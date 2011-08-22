@@ -3,6 +3,7 @@ package utamaru
 import (
 	"os"
 	"appengine"
+	"appengine/taskqueue"
 	"fmt"
 	"http"
 	"regexp"
@@ -86,3 +87,32 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("CrawleHashtags")
+	hashtags, err := GetHashtags(c)
+	if err != nil {
+		c.Errorf("CrawleHashtags failed to retrieve hashtags: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+
+	var hashtagStrings []string
+	for _, hashtag := range hashtags {
+		hashtagStrings = append(hashtagStrings, hashtag.Name)
+	}
+
+	for _, h := range hashtagStrings {
+		c.Debugf("CrawleHashtags h: %s", h)
+	}
+	if len(hashtagStrings) == 0 {
+		c.Warningf("CrawleHashtags no hashtags")
+		return
+	}
+
+	t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": hashtagStrings})
+	if _, err := taskqueue.Add(c, t, ""); err != nil {
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+}

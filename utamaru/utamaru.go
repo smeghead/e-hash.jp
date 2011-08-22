@@ -21,6 +21,7 @@ func init() {
 	http.HandleFunc("/sign", sign)
 	http.HandleFunc("/cron/record_hashtags", RecordHashtags)
 	http.HandleFunc("/cron/record_trends_hashtags", RecordTrendsHashtags)
+	http.HandleFunc("/cron/crawle_hashtags", CrawleHashtags)
 	http.HandleFunc("/worker/crawle_hashtag", WorkerCrawleHashtagHandler)
 	http.HandleFunc("/home_test", HomeTestHandler)
 }

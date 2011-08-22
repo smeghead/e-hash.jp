@@ -7,32 +7,6 @@ import (
 	"time"
 )
 
-type Hashtag struct {
-	Name string
-	Count int
-	Date datastore.Time
-}
-
-func SaveHashtag(c appengine.Context, hashtag string) os.Error {
-	//search
-	h := new(Hashtag)
-	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
-
-	if err := datastore.Get(c, key, h); err != nil {
-		//insert
-		h.Name = hashtag
-		h.Count = 0
-	}
-	h.Count += 1
-	h.Date = datastore.SecondsToTime(time.Seconds())
-
-	if _, err := datastore.Put(c, key, h); err != nil {
-		c.Errorf("SaveHashtag failed to put: %v", err.String())
-		return err
-	}
-	return nil
-}
-
 type Tweet struct {
 	Id_Str string
 	Screen_name string
@@ -61,8 +35,10 @@ func NewTweet(tw TweetTw) Tweet {
 
 func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error {
 	for _, tweet := range tweets {
-		c.Debugf("string key id_str: %v", tweet.Id_Str)
-		c.Debugf("string key Created_At: %v", tweet.Created_At)
+		if !ContainsMultibyteChar(hashtag) {
+			c.Infof("not contains multibyte char: %s", hashtag)
+			continue
+		}
 		t := NewTweet(tweet)
 		t.Hashtag = hashtag
 		key := datastore.NewKey("Tweet", t.String(), 0, nil)
@@ -74,4 +50,13 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 		}
 	}
 	return nil
+}
+
+func ContainsMultibyteChar(s string) bool {
+	for _, c := range s {
+		if c > 128 {
+			return true
+		}
+	}
+	return false
 }

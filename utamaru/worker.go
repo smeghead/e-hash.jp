@@ -1,23 +1,15 @@
-
 package utamaru
 
+// worker for queue tasks.
 import (
 	"appengine"
-//	"appengine/datastore"
-//	"appengine/user"
-//	"fmt"
 	"http"
 )
 
-/**
-  worker for queue tasks.
- */
 
-/**
-  引数のハッシュタグを、twitter api search で検索する。
-  取れるだけ取る。
-  それを、Tweetに登録する
- */
+//  引数のハッシュタグを、twitter api search で検索する。
+//  取れるだけ取る。
+//  それを、Tweetに登録する
 func WorkerCrawleHashtagHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("WorkerCrawleHashtagHandler")
@@ -36,15 +28,10 @@ func WorkerCrawleHashtagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-//	q := datastore.NewQuery("Hashtag").Order("-Count").Limit(10)
-//	hashtags := make([]Hashtag, 0, 10)
-//	if _, err := q.GetAll(c, &hashtags); err != nil {
-//		http.Error(w, err.String(), http.StatusInternalServerError)
-//		return
-//	}
-//	if err := guestbookTemplate.Execute(w, hashtags); err != nil {
-//		http.Error(w, err.String(), http.StatusInternalServerError)
-//		return
-//	}
+	if err := UpdateHashtag(c, hashtag); err != nil {
+		c.Errorf("WorkerCrawleHashtagHandler failed to UpdateHashtag: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
 }
 

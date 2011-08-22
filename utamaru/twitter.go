@@ -35,19 +35,18 @@ type ErrorResponse struct {
 }
 
 func OAuthHeader(c appengine.Context, method, url string) string {
-	consumer_key := "47b38aD2FrxUdN1ZzHwcw";
-	consumer_secret := "hyXMjyGUnXjCLnPKDsMN3K3a47WZ1bjIyD8UMSEw"
-	access_token := "358728662-kiCEADYzFnRrou8QwvGM1rQEGPvPfXpGMxlJr2px"
-	access_token_secret := "q1z7ePnfSXAJACk1Ci8IzXARO4LLO1AJtpg6ghNm4"
+	conf, err := GetTwitterConf(c)
+	if err != nil {
+		c.Errorf("OAuthHeader failed to load TwitterConf: %v", err.String())
+		return ""
+	}
 	oauthMap := make(map[string]string)
-	oauthMap["oauth_consumer_key"] = consumer_key
+	oauthMap["oauth_consumer_key"] = conf.ConsumerKey
 	oauthMap["oauth_signature_method"] = "HMAC-SHA1"
-	//oauthMap["oauth_timestamp"] = "1313853662"
 	oauthMap["oauth_timestamp"] = strconv.Itoa64(time.Seconds())
-	//oauthMap["oauth_nonce"] = "11781565341701958306"
 	oauthMap["oauth_nonce"] = strconv.Itoa64(rand.Int63())
 	oauthMap["oauth_version"] = "1.0"
-	oauthMap["oauth_token"] = access_token
+	oauthMap["oauth_token"] = conf.AccessToken
 
 	oauthArray := make([]string, 0, 10)
 	mapKeys := make([]string, len(oauthMap))
@@ -62,10 +61,9 @@ func OAuthHeader(c appengine.Context, method, url string) string {
 	}
 	oauth := strings.Join(oauthArray, Encode("&"))
 	msg := method + "&" + Encode(url) + "&" + oauth
-	key := consumer_secret + "&" + access_token_secret
+	key := conf.ConsumerSecret + "&" + conf.AccessTokenSecret
 	h := hmac.NewSHA1([]byte(key))
 	h.Write([]byte(msg))
-	c.Debugf("OAuthHeader sum: %x", h.Sum())
 	oauthMap["oauth_signature"] = base64.StdEncoding.EncodeToString(h.Sum())
 
 	oauthArray = make([]string, 0, 10)
@@ -152,12 +150,8 @@ type Trend struct {
 func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 	url := "http://api.twitter.com/1/trends/1118370.json"
 	request, _ := http.NewRequest("GET", url, nil)
-	//request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
-	//c.Debugf("GetTrends Authorization: %v", request.Header.Get("Authorization"))
-	//client := &http.Client{}
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
-	//response, err := http.Get("http://api.twitter.com/1/trends/1118370.json")
 	if err != nil {
 		c.Errorf("GetTrends failed to api call: %v", err.String())
 		return nil, err
@@ -169,7 +163,7 @@ func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 	}
 	locales := make([]Locale, 0, 1)
 	json.Unmarshal(jsonVal, &locales)
-	if len(locales[0].Trends) == 0 {
+	if len(locales) == 0 || len(locales[0].Trends) == 0 {
 		//maybe error.
 		var errRes ErrorResponse
 		json.Unmarshal(jsonVal, &errRes)
@@ -184,9 +178,8 @@ func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 func HomeTest(c appengine.Context) os.Error {
 	url := "http://api.twitter.com/statuses/friends_timeline.json"
 	request, _ := http.NewRequest("GET", url, nil)
-	//request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
-	//c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
-	//client := &http.Client{}
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
@@ -215,6 +208,7 @@ func Encode(s string) string {
 	}
 	return enc
 }
+
 func isEncodable(c byte) bool {
 	// return false if c is an unreserved character (see RFC 3986 section 2.3)
 	switch {
@@ -232,7 +226,11 @@ type Result struct {
 	Results []TweetTw
 }
 func SearchTweetsByHashtag(c appengine.Context, hashtag string) ([]TweetTw, os.Error) {
-	url := "http://search.twitter.com/search.json?q=" + Encode(hashtag)
+	var empty []TweetTw
+	if len(hashtag) == 0 {
+		return empty, nil
+	}
+	url := "http://search.twitter.com/search.json?rpp=100&q=" + Encode(hashtag)
 	c.Debugf("SearchTweetsByHashtag url: %s", url)
 	request, _ := http.NewRequest("GET", url, nil)
 	client := urlfetch.Client(c)
@@ -254,8 +252,8 @@ func SearchTweetsByHashtag(c appengine.Context, hashtag string) ([]TweetTw, os.E
 		json.Unmarshal(jsonVal, &errRes)
 		return nil, os.NewError(errRes.Error)
 	}
-	for _, tweet := range result.Results {
-		c.Debugf("SearchTweetsByHashtag tweet.Text: %v", tweet.Text)
-	}
+//	for _, tweet := range result.Results {
+//		c.Debugf("SearchTweetsByHashtag tweet.Text: %v", tweet.Text)
+//	}
 	return result.Results, nil
 }
