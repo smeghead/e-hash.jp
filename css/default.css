@@ -1,0 +1,135 @@
+@charset "UTF-8";
+
+/*---------------------------------------------
+
+Default CSS
+
+for all pages
+coded by d-spica at 2008-05-31
+imported to "$category-name.css" and "top.css"
+
+---------------------------------------------*/
+
+ 
+/* Reset */
+
+body, div, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ul, ol, li, 
+brockquote, pre, table, caption, th, td, address, 
+form, fieldset, legend, object {
+  margin: 0;
+  padding: 0;
+}
+
+h5, h6, pre, table, code, kbd, samp, acronym, input, textarea, select {
+  font-size: 100%;
+}
+
+a, ins {
+  text-decoration: none;
+}
+
+address, em, cite, dfn, var {
+  font-style: normal;
+}
+
+input, textarea {
+  font-family: sans-serif;
+  font-weight: normal;
+}
+
+img {
+  vertical-align: baseline;
+}
+
+a img {
+  border: none;
+}
+
+
+/* Setting */
+
+html {  
+  overflow-y: scroll;  
+}
+
+body {
+  background: #FFF;
+  font-family: sans-serif;
+  font-size: 13px;
+  color: #333;
+}
+
+* html body { /* for IE6 */
+  font-size: small;
+}
+  
+*:first-child+html body { /* for IE7 */
+  font-size: small;
+}
+
+ul {
+  list-style-position: outside;
+  list-style-type: none;
+}
+
+ol {
+  list-style-position: outside;
+}
+  
+table {
+  border-collapse: collapse;
+}
+
+legend {
+  color: #333;
+}
+
+div#main p,
+div#main ul,
+div#main ol,
+div#main dl,
+div#main blockquote,
+div#main pre,
+div#main table {
+  margin: 1em 0;
+}
+
+
+/* Option *//*
+
+* html .smallFont {
+  font-family: 'メイリオ', 'ＭＳ Ｐゴシック', sans-serif;
+}
+  
+*:first-child+html .smallFont {
+  font-family: 'メイリオ', 'ＭＳ Ｐゴシック', sans-serif;
+}
+
+* html ul li dl,
+* html ol li dl {
+  display: inline;
+}
+
+*:first-child+html ul li dl,
+*:first-child+html ol li dl {
+  display: inline;
+}
+
+*/
+
+
+/*---------------------------------------------
+
+Font Size
+
+20px : 154%
+18px : 139%
+16px : 124%
+15px : 116%  125%
+14px : 108%  117%
+13px : 100%  108%
+12px :  93%  100%
+11px :  85%   92%
+
+---------------------------------------------*/
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>なにこれ？</title>
+    <link href="/css/default.css" type="text/css" rel="stylesheet"></link>
+    <link href="/css/style.css" type="text/css" rel="stylesheet"></link>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="/js/common.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <h1><a href="/">なにこれ？</a></h1>
+    <div id="menu">
+      <div class="subject_list">
+        {.repeated section hashtags}
+          <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
+        {.end}
+      </div>
+    </div>
+    {.repeated section elements}
+      <h2><a class="subject_link" href="#">{Hashtag.Name|html}</a></h2>
+      {.repeated section Tweets}
+        <div class="subject_block">
+          <div class="icon_block">
+            <a href="http://twitter.com/#!/{Screen_name|html}" target="_blank"><img class="icon" src="{Profile_Image_Url}" /></a>
+          </div>
+          <div class="subject_right">
+            <div class="subject_record">
+              <a href="http://twitter.com/#!/{Screen_name|html}" target="_blank">{Screen_name|html}</a>
+              <span class="create_at">{Created_At}</span>
+            </div>
+            <div class="text"> {Text|html}</div>
+          </div>
+          <br clear="all" />
+        </div>
+      {.end}
+    {.end}
+  </body>
+</html>

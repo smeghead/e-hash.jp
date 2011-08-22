@@ -1,0 +1,19 @@
+.subject_block {
+	width: 620px;
+}
+.subject_block .icon_block {
+	float: left;
+}
+.subject_block .subject_right {
+	float: left;
+	width: 550px;
+}
+.subject_block .subject_record {
+	margin: 5px;
+}
+.subject_block .create_at {
+	display: none;
+}
+.subject_block .text {
+	margin: 10px;
+}
