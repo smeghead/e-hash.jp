@@ -40,7 +40,7 @@ func UpdateHashtag(c appengine.Context, hashtag string) os.Error {
 	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
 
 	if err := datastore.Get(c, key, h); err != nil {
-		return nil
+		return err
 	}
 	h.Crawled = datastore.SecondsToTime(time.Seconds())
 
@@ -51,10 +51,22 @@ func UpdateHashtag(c appengine.Context, hashtag string) os.Error {
 	return nil
 }
 
-func GetHashtags(c appengine.Context) ([]Hashtag, os.Error) {
+func FindHashtag(c appengine.Context, hashtag string) (Hashtag, os.Error) {
 	//search
-	q := datastore.NewQuery("Hashtag").Order("Crawled").Limit(10)
-	hashtags := make([]Hashtag, 0, 10)
+	h := new(Hashtag)
+	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
+
+	if err := datastore.Get(c, key, h); err != nil {
+		return *h, err
+	}
+	return *h, nil
+}
+
+func GetHashtags(c appengine.Context, options map[string]interface{}) ([]Hashtag, os.Error) {
+	length := options["length"].(int)
+	//search
+	q := datastore.NewQuery("Hashtag").Order("Crawled").Limit(length)
+	hashtags := make([]Hashtag, 0, length)
 	if _, err := q.GetAll(c, &hashtags); err != nil {
 		return nil, err
 	}
@@ -62,3 +74,14 @@ func GetHashtags(c appengine.Context) ([]Hashtag, os.Error) {
 	return hashtags, nil
 }
 
+func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]Hashtag, os.Error) {
+	length := options["length"].(int)
+	//search
+	q := datastore.NewQuery("Hashtag").Order("-Count").Limit(length)
+	hashtags := make([]Hashtag, 0, length)
+	if _, err := q.GetAll(c, &hashtags); err != nil {
+		return nil, err
+	}
+	c.Debugf("len hashtags: %d", len(hashtags))
+	return hashtags, nil
+}

@@ -15,6 +15,7 @@ type Tweet struct {
 	Profile_Image_Url string
 	Created_At datastore.Time
 	Hashtag string
+	Point int
 }
 
 func (t *Tweet) String() string {
@@ -24,13 +25,21 @@ func (t *Tweet) String() string {
 func NewTweet(tw TweetTw) Tweet {
 	var t Tweet
 	t.Id_Str = tw.Id_Str
-	t.Screen_name = tw.User.Screen_name
+	t.Screen_name = tw.From_User
 	t.UserId_Str = tw.User.Id_Str
 	t.Text = tw.Text
 	t.Profile_Image_Url = tw.Profile_Image_Url
 	createAtTime, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", tw.Created_At)
 	t.Created_At = datastore.SecondsToTime(createAtTime.Seconds())
 	return t
+}
+
+func CopyTweet(newT, old Tweet) Tweet {
+	old.Screen_name = newT.Screen_name
+	old.UserId_Str = newT.UserId_Str
+	old.Text = newT.Text
+	old.Profile_Image_Url = newT.Profile_Image_Url
+	return old
 }
 
 func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error {
@@ -44,6 +53,12 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 		key := datastore.NewKey("Tweet", t.String(), 0, nil)
 		c.Debugf("key: %v", key)
 
+		var old Tweet
+		if err := datastore.Get(c, key, &old); err == nil {
+			// 既に存在する場合
+			t = CopyTweet(t, old)
+			c.Debugf("exists %s", t.Screen_name)
+		}
 		if _, err := datastore.Put(c, key, &t); err != nil {
 			c.Errorf("SaveTweets failed to put: %v", err.String())
 			return err
@@ -59,4 +74,16 @@ func ContainsMultibyteChar(s string) bool {
 		}
 	}
 	return false
+}
+
+func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]interface{}) ([]Tweet, os.Error) {
+	length := options["length"].(int)
+	//search
+	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order("-Created_At").Limit(length)
+	tweets := make([]Tweet, 0, length)
+	if _, err := q.GetAll(c, &tweets); err != nil {
+		return nil, err
+	}
+	c.Debugf("len tweets: %d", len(tweets))
+	return tweets, nil
 }

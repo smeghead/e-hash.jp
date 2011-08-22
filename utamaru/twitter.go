@@ -25,6 +25,7 @@ type User struct {
 type TweetTw struct {
 	Id_Str string
 	User User
+	From_User string
 	Text string
 	Profile_Image_Url string
 	Created_At string
@@ -150,6 +151,8 @@ type Trend struct {
 func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 	url := "http://api.twitter.com/1/trends/1118370.json"
 	request, _ := http.NewRequest("GET", url, nil)
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
@@ -225,6 +228,7 @@ func isEncodable(c byte) bool {
 type Result struct {
 	Results []TweetTw
 }
+
 func SearchTweetsByHashtag(c appengine.Context, hashtag string) ([]TweetTw, os.Error) {
 	var empty []TweetTw
 	if len(hashtag) == 0 {
@@ -233,6 +237,8 @@ func SearchTweetsByHashtag(c appengine.Context, hashtag string) ([]TweetTw, os.E
 	url := "http://search.twitter.com/search.json?rpp=100&q=" + Encode(hashtag)
 	c.Debugf("SearchTweetsByHashtag url: %s", url)
 	request, _ := http.NewRequest("GET", url, nil)
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {

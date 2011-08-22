@@ -7,4 +7,4 @@ cron:
   schedule: every 2 hours
 - description: crawle hashtags.
   url: /cron/crawle_hashtags
-  schedule: every 10 minutes
+  schedule: every 15 minutes

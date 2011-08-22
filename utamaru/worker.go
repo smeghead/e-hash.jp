@@ -18,7 +18,8 @@ func WorkerCrawleHashtagHandler(w http.ResponseWriter, r *http.Request) {
 	tweets, err := SearchTweetsByHashtag(c, hashtag)
 	if err != nil {
 		c.Errorf("WorkerCrawleHashtagHandler failed to crawle by hashtag: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		// if this return error, loop execution call Twitter API. so, over the limit.
+		//http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
 

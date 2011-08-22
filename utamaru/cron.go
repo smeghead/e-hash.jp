@@ -90,7 +90,9 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("CrawleHashtags")
-	hashtags, err := GetHashtags(c)
+	hashtags, err := GetHashtags(c, map[string]interface{}{
+		"length": 3,
+	})
 	if err != nil {
 		c.Errorf("CrawleHashtags failed to retrieve hashtags: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
@@ -102,17 +104,16 @@ func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 		hashtagStrings = append(hashtagStrings, hashtag.Name)
 	}
 
-	for _, h := range hashtagStrings {
-		c.Debugf("CrawleHashtags h: %s", h)
-	}
 	if len(hashtagStrings) == 0 {
 		c.Warningf("CrawleHashtags no hashtags")
 		return
 	}
 
-	t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": hashtagStrings})
-	if _, err := taskqueue.Add(c, t, ""); err != nil {
-		http.Error(w, err.String(), http.StatusInternalServerError)
-		return
+	for _, h := range hashtagStrings {
+		t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": []string{h}})
+		if _, err := taskqueue.Add(c, t, ""); err != nil {
+			http.Error(w, err.String(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
