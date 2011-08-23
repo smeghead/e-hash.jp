@@ -1,7 +1,7 @@
 cron:
-#- description: record hashtag.
-#  url: /cron/record_hashtags
-#  schedule: every 2 minutes
+- description: record hashtag.
+  url: /cron/record_hashtags
+  schedule: every 10 minutes
 - description: record trends hashtag.
   url: /cron/record_trends_hashtags
   schedule: every 2 hours

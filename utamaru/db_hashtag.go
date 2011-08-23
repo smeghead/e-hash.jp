@@ -76,6 +76,19 @@ func GetHashtags(c appengine.Context, options map[string]interface{}) ([]Hashtag
 
 func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]Hashtag, os.Error) {
 	length := options["length"].(int)
+	noCache := 0
+	if options["noCache"] != nil {
+		noCache = options["noCache"].(int)
+	}
+	if noCache == 0 {
+		// try to get cache.
+		hs, err := CacheGetSubjects(c)
+		if err == nil {
+			// got from memcached.
+			c.Debugf("GetPublicHashtags got from memcached")
+			return hs, nil
+		}
+	}
 	//search
 	q := datastore.NewQuery("Hashtag").Order("-Count").Limit(length)
 	hashtags := make([]Hashtag, 0, length)
@@ -83,5 +96,10 @@ func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]H
 		return nil, err
 	}
 	c.Debugf("len hashtags: %d", len(hashtags))
+	if len(hashtags) > 0 {
+		// cache.
+		CacheSetSubjects(c, hashtags)
+		c.Debugf("GetPublicHashtags subjects cached")
+	}
 	return hashtags, nil
 }

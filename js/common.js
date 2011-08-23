@@ -19,6 +19,7 @@ $(function(){
   });
   $('a.subject_link').click(function(){
     document.location.href = '/s/' + encodeURIComponent($(this).text());
+    return false;
   });
 });
 //  vim: set ts=2 sw=2 sts=2 expandtab fenc=utf-8:

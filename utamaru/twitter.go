@@ -76,7 +76,11 @@ func OAuthHeader(c appengine.Context, method, url string) string {
 }
 
 func GetPublicTimeline(c appengine.Context) ([]TweetTw, os.Error) {
-	response, err := http.Get("http://api.twitter.com/statuses/public_timeline.json")
+	url := "http://api.twitter.com/statuses/public_timeline.json"
+	request, _ := http.NewRequest("GET", url, nil)
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	client := urlfetch.Client(c)
+	response, err := client.Do(request)
 	if err != nil {
 		c.Errorf("GetPublicTimeline failed to api call: %v", err.String())
 		return nil, err
@@ -108,7 +112,6 @@ func InvokePublicTimelineStream(c appengine.Context, procTweet func(TweetTw) os.
 			 bytes.NewBufferString("track=#,＃"))
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	request.Header.Set("Authorization", "Basic aW1ha2FyYXlhcnU6N2tvcm9iaThva2k=")
-	//client := &http.Client{}
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
@@ -152,7 +155,6 @@ func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 	url := "http://api.twitter.com/1/trends/1118370.json"
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
-	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {

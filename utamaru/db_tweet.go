@@ -69,7 +69,10 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 
 func ContainsMultibyteChar(s string) bool {
 	for _, c := range s {
-		if c > 128 {
+		if c >= 12353 && c <= 12540 { // range [ぁんァンー]
+			return true
+		}
+		if c >= 19968 && c <= 40869 { // range 漢字
 			return true
 		}
 	}

@@ -16,7 +16,7 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	var topTemplate = template.MustParseFile("templates/index.html", nil)
 	c := appengine.NewContext(r)
 	hashtags, err := GetPublicHashtags(c, map[string]interface{}{
-			"length": 10,
+			"length": 50,
 		})
 	if err != nil {
 		c.Errorf("FrontTop failed to retrieve hashtags: %v", err.String())
@@ -24,7 +24,10 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	hles := make([]HashtagListElement, 0, 10)
-	for _, h := range hashtags {
+	for i, h := range hashtags {
+		if i > 10 {
+			break
+		}
 		tweets, err := GetTweetsByHashtag(c, h.Name, map[string]interface{}{
 			"length": 3,
 		})
@@ -72,8 +75,8 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	hle := HashtagListElement{h, tweets}
 
 	hashtags, err := GetPublicHashtags(c, map[string]interface{}{
-			"length": 10,
-		})
+		"length": 50,
+	})
 	if err != nil {
 		c.Errorf("FrontTop failed to retrieve hashtags: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
