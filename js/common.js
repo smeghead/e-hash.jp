@@ -17,7 +17,7 @@ $(function(){
     $(this).show();
   });
   $('a.subject_link').click(function(){
-    document.location.href = '/s/' + encodeURIComponent($(this).text());
+    document.location.href = '/s/' + encodeURIComponent($(this).text().substring(1));
     return false;
   });
   $('div.text').each(function(){

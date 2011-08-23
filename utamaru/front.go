@@ -55,7 +55,7 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 		return
 	}
-	hashtag := path[3:]
+	hashtag := "#" + path[3:]
 	c.Debugf("FrontSubject hashtag: %s", hashtag)
 
 	h, err := FindHashtag(c, hashtag)
