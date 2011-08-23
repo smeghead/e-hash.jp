@@ -29,7 +29,7 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		tweets, err := GetTweetsByHashtag(c, h.Name, map[string]interface{}{
-			"length": 3,
+			"length": 2,
 		})
 		if err != nil {
 			c.Errorf("FrontTop failed to retrieve tweets: %v", err.String())

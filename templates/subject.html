@@ -11,30 +11,32 @@
   </head>
   <body>
     <h1><a href="/">木久蔵</a></h1>
-    <div id="menu">
-      <div class="subject_list">
-        {.repeated section hashtags}
-          <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
+    <div id="main-container">
+      <div id="menu">
+        <div class="subject_list">
+          {.repeated section hashtags}
+            <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
+          {.end}
+        </div>
+      </div>
+      <div id="main">
+        <h2><a class="subject_link" href="#">{elements.Hashtag.Name|html}</a></h2>
+        {.repeated section elements.Tweets}
+        <div class="subject_block">
+          <div class="icon_block">
+            <a href="http://twitter.com/#!/{Screen_name|html}" target="_blank"><img class="icon" src="{Profile_Image_Url}" /></a>
+          </div>
+          <div class="subject_right">
+            <div class="subject_record">
+              <a href="http://twitter.com/#!/{Screen_name|html}" target="_blank">{Screen_name|html}</a>
+              <span class="create_at">{Created_At}</span>
+            </div>
+            <div class="text"> {Text|html}</div>
+          </div>
+          <br clear="all" />
+        </div>
         {.end}
       </div>
-    </div>
-    <div id="main">
-      <h2><a class="subject_link" href="#">{elements.Hashtag.Name|html}</a></h2>
-      {.repeated section elements.Tweets}
-      <div class="subject_block">
-        <div class="icon_block">
-          <a href="http://twitter.com/#!/{Screen_name|html}" target="_blank"><img class="icon" src="{Profile_Image_Url}" /></a>
-        </div>
-        <div class="subject_right">
-          <div class="subject_record">
-            <a href="http://twitter.com/#!/{Screen_name|html}" target="_blank">{Screen_name|html}</a>
-            <span class="create_at">{Created_At}</span>
-          </div>
-          <div class="text"> {Text|html}</div>
-        </div>
-        <br clear="all" />
-      </div>
-      {.end}
     </div>
   </body>
 </html>
