@@ -1,5 +1,12 @@
 .subject_block {
 	width: 620px;
+	margin: 10px;
+	padding: 10px;
+	background-color: #FFFF99;
+	border-style: solid;
+	border-color: #FFCC00;
+	border-width: 1px;
+	border-radius: 5px;
 }
 .subject_block .icon_block {
 	float: left;
@@ -10,10 +17,21 @@
 }
 .subject_block .subject_record {
 	margin: 5px;
+	font-size: 70%;
 }
 .subject_block .create_at {
 	display: none;
 }
 .subject_block .text {
 	margin: 10px;
+	font-size: 140%;
+	padding: 15px;
+	background-color: white;
+	border-radius: 8px;
+	border-style: solid;
+	border-color: #FFCC00;
+	border-width: 1px;
+}
+a.twitter-hashtag {
+	color: #FF33FF !important;
 }

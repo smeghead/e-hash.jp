@@ -82,7 +82,7 @@ func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]H
 	}
 	if noCache == 0 {
 		// try to get cache.
-		hs, err := CacheGetSubjects(c)
+		hs, err := CacheGetSubjects(c, options)
 		if err == nil {
 			// got from memcached.
 			c.Debugf("GetPublicHashtags got from memcached")
@@ -96,9 +96,9 @@ func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]H
 		return nil, err
 	}
 	c.Debugf("len hashtags: %d", len(hashtags))
-	if len(hashtags) > 0 {
+	if noCache == 0 {
 		// cache.
-		CacheSetSubjects(c, hashtags)
+		CacheSetSubjects(c, hashtags, options)
 		c.Debugf("GetPublicHashtags subjects cached")
 	}
 	return hashtags, nil

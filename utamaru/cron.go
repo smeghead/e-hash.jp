@@ -44,7 +44,7 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
-	reg, err := regexp.Compile("[#＃][^ ;'.,]+")
+	reg, err := regexp.Compile(HashtagRexexp)
 	if err != nil {
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
@@ -78,7 +78,7 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for _, t := range trends {
-		reg, err := regexp.Compile("^[#＃].+")
+		reg, err := regexp.Compile(HashtagRexexp)
 		if err != nil {
 			c.Errorf("RecordTrendsHashtags regexp compile error: %v", err.String())
 			http.Error(w, err.String(), http.StatusInternalServerError)
