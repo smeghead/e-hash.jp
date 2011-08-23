@@ -10,15 +10,10 @@
     <script src="/js/common.js" type="text/javascript"></script>
   </head>
   <body>
-    <h1><a href="/">木久蔵</a></h1>
+    <div id="header">
+      <h1><a href="/">木久蔵</a></h1>
+    </div>
     <div id="main-container">
-      <div id="menu">
-        <div class="subject_list">
-          {.repeated section hashtags}
-            <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
-          {.end}
-        </div>
-      </div>
       <div id="main">
         <h2><a class="subject_link" href="#">{elements.Hashtag.Name|html}</a></h2>
         {.repeated section elements.Tweets}
@@ -37,6 +32,17 @@
         </div>
         {.end}
       </div>
+      <div id="sidebar">
+        <div class="subject_list">
+          {.repeated section hashtags}
+            <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
+          {.end}
+        </div>
+      </div>
+      <br clear="all"/>
+    </div>
+    <div id="footer">
+      footer
     </div>
   </body>
 </html>
