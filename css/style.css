@@ -1,6 +1,20 @@
+body {
+	text-align:center;
+	background-color: #29470D;
+}
+h2 {
+}
+div#main-container {
+	width: 900px;
+	padding: 20px;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:left;
+	background-color: white;
+}
 .subject_block {
-	width: 620px;
-	margin: 10px;
+	width: 600px;
+	margin: 30px 0px;
 	padding: 10px;
 	background-color: #FFFF99;
 	border-style: solid;
@@ -8,15 +22,21 @@
 	border-width: 1px;
 	border-radius: 5px;
 }
+.subject_block .icon {
+	float: left;
+	border-radius: 5px;
+}
 .subject_block .icon_block {
 	float: left;
+	width: 48px;
+	height: 48px;
 }
 .subject_block .subject_right {
 	float: left;
 	width: 550px;
 }
 .subject_block .subject_record {
-	margin: 5px;
+	margin: 5px 10px;
 	font-size: 70%;
 }
 .subject_block .create_at {
@@ -25,7 +45,7 @@
 .subject_block .text {
 	margin: 10px;
 	font-size: 140%;
-	padding: 15px;
+	padding: 5px 15px;
 	background-color: white;
 	border-radius: 8px;
 	border-style: solid;
