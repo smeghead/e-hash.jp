@@ -15,6 +15,11 @@
     </div>
     <div id="main-container">
       <div id="main">
+        <div id="introduction">
+          <span>
+            まるまるをばつばつする
+          </span>
+        </div>
         {.repeated section elements}
           <h2><a class="subject_link" href="#">{Hashtag.Name|html}</a></h2>
           {.repeated section Tweets}
@@ -32,6 +37,10 @@
               <br clear="all" />
             </div>
           {.end}
+          <div class="more">
+            <a class="subject_link" href="#">{Hashtag.Name|html}をもっと見る</a>
+          </div>
+          <hr />
         {.end}
       </div>
       <div id="sidebar">

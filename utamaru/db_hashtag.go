@@ -24,12 +24,34 @@ func SaveHashtag(c appengine.Context, hashtag string) os.Error {
 		h.Name = hashtag
 		h.Count = 0
 	}
-	h.Count += 1
+	// Countは最大5にする。
+	if h.Count < 5 {
+		h.Count += 1
+	}
 	h.Date = datastore.SecondsToTime(time.Seconds())
 
 	if _, err := datastore.Put(c, key, h); err != nil {
 		c.Errorf("SaveHashtag failed to put: %v", err.String())
 		return err
+	}
+
+	// 古くてカウントが多いもののカウントを減らす
+	length := 10
+	q := datastore.NewQuery("Hashtag").Filter("Count >", 2).Order("-Date").Limit(length)
+	hashtags := make([]Hashtag, 0, length)
+	if _, err := q.GetAll(c, &hashtags); err != nil {
+		return err
+	}
+	for _, h := range hashtags {
+		if h.Count <= 1 {
+			continue;
+		}
+		c.Debugf("SaveHashtag old hashtag decrement: %v", h.Name)
+		h.Count -= 1
+		if _, err := datastore.Put(c, key, h); err != nil {
+			c.Errorf("SaveHashtag failed to put old hashtag decrement: %v", err.String())
+			return err
+		}
 	}
 	return nil
 }

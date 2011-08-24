@@ -7,7 +7,7 @@ a:hover{text-decoration:underline;}
 a:focus{outline:1px dotted;}
 hr{border:0;border-top:1px solid rgba(0,0,0,0.1);border-bottom:1px solid rgba(255,255,255,0.3);*border-top:1px solid #000;*border-bottom:1px solid #fff;*filter:alpha(opacity = 30);clear:both;height:0;display:block;margin:15px 0 15px 0;}
 h1{font-size:25px;}
-h2{font-size:23px;}
+h2{font-size:27px;}
 h3{font-size:21px;}
 h4{font-size:19px;}
 h5{font-size:17px;}
@@ -83,6 +83,16 @@ div#footer {
 	border-color: #FFCC00;
 	border-width: 1px;
 }
+#main .more {
+	text-align: right;
+}
 a.twitter-hashtag {
 	color: #FF33FF !important;
+}
+#introduction {
+	border: 3px solid blue;
+	padding: 10px;
+}
+#introduction span {
+	font-size: 120%;
 }

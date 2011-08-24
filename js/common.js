@@ -26,7 +26,7 @@ $(function(){
     html = html.replace(url_regexp, function(x){
       return '<a class="twitter-url" href="' + x + '" target="_blank">' + x + '</a>';
     });
-    var hashtag_regexp = /[#＃][^ .;:　]+/g;
+    var hashtag_regexp = /[#＃][^ .;:　\n]+/g;
     html = html.replace(hashtag_regexp, function(x){
       return '<a class="twitter-hashtag" href="http://twitter.com/#!/search?q=' + encodeURIComponent(x) + '" target="_blank">' + x + '</a>';
     });

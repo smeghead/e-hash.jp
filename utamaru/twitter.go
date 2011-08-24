@@ -17,7 +17,7 @@ import (
 	"encoding/base64"
 )
 
-var HashtagRexexp string = "[#＃][^ ;'.,　]+"
+var HashtagRexexp string = "[#＃][^ ;'.,　\n]+"
 
 type User struct {
 	Id_Str string
