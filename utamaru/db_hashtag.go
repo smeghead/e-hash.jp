@@ -14,7 +14,7 @@ type Hashtag struct {
 	Crawled datastore.Time
 }
 
-func SaveHashtag(c appengine.Context, hashtag string) os.Error {
+func SaveHashtag(c appengine.Context, hashtag string, count int) os.Error {
 	//search
 	h := new(Hashtag)
 	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
@@ -22,7 +22,7 @@ func SaveHashtag(c appengine.Context, hashtag string) os.Error {
 	if err := datastore.Get(c, key, h); err != nil {
 		//insert
 		h.Name = hashtag
-		h.Count = 0
+		h.Count = count
 	}
 	// Countは最大5にする。
 	if h.Count < 5 {

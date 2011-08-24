@@ -7,13 +7,17 @@ $(function(){
     var timestamp = $(this).text();
     var d = new Date();
     d.setTime(timestamp.substring(0, timestamp.length - 3));
-    $(this).text(
-      zero(d.getFullYear(), 4) + '-' +
-      zero((d.getMonth() + 1), 2) + '-' +
-      zero(d.getDate(), 2) + ' ' +
+    var date_string = 
+      zero(d.getFullYear(), 4) + '年' +
+      zero((d.getMonth() + 1), 2) + '月' +
+      zero(d.getDate(), 2) + '日 ' +
       zero(d.getHours(), 2) + ':' +
-      zero(d.getMinutes(), 2) + ':' +
-      zero(d.getSeconds(), 2));
+      zero(d.getMinutes(), 2);
+    $(this).html(
+      '<a target="_blank" href="http://twitter.com/#!/' +
+      $(this).data('screenname') + '/status/' +
+      $(this).data('statusid') + '">' +
+      date_string + '</a>');
     $(this).show();
   });
   $('a.subject_link').click(function(){
@@ -36,5 +40,6 @@ $(function(){
     });
     $(this).html(html);
   });
+  $('div#ticker-elements').jStockTicker({interval: 13});
 });
 //  vim: set ts=2 sw=2 sts=2 expandtab fenc=utf-8:

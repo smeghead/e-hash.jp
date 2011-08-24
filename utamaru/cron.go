@@ -61,7 +61,7 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 			if !ContainsMultibyteChar(hashtag) {
 				continue
 			}
-			if err := SaveHashtag(c, hashtag); err != nil {
+			if err := SaveHashtag(c, hashtag, 0); err != nil {
 				http.Error(w, err.String(), http.StatusInternalServerError)
 				return
 			}
@@ -89,13 +89,33 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 		matches := reg.FindAllString(t.Name, 5)
 		for _, hashtag := range matches {
 			fmt.Fprintf(w, "<b>%v</b><br>\n", hashtag)
-			if err := SaveHashtag(c, hashtag); err != nil {
+			if err := SaveHashtag(c, hashtag, 0); err != nil {
 				c.Errorf("RecordTrendsHashtags failed to SaveHashtag: %v", err.String())
 				http.Error(w, err.String(), http.StatusInternalServerError)
 				return
 			}
 		}
 	}
+}
+
+func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("RecordRssHashtags")
+	hashtags, err := GetHashtagsFromRss(c)
+	if err != nil {
+		c.Errorf("RecordRssHashtags failed to GetTrends: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+	for _, h := range hashtags {
+		fmt.Fprintf(w, "<b>%v</b><br>\n", h.Name)
+		if err := SaveHashtag(c, h.Name, 3); err != nil {
+			c.Errorf("RecordRssHashtags failed to SaveHashtag: %v", err.String())
+			http.Error(w, err.String(), http.StatusInternalServerError)
+			return
+		}
+	}
+	fmt.Fprintf(w, "end<br>\n")
 }
 
 func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
@@ -110,22 +130,13 @@ func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var hashtagStrings []string
 	for _, hashtag := range hashtags {
 		if !ContainsMultibyteChar(hashtag.Name) {
 			c.Infof("not contains multibyte char: %s", hashtag.Name)
 			continue
 		}
-		hashtagStrings = append(hashtagStrings, hashtag.Name)
-	}
-
-	if len(hashtagStrings) == 0 {
-		c.Warningf("CrawleHashtags no hashtags")
-		return
-	}
-
-	for _, h := range hashtagStrings {
-		t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": []string{h}})
+		c.Debugf("register taskqueue: %s", hashtag.Name)
+		t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": []string{hashtag.Name}})
 		if _, err := taskqueue.Add(c, t, ""); err != nil {
 			http.Error(w, err.String(), http.StatusInternalServerError)
 			return
@@ -137,7 +148,7 @@ func CronAdmin(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	hashtag := r.FormValue("hashtag")
 	if len(hashtag) > 0 {
-		if err := SaveHashtag(c, hashtag); err != nil {
+		if err := SaveHashtag(c, hashtag, 3); err != nil {
 			http.Error(w, err.String(), http.StatusInternalServerError)
 			return
 		}

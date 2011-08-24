@@ -5,6 +5,8 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"time"
+	"strings"
+//	"regexp"
 )
 
 type Tweet struct {
@@ -28,6 +30,16 @@ func NewTweet(tw TweetTw) Tweet {
 	t.Screen_name = tw.From_User
 	t.UserId_Str = tw.User.Id_Str
 	t.Text = tw.Text
+//	if len(tw.To_User_Id_Str) > 0 {
+//		// Officel RT. pick up original tweet user.
+//		t.Id_Str = tw.Id_Str
+//		t.UserId_Str = tw.To_User_Id_Str
+//		t.Screen_name = tw.To_User
+//		reg, err := regexp.Compile("^RT [^:]+: ")
+//		if err == nil {
+//			t.Text = reg.ReplaceAllString(t.Text, "")
+//		}
+//	}
 	t.Profile_Image_Url = tw.Profile_Image_Url
 	createAtTime, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", tw.Created_At)
 	t.Created_At = datastore.SecondsToTime(createAtTime.Seconds())
@@ -44,20 +56,21 @@ func CopyTweet(newT, old Tweet) Tweet {
 
 func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error {
 	for _, tweet := range tweets {
-		if !ContainsMultibyteChar(hashtag) {
-			c.Infof("not contains multibyte char: %s", hashtag)
+		if len(strings.Trim(tweet.Text, " 　\n")) == len(hashtag) {
+			// ハッシュタグだけのtweetは登録しない
+			c.Infof("SaveTweets tweet is only hashtag: %s", hashtag)
 			continue
 		}
 		t := NewTweet(tweet)
 		t.Hashtag = hashtag
 		key := datastore.NewKey("Tweet", t.String(), 0, nil)
-		c.Debugf("key: %v", key)
+		c.Debugf("SaveTweets key: %v", key)
 
 		var old Tweet
 		if err := datastore.Get(c, key, &old); err == nil {
 			// 既に存在する場合
 			t = CopyTweet(t, old)
-			c.Debugf("exists %s", t.Screen_name)
+			c.Debugf("SaveTweets exists %s", t.Screen_name)
 		}
 		if _, err := datastore.Put(c, key, &t); err != nil {
 			c.Errorf("SaveTweets failed to put: %v", err.String())

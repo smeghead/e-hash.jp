@@ -62,9 +62,17 @@ div#footer {
 	width: 48px;
 	height: 48px;
 }
+.subject_block .icon_block img {
+	width: 48px;
+	height: 48px;
+}
 .subject_block .subject_right {
 	float: left;
 	width: 550px;
+}
+.subject_block .twitter-buttons {
+	float: right;
+	margin-right: 18px;
 }
 .subject_block .subject_record {
 	margin: 5px 10px;
@@ -96,3 +104,39 @@ a.twitter-hashtag {
 #introduction span {
 	font-size: 120%;
 }
+#header {
+	text-align: left;
+	background-color: #222;
+	margin-bottom: 20px;
+	padding: 5px;
+}
+#footer {
+	background-color: #222;
+	color: #666;
+	margin-top: 30px;
+	padding: 30px 100px 50px 100px;
+}
+/* ticker */
+.container {  
+    width: 600px;  
+    text-align: left;  
+}  
+.container .wrap {  
+    position: relative;   
+    padding: 2px;  
+    overflow: hidden;  
+}  
+#ticker {
+    position: absolute;  
+    left: 200px;
+}
+#ticker-elements {
+    position: relative;  
+}  
+#ticker-elements span {
+    padding-right: 20px;  
+}  
+#ticker-elements span a {
+	color: #99f;
+	font-size: 15pt;
+}  

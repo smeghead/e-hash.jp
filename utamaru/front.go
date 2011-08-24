@@ -23,11 +23,9 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
-	hles := make([]HashtagListElement, 0, 10)
-	for i, h := range hashtags {
-		if i > 10 {
-			break
-		}
+	topCount := 5
+	hles := make([]HashtagListElement, 0, topCount)
+	for _, h := range hashtags {
 		tweets, err := GetTweetsByHashtag(c, h.Name, map[string]interface{}{
 			"length": 2,
 		})
@@ -35,8 +33,14 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 			c.Errorf("FrontTop failed to retrieve tweets: %v", err.String())
 			http.Error(w, err.String(), http.StatusInternalServerError)
 		}
+		if len(tweets) == 0 {
+			continue
+		}
 		e := HashtagListElement{h, tweets}
 		hles = append(hles, e)
+		if len(hles) >= topCount {
+			break
+		}
 	}
 	if err := topTemplate.Execute(w, map[string]interface{}{"hashtags":hashtags, "elements": hles}); err != nil {
 		c.Errorf("FrontTop failed to merge template: %v", err.String())

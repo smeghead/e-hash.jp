@@ -28,6 +28,9 @@ type TweetTw struct {
 	Id_Str string
 	User User
 	From_User string
+	From_User_Id_Str string
+	To_User string
+	To_User_Id_Str string
 	Text string
 	Profile_Image_Url string
 	Created_At string
