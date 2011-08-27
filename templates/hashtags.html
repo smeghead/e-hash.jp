@@ -3,7 +3,7 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
   <head>
-    <title>{siteTitle|html}</title>
+    <title>ハッシュタグ一覧 - {siteTitle|html}</title>
     <link href="/css/default.css" type="text/css" rel="stylesheet"></link>
     <link href="/css/style.css" type="text/css" rel="stylesheet"></link>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
@@ -42,46 +42,22 @@
     <div id="main-container">
       <div id="menu">
         <ul class="menu">
-          <li><a href="/" class="active"><span>トップ</span></a></li>
-          <li><a href="/hashtags"><span>ハッシュタグ一覧</span></a></li>
+          <li><a href="/"><span>トップ</span></a></li>
+          <li><a href="/hashtags" class="active"><span>ハッシュタグ一覧</span></a></li>
           <li><a href="/about"><span>{siteTitle|html}について</span></a></li>
         </ul>
       </div>
       <div id="main">
-        <div id="introduction">
-          <span>
-            Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。
-          </span>
-        </div>
-        {.repeated section elements}
-          <h2><a class="subject_link" href="#">{Hashtag.Name|html}</a></h2>
-          {.repeated section Tweets}
-            <div class="subject_block">
-              <div class="icon_block">
-                <a class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name}" data-key="{Hashtag|html}:{Id_Str}"><img class="icon" src="{Profile_Image_Url}" /></a>
-              </div>
-              <div class="subject_right">
-                <div class="twitter-buttons">
-                  <a data-key="{Hashtag|html}:{Id_Str}"><div class="button favorite" data-href="https://twitter.com/intent/favorite?tweet_id={Id_Str}"></div></a>
-                  <a data-key="{Hashtag|html}:{Id_Str}"><div class="button retweet" data-href="https://twitter.com/intent/retweet?tweet_id={Id_Str}"></div></a>
-                  <a data-key="{Hashtag|html}:{Id_Str}"><div class="button reply" data-href="https://twitter.com/intent/tweet?in_reply_to={Id_Str}"></div></a>
-                </div>
-                <div class="subject_record">
-                  <a data-key="{Hashtag|html}:{Id_Str}" class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name}">{Screen_name|html}</a>
-                  <span data-screenname="{Screen_name}" data-statusid="{Id_Str}/" class="create_at">{Created_At}</span>
-                </div>
-                <div class="text"> {Text|html}</div>
-              </div>
-              <br clear="all" />
-            </div>
+        <h2>ハッシュタグ一覧</h2>
+        <div class="subject_list">
+          {.repeated section hashtags}
+            <span><a class="subject_link" href="#">{Name|html}</a></span>
           {.end}
-          <div class="more">
-            <a class="subject_link" href="#">{Hashtag.Name|html}をもっと見る</a>
-          </div>
-          <hr />
-        {.end}
+        </div>
         <div class="totop">
           <a href="#top">↑一番上へ</a>
+        </div>
+        <div class="virtual-blank">
         </div>
       </div>
       <div id="sidebar">

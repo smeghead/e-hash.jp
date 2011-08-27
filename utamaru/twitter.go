@@ -40,7 +40,7 @@ type ErrorResponse struct {
 	Error string
 }
 
-func OAuthHeader(c appengine.Context, method, url string) string {
+func OAuthHeader(c appengine.Context, method, url string, withOAuthToken bool) string {
 	conf, err := GetTwitterConf(c)
 	if err != nil {
 		c.Errorf("OAuthHeader failed to load TwitterConf: %v", err.String())
@@ -52,7 +52,9 @@ func OAuthHeader(c appengine.Context, method, url string) string {
 	oauthMap["oauth_timestamp"] = strconv.Itoa64(time.Seconds())
 	oauthMap["oauth_nonce"] = strconv.Itoa64(rand.Int63())
 	oauthMap["oauth_version"] = "1.0"
-	oauthMap["oauth_token"] = conf.AccessToken
+	if (withOAuthToken) {
+		oauthMap["oauth_token"] = conf.AccessToken
+	}
 
 	oauthArray := make([]string, 0, 10)
 	mapKeys := make([]string, len(oauthMap))
@@ -67,7 +69,11 @@ func OAuthHeader(c appengine.Context, method, url string) string {
 	}
 	oauth := strings.Join(oauthArray, Encode("&"))
 	msg := method + "&" + Encode(url) + "&" + oauth
-	key := conf.ConsumerSecret + "&" + conf.AccessTokenSecret
+	c.Debugf("msg: %s", msg)
+	key := conf.ConsumerSecret + "&"
+	if withOAuthToken {
+		key += conf.AccessTokenSecret
+	}
 	h := hmac.NewSHA1([]byte(key))
 	h.Write([]byte(msg))
 	oauthMap["oauth_signature"] = base64.StdEncoding.EncodeToString(h.Sum())
@@ -80,10 +86,44 @@ func OAuthHeader(c appengine.Context, method, url string) string {
 	return "OAuth " + oauth
 }
 
+func GetRequestToken(c appengine.Context) (map[string]string, os.Error) {
+	url := "http://twitter.com/oauth/request_token"
+	request, _ := http.NewRequest("GET", url, nil)
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url, false))
+	client := urlfetch.Client(c)
+	response, err := client.Do(request)
+	if err != nil {
+		c.Errorf("GetPublicTimeline failed to api call: %v", err.String())
+		return nil, err
+	}
+	bytes, err2 := ioutil.ReadAll(response.Body)
+	c.Debugf("response body: %s", string(bytes))
+	if err2 != nil {
+		c.Errorf("GetPublicTimeline failed to read result: %v", err.String())
+		return nil, err
+	}
+	s := string(bytes)
+	splited := strings.Split(s, "&", -1)
+	resMap := make(map[string]string, 3)
+	for _, e := range splited {
+		c.Debugf("elem: %s", e)
+		keyValue := strings.Split(e, "=", -1)
+		if len(keyValue) == 2 {
+			c.Debugf("keyvalue: %s", keyValue)
+			resMap[keyValue[0]] = keyValue[1]
+		}
+	}
+	c.Debugf("resMap: %v", resMap)
+//	oauth_token=fThXHxnRDD9yKrvfRGu1J7GcMcjRmUb6ovmzn6hIbs&
+//	oauth_token_secret=adwUJzCwfiy9ACMUQv1PlFG97BODzLHWbgioXSV1pA&
+//	oauth_callback_confirmed=true
+	return resMap, nil
+}
+
 func GetPublicTimeline(c appengine.Context) ([]TweetTw, os.Error) {
 	url := "http://api.twitter.com/statuses/public_timeline.json"
 	request, _ := http.NewRequest("GET", url, nil)
-	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url, true))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
@@ -159,7 +199,7 @@ type Trend struct {
 func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 	url := "http://api.twitter.com/1/trends/1118370.json"
 	request, _ := http.NewRequest("GET", url, nil)
-	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url, true))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
@@ -188,7 +228,7 @@ func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 func HomeTest(c appengine.Context) os.Error {
 	url := "http://api.twitter.com/statuses/friends_timeline.json"
 	request, _ := http.NewRequest("GET", url, nil)
-	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url, true))
 	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
@@ -241,11 +281,15 @@ func SearchTweetsByHashtag(c appengine.Context, hashtag string) ([]TweetTw, os.E
 	if len(hashtag) == 0 {
 		return empty, nil
 	}
+	h, _ := FindHashtag(c, hashtag)
 	url := "http://search.twitter.com/search.json?rpp=100&q=" + Encode(hashtag)
+	if h.LastStatusId != "" {
+		url += "&since_id=" + h.LastStatusId
+	}
 	c.Debugf("SearchTweetsByHashtag url: %s", url)
 	request, _ := http.NewRequest("GET", url, nil)
-	request.Header.Set("Authorization", OAuthHeader(c, "GET", url))
-	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
+	request.Header.Set("Authorization", OAuthHeader(c, "GET", url, true))
+	c.Debugf("SearchTweetsByHashtag Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {

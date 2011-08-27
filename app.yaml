@@ -10,6 +10,9 @@ handlers:
 - url: /js
   static_dir: js
 
+- url: /images
+  static_dir: images
+
 - url: /favicon.ico
   static_files: favicon.ico
   upload: favicon.ico
@@ -19,6 +22,10 @@ handlers:
   login: admin
 
 - url: /worker/.*
+  script: _go_app
+  login: admin
+
+- url: /admin/.*
   script: _go_app
   login: admin
 

@@ -58,9 +58,6 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 		matches := reg.FindAllString(t.Text, 5)
 		for _, hashtag := range matches {
 			fmt.Fprintf(w, "<b>%v</b><br>\n", hashtag)
-			if !ContainsMultibyteChar(hashtag) {
-				continue
-			}
 			if err := SaveHashtag(c, hashtag, 0); err != nil {
 				http.Error(w, err.String(), http.StatusInternalServerError)
 				return
@@ -96,6 +93,11 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	// decrement old hashtag
+	if err := DecrementOldHashtags(c, 5); err != nil {
+		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+	}
 }
 
 func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
@@ -107,14 +109,23 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
+	c.Debugf("RecordRssHashtags len(hashtag): %d", len(hashtags))
 	for _, h := range hashtags {
 		fmt.Fprintf(w, "<b>%v</b><br>\n", h.Name)
+		c.Debugf("RecordRssHashtags try to save: %s", h.Name)
 		if err := SaveHashtag(c, h.Name, 3); err != nil {
 			c.Errorf("RecordRssHashtags failed to SaveHashtag: %v", err.String())
 			http.Error(w, err.String(), http.StatusInternalServerError)
 			return
 		}
+		c.Debugf("RecordRssHashtags saved: %s", h.Name)
 	}
+	// decrement old hashtag
+	if err := DecrementOldHashtags(c, 5); err != nil {
+		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+	}
+	c.Debugf("RecordRssHashtags end .. ok")
 	fmt.Fprintf(w, "end<br>\n")
 }
 
@@ -131,8 +142,8 @@ func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, hashtag := range hashtags {
-		if !ContainsMultibyteChar(hashtag.Name) {
-			c.Infof("not contains multibyte char: %s", hashtag.Name)
+		if !hashtag.Valid() {
+			c.Infof("CrawleHashtags ignore invalid hashtag: %s", hashtag.Name)
 			continue
 		}
 		c.Debugf("register taskqueue: %s", hashtag.Name)

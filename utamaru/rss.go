@@ -34,10 +34,13 @@ func GetHashtagsFromRss(c appengine.Context) ([]Hashtag, os.Error) {
 	hashtags := make([]Hashtag, 0, 10)
 	for _, item := range rss.Channel.Item {
 		c.Debugf("GetHashtagsFromRss %v", item.Title)
-		if item.Title[0:1] == "#" && ContainsMultibyteChar(item.Title) && len(item.Title) > 5 {
+		if item.Title[0:1] == "#" {
 			c.Debugf("GetHashtagsFromRss hit hashtag. %s", item.Title)
 			var h Hashtag
 			h.Name = item.Title
+			if !h.Valid() {
+				continue
+			}
 			hashtags = append(hashtags, h)
 		}
 	}

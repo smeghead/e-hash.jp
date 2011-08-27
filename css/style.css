@@ -27,13 +27,23 @@ div#main-container {
 	text-align: left;
 	border-radius: 5px;
 }
+div#menu {
+	width: 665px;
+	padding: 0px;
+	float: left;
+	background-color: #dddddd;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
 div#main {
 	width: 625px;
 	padding: 20px;
 	float: left;
 	background-color: white;
-	border-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
+
 div#sidebar {
 	padding: 20px 20px 20px 685px;
 }
@@ -43,6 +53,83 @@ div#footer {
 }
 
 /* style */
+h1 a,
+h1 a:hover,
+h1 a:visited {
+	color: white;
+}
+h2 a,
+h2 a:hover,
+h2 a:visited {
+	color: #3366CC;
+}
+
+.menu{margin:0 auto; padding:0; height:20px; width:100%; display:block;}
+.menu li {
+	padding: 0px;
+	margin: 0px;
+	list-style:none;
+	display:inline;
+	border: 1px solid red;
+}
+.menu li a{
+	float:left;
+	padding: 8px 0px 8px 15px;
+	display:block;
+	color:#333; text-decoration:none;
+	font-size: 11pt;
+	font-weight: bold;
+	cursor:pointer;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	background-color: #EEE;
+}
+.menu li a span{line-height:20px; float:left; display:block; padding-right:15px; }
+.menu li a:hover{ color:#444; background-color: #CCC;}
+.menu li a:hover span{}
+.menu li a.active, .menu li a.active:hover {
+	line-height:30px;
+	color:#444;
+	background-color: #BBB;
+	cursor: default;
+}
+.menu li a.active span, .menu li a.active:hover span{}
+h2 a {
+	padding: 3px;
+}
+div#main-container .subject_list {
+	font-size: 120%;
+	margin: 0px 0px;
+}
+div#main .subject_list {
+	line-height: 180%;
+}
+h2 a:hover,
+.subject_list a:hover,
+.more a:hover
+{
+	text-decoration:none;
+	background-color: #FFDD66;
+}
+div#sidebar h5 {
+	margin-bottom: 10px;
+	font-weight: normal;
+}
+div#sidebar .subject_list a {
+	color:#0D56B9;
+	font-size: 120%;
+}
+div#sidebar hr {
+	clear: none;
+	width: 100%;
+}
+div#topad {
+	margin: 10px;
+}
+div#sidead {
+	margin: 20px;
+	text-align: center;
+}
 .subject_block {
 	width: 600px;
 	margin: 30px 0px;
@@ -60,7 +147,7 @@ div#footer {
 .subject_block .icon_block {
 	float: left;
 	width: 48px;
-	height: 48px;
+	font-size: 8pt;
 }
 .subject_block .icon_block img {
 	width: 48px;
@@ -74,12 +161,45 @@ div#footer {
 	float: right;
 	margin-right: 18px;
 }
+.subject_block .twitter-buttons div.button {
+	margin: 2px 5px;
+	float: right;
+	display: block;
+	width: 18px;
+	height: 18px;
+	background: url(../images/tw-sprite.png);
+}
+.subject_block .twitter-buttons div.reply {
+	background-position: 0 0;
+}
+.subject_block .twitter-buttons div.retweet {
+	background-position: -80px 0;
+}
+.subject_block .twitter-buttons div.favorite {
+	background-position: -32px 0;
+}
+.subject_block .twitter-buttons div:hover.reply {
+	background-position: -16px 0;
+}
+.subject_block .twitter-buttons div:hover.retweet {
+	background-position: -96px 0;
+}
+.subject_block .twitter-buttons div:hover.favorite {
+	background-position: -48px 0;
+	cursor: default;
+}
+.subject_block .twitter-buttons div.retweeted {
+	background-position: -112px 0;
+}
+.subject_block .twitter-buttons div.favorited {
+	background-position: -64px 0;
+}
+
 .subject_block .subject_record {
 	margin: 5px 10px;
 	font-size: 70%;
 }
 .subject_block .create_at {
-	display: none;
 }
 .subject_block .text {
 	margin: 10px;
@@ -94,12 +214,30 @@ div#footer {
 #main .more {
 	text-align: right;
 }
+#main .more-tweets {
+	padding: 5px;
+	font-size: 13pt;
+	font-weight: bold;
+	text-align: center;
+	color: #111166;
+	background-color: #99CCFF;
+	border: 1px solid #336699;
+	border-radius: 5px;
+	cursor: pointer;
+}
+#main div:hover.more-tweets {
+	color: #4444AA;
+	background-color: #88BBEE;
+}
 a.twitter-hashtag {
 	color: #FF33FF !important;
 }
 #introduction {
-	border: 3px solid blue;
-	padding: 10px;
+/* 	border: 3px solid blue; */
+	padding: 0px;
+	font-weight: bold;
+	font-size: 120%;
+	margin-bottom: 20px;
 }
 #introduction span {
 	font-size: 120%;
@@ -107,8 +245,8 @@ a.twitter-hashtag {
 #header {
 	text-align: left;
 	background-color: #222;
-	margin-bottom: 20px;
-	padding: 5px;
+	margin-bottom: 2px;
+	padding: 2px;
 }
 #footer {
 	background-color: #222;
@@ -116,22 +254,40 @@ a.twitter-hashtag {
 	margin-top: 30px;
 	padding: 30px 100px 50px 100px;
 }
+.clear {
+	clear: both;
+	height: 0px;
+}
+
+div.totop {
+	margin: 20px 0px;
+	font-size: 130%;
+}
+
+div.virtual-blank {
+	height: 1000px;
+}
 /* ticker */
 .container {  
-    width: 600px;  
+/*     width: 600px;   */
     text-align: left;  
+    height: 25px;
 }  
 .container .wrap {  
     position: relative;   
-    padding: 2px;  
+    padding: 0px;
     overflow: hidden;  
+    height: 25px;
 }  
 #ticker {
-    position: absolute;  
-    left: 200px;
+	float: right
 }
+#ticker-elements-hide {
+	display: none;
+}  
 #ticker-elements {
     position: relative;  
+    height: 50px;
 }  
 #ticker-elements span {
     padding-right: 20px;  
@@ -140,3 +296,9 @@ a.twitter-hashtag {
 	color: #99f;
 	font-size: 15pt;
 }  
+/* error page */
+div.errorpage-message {
+	font-size: 150%;
+	font-weight: bold;
+	height: 1000px;
+}

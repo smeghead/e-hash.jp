@@ -15,3 +15,9 @@ indexes:
   - name: Hashtag
   - name: Created_At
     direction: desc
+
+- kind: Tweet
+  properties:
+  - name: Hashtag
+  - name: Point
+    direction: desc

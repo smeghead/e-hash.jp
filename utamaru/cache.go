@@ -7,7 +7,7 @@ import (
 	"appengine/memcache"
 )
 
-var cacheLifetime = 60 * 30 // 30 minutes.
+var cacheLifetime = 60 * 1 // 1 minutes.
 
 func CacheSetSubjects(c appengine.Context, subjects []Hashtag, options map[string]interface{}) {
 	optionsVal, _ := json.Marshal(options)
