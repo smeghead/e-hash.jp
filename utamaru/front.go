@@ -26,7 +26,7 @@ func getCommonMap(c appengine.Context) (map[string]interface{}, os.Error) {
 		"length": 10,
 	})
 	if err != nil {
-		c.Errorf("FrontTop failed to retrieve hashtags: %v", err.String())
+		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err.String())
 		return commonMap, err
 	}
 	commonMap["Common_HashtagsHot"] = hashtagsHot
@@ -36,7 +36,7 @@ func getCommonMap(c appengine.Context) (map[string]interface{}, os.Error) {
 		"order": "-Date",
 	})
 	if err != nil {
-		c.Errorf("FrontTop failed to retrieve hashtags: %v", err.String())
+		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err.String())
 		return commonMap, err
 	}
 	commonMap["Common_HashtagsNew"] = hashtagsNew
@@ -55,9 +55,20 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hashtagsForTop, err := GetPublicHashtags(c, map[string]interface{}{
+		"length": 10,
+		"order": "random",
+	})
+	if err != nil {
+		c.Errorf("FrontTop failed to retrieve hashtags: %v", err.String())
+		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+
 	topCount := 5
 	hles := make([]HashtagListElement, 0, topCount)
-	for _, h := range resultMap["Common_HashtagsHot"].([]Hashtag) {
+	for _, h := range hashtagsForTop {
+		c.Debugf("FrontTop hashtag: %v", h.Name)
 		tweets, err := GetTweetsByHashtag(c, h.Name, map[string]interface{}{
 			"length": 2,
 		})

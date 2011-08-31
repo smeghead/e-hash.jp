@@ -113,7 +113,7 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 	for _, h := range hashtags {
 		fmt.Fprintf(w, "<b>%v</b><br>\n", h.Name)
 		c.Debugf("RecordRssHashtags try to save: %s", h.Name)
-		if err := SaveHashtag(c, h.Name, 3); err != nil {
+		if err := SaveHashtag(c, h.Name, 5); err != nil {
 			c.Errorf("RecordRssHashtags failed to SaveHashtag: %v", err.String())
 			http.Error(w, err.String(), http.StatusInternalServerError)
 			return

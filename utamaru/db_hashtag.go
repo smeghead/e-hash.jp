@@ -64,21 +64,21 @@ func DecrementOldHashtags(c appengine.Context, length int) os.Error {
 	q := datastore.NewQuery("Hashtag").Order("Date").Limit(length)
 	hashtags := make([]Hashtag, 0, length)
 	if _, err := q.GetAll(c, &hashtags); err != nil {
-		c.Errorf("SaveHashtag failed to search hashtags for decrement")
+		c.Errorf("DecrementOldHashtags failed to search hashtags for decrement")
 		return err
 	}
-	c.Debugf("SaveHashtag got old hashtags len: %d", len(hashtags))
-	r := rand.New(rand.NewSource(123))
+	c.Infof("DecrementOldHashtags got old hashtags len: %d", len(hashtags))
+	r := rand.New(rand.NewSource(time.Seconds()))
 	for _, h := range hashtags {
 		if h.Count <= 3 {
 			continue;
 		}
-		c.Debugf("SaveHashtag old hashtag decrement before: %v (%d)", h.Name, h.Count)
+		c.Debugf("DecrementOldHashtags old hashtag decrement before: %v (%d)", h.Name, h.Count)
 		h.Count = (r.Int() % 3) + 1 // 1 or 2 or 3
-		c.Debugf("SaveHashtag old hashtag decrement after : %v (%d)", h.Name, h.Count)
+		c.Infof("DecrementOldHashtags old hashtag decrement after : %v (%d)", h.Name, h.Count)
 		key := datastore.NewKey("Hashtag", h.Name, 0, nil)
 		if _, err := datastore.Put(c, key, &h); err != nil {
-			c.Errorf("SaveHashtag failed to put old hashtag decrement: %v", err.String())
+			c.Errorf("DecrementOldHashtags failed to put old hashtag decrement: %v", err.String())
 			return err
 		}
 	}
@@ -148,6 +148,11 @@ func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]H
 	order := "-Count"
 	if options["order"] != nil {
 		order = options["order"].(string)
+		if order == "random" {
+			r := rand.New(rand.NewSource(time.Seconds()))
+			order = []string{"-Count", "-Date", "Crawled"}[r.Int() % 3]
+			c.Debugf("GetPublicHashtags order random selected: %s", order)
+		}
 	}
 	c.Debugf("GetPublicHashtags order: %s", order)
 	noCache := 0
@@ -188,15 +193,15 @@ func MigrateHashtag(c appengine.Context, offset, length int) os.Error {
 	q := datastore.NewQuery("Hashtag").Order("Date").Offset(offset).Limit(length)
 	hashtags := make([]Hashtag, 0, length)
 	if _, err := q.GetAll(c, &hashtags); err != nil {
-		c.Errorf("MigrateHashtag failed to search hashtags for decrement")
+		c.Errorf("MigrateHashtag failed to search hashtags for migrate")
 		return err
 	}
-	c.Debugf("MigrateHashtag got old hashtags len: %d", len(hashtags))
+	c.Debugf("MigrateHashtag got hashtags len: %d", len(hashtags))
 	for _, hashtag := range hashtags {
 		c.Debugf("MigrateHashtag old hashtag : %v", hashtag.Name)
 		key := datastore.NewKey("Hashtag", hashtag.Name, 0, nil)
 		if _, err := datastore.Put(c, key, &hashtag); err != nil {
-			c.Errorf("MigrateHashtag failed to put old hashtag decrement: %v", err.String())
+			c.Errorf("MigrateHashtag failed to put hashtag migrate: %v", err.String())
 			return err
 		}
 	}

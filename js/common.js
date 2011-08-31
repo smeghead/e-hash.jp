@@ -63,7 +63,6 @@ $(function(){
     if (!type) return;
     $.post('/point_up', {type: type, key: $this.data('key')},
       function(data){
-        console.log(data);
       });
   });
   $('div.more-tweets').click(function(){
@@ -100,4 +99,20 @@ _gaq.push(['_trackPageview']);
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
+//woopra
+function woopraReady(tracker) {
+  tracker.setDomain('gimmehash.in');
+  tracker.setIdleTimeout(300000);
+  tracker.track();
+  return false;
+}
+(function() {
+  var wsc = document.createElement('script');
+  wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';
+  wsc.type = 'text/javascript';
+  wsc.async = true;
+  var ssc = document.getElementsByTagName('script')[0];
+  ssc.parentNode.insertBefore(wsc, ssc);
+})();
+
 //  vim: set ts=2 sw=2 sts=2 expandtab fenc=utf-8:

@@ -19,29 +19,29 @@ b,strong{font-weight:bold;}
 fieldset,img{border:0;}
 /* layout */
 div#main-container {
-	background-color: rgba(171, 219, 177, 0.898438);
-	_background-color: #ABDBB1;
+	background-color: #9BCBA1; /*rgba(171, 219, 177, 0.898438);
+	_background-color: #ABDBB1;*/
 	width: 900px;
 	margin-left:auto;
 	margin-right:auto;
 	text-align: left;
-	border-radius: 5px;
+	border-radius: 8px;
 }
 div#menu {
 	width: 665px;
 	padding: 0px;
 	float: left;
 	background-color: #dddddd;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
 }
 div#main {
 	width: 625px;
 	padding: 20px;
 	float: left;
 	background-color: white;
-	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
 }
 
 div#sidebar {
@@ -70,7 +70,6 @@ h2 a:visited {
 	margin: 0px;
 	list-style:none;
 	display:inline;
-	border: 1px solid red;
 }
 .menu li a{
 	float:left;
@@ -80,8 +79,8 @@ h2 a:visited {
 	font-size: 11pt;
 	font-weight: bold;
 	cursor:pointer;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+	border-top-left-radius: 8px;
+	border-top-right-radius: 8px;
 	background-color: #EEE;
 }
 .menu li a span{line-height:20px; float:left; display:block; padding-right:15px; }
@@ -186,13 +185,13 @@ div#sidead {
 }
 .subject_block .twitter-buttons div:hover.favorite {
 	background-position: -48px 0;
-	cursor: default;
 }
 .subject_block .twitter-buttons div.retweeted {
 	background-position: -112px 0;
 }
 .subject_block .twitter-buttons div.favorited {
 	background-position: -64px 0;
+	cursor: default;
 }
 
 .subject_block .subject_record {
@@ -301,4 +300,10 @@ div.errorpage-message {
 	font-size: 150%;
 	font-weight: bold;
 	height: 1000px;
+}
+div#social-bookmarks {
+}
+div#social-bookmarks div.box {
+	display: inline;
+	margin: 5px;
 }

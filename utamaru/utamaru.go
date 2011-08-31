@@ -31,6 +31,7 @@ func init() {
 	http.HandleFunc("/point_up", PointUpHandler)
 	http.HandleFunc("/home_test", HomeTestHandler)
 	http.HandleFunc("/get_request_token", GetReqestTokenHandler)
+	http.HandleFunc("/callback", GetAccessTokenHandler)
 	http.HandleFunc("/admin/migrate_tweet", MigrateTweetHandler)
 	http.HandleFunc("/admin/migrate_hashtag", MigrateHashtagHandler)
 }
@@ -86,6 +87,36 @@ func GetReqestTokenHandler(w http.ResponseWriter, r *http.Request) {
 	requestToken, err := GetRequestToken(c)
 	if err != nil {
 		c.Errorf("GetReqestTokenHandler failed to post: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
 	}
-	fmt.Fprintf(w, "request token: %v", requestToken);
+	SaveRequestToken(c, *requestToken)
+	http.Redirect(w, r, "http://twitter.com/oauth/authorize?oauth_token=" + requestToken.OauthToken, 302)
+}
+
+func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("GetAccessTokenHandler")
+	oauthToken := r.FormValue("oauth_token")
+	oauthVerifier := r.FormValue("oauth_verifier")
+	c.Debugf("%s, %s", oauthToken, oauthVerifier)
+	requestToken, err := FindRequestToken(c, oauthToken)
+	if err != nil {
+		c.Errorf("GetAccessTokenHandler failed to find requestToken: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+	c.Debugf("requestToken: %s", requestToken.OauthToken)
+	user, err := GetAccessToken(c, requestToken, oauthVerifier)
+	if err != nil {
+		c.Errorf("GetReqestTokenHandler failed to post: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+	
+	if err := SaveUser(c, *user); err != nil {
+		c.Errorf("SaveUser failed to save: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+	//http.Redirect(w, r, "http://twitter.com/oauth/authorize?oauth_token=" + requestToken["oauth_token"], 302)
 }

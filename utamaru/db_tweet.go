@@ -174,7 +174,6 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 		c.Errorf("GetTweetsByHashtag failed to get: %v", err.String())
 		return nil, err
 	}
-	c.Debugf("len tweets: %d", len(tweets))
 	return tweets, nil
 }
 

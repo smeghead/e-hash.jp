@@ -28,3 +28,4 @@ func GetTwitterConf(c appengine.Context) (TwitterConf, os.Error) {
 	}
 	return *conf, nil
 }
+

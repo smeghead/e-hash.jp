@@ -26,6 +26,16 @@
       <h1><a href="/">{siteTitle|html}</a></h1>
       <div class="clear"></div>
     </div>
+    <!--
+    <div id="social-bookmarks">
+      <div>
+        <iframe src="http://www.facebook.com/plugins/like.php?app_id=275762465771737&amp;href=http%3A%2F%2Fwww.gimmehash.in%2F&amp;send=false&amp;layout=box_count&amp;show_faces=true&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" style="border:none; overflow:hidden;" allowTransparency="true"></iframe>
+      </div>
+      <div>
+        <a href="http://b.hatena.ne.jp/entry/http://www.gimmehash.in" class="hatena-bookmark-button" data-hatena-bookmark-title="ギミハッシュ.in α" data-hatena-bookmark-layout="vertical" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+      </div>
+    </div>
+    -->
     <div id="topad">
       <script type="text/javascript"><!--
         google_ad_client = "ca-pub-6994803411870749";
@@ -80,6 +90,7 @@
       </div>
       <div id="sidebar">
         <div class="subject_list">
+          <h5>人気</h5>
           {.repeated section Common_HashtagsHot}
             <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
           {.end}
@@ -96,6 +107,12 @@
           <script type="text/javascript"
             src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
           </script>
+        </div>
+        <div class="subject_list">
+          <h5>最新</h5>
+          {.repeated section Common_HashtagsNew}
+            <span><a class="subject_link" href="#">{Name|html}</a></span>&nbsp;
+          {.end}
         </div>
       </div>
       <br clear="all"/>
