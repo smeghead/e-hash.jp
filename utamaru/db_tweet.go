@@ -9,6 +9,12 @@ import (
 //	"regexp"
 )
 
+type TweetLikeUser struct {
+	TweetKey string
+	UserId string
+	ScreenName string
+	Created_At datastore.Time
+}
 type Tweet struct {
 	Id_Str string
 	Screen_name string
@@ -22,6 +28,8 @@ type Tweet struct {
 	RetweetCount int
 	FavoriteCount int
 	ProfileCount int
+	LikeCount int
+	Users []TweetLikeUser
 }
 
 func (t *Tweet) String() string {
@@ -63,6 +71,11 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 		if len(strings.Trim(tweet.Text, " 　\n")) == len(hashtag) {
 			// ハッシュタグだけのtweetは登録しない
 			c.Infof("SaveTweets tweet is only hashtag: %s", hashtag)
+			continue
+		}
+		if len(tweet.To_User_Id_Str) > 0 {
+			// RTは、無視する
+			c.Infof("SaveTweets tweet is RT: %s", hashtag)
 			continue
 		}
 		t := NewTweet(tweet)
@@ -116,34 +129,89 @@ func PointUpTweet(c appengine.Context, keyString, pointType string) os.Error {
 	var tweet Tweet
 
 	c.Debugf("tweet pointType: %s key: %s", pointType, keyString)
-	key := datastore.NewKey("Tweet", keyString, 0, nil)
-	if err := datastore.Get(c, key, &tweet); err != nil {
-		c.Errorf("PointUpTweet failed to get: %v", err.String())
+	err := datastore.RunInTransaction(c, func(c appengine.Context) os.Error {
+		key := datastore.NewKey("Tweet", keyString, 0, nil)
+		if err := datastore.Get(c, key, &tweet); err != nil {
+			c.Errorf("PointUpTweet failed to get: %v", err.String())
+			return err
+		}
+		switch pointType {
+		case "profile":
+			tweet.ProfileCount += 1
+		case "reply":
+			tweet.ReplyCount += 1
+		case "retweet":
+			tweet.RetweetCount += 1
+		case "favorite":
+			tweet.FavoriteCount += 1
+		default:
+			c.Errorf("invalid pointType: %s", pointType)
+			return os.NewError("invalid pointType")
+		}
+
+		// ポイントの計算
+		tweet.Point += getPoint(c, tweet)
+
+		if _, err := datastore.Put(c, key, &tweet); err != nil {
+			c.Errorf("PointUpTweet failed to put: %v", err.String())
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		c.Errorf("Transaction failed: %v", err)
 		return err
 	}
-	switch pointType {
-	case "profile":
-		tweet.ProfileCount += 1
-	case "reply":
-		tweet.ReplyCount += 1
-	case "retweet":
-		tweet.RetweetCount += 1
-	case "favorite":
-		tweet.FavoriteCount += 1
-	default:
-		c.Errorf("invalid pointType: %s", pointType)
-		return os.NewError("invalid pointType")
-	}
+	return nil
+}
 
+func getPoint(c appengine.Context, tweet Tweet) int {
 	// ポイントの計算
-	tweet.Point +=
+	return (tweet.LikeCount * 10) +
 		(tweet.ProfileCount * 3) +
 		(tweet.ReplyCount * 2) +
 		(tweet.RetweetCount * 4) +
 		(tweet.FavoriteCount * 5)
+}
 
-	if _, err := datastore.Put(c, key, &tweet); err != nil {
-		c.Errorf("PointUpTweet failed to put: %v", err.String())
+func LikeTweet(c appengine.Context, keyString string, user TwitterUser) os.Error {
+	var tweet Tweet
+
+	err := datastore.RunInTransaction(c, func(c appengine.Context) os.Error {
+
+		c.Debugf("tweet key: %s", keyString)
+		key := datastore.NewKey("Tweet", keyString, 0, nil)
+		if err := datastore.Get(c, key, &tweet); err != nil {
+			c.Errorf("LikeTweet failed to get: %v", err.String())
+			return err
+		}
+		tweet.LikeCount += 1
+
+		// ポイントの計算
+		tweet.Point += getPoint(c, tweet)
+
+		if _, err := datastore.Put(c, key, &tweet); err != nil {
+			c.Errorf("LikeTweet failed to put: %v", err.String())
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		c.Errorf("Transaction failed: %v", err)
+		return err
+	}
+
+	// ユーザの記録
+	key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str, 0, nil)
+	tweetLikeUser := TweetLikeUser{
+		TweetKey: tweet.Hashtag + ":" + tweet.Id_Str,
+		UserId: user.Id,
+		ScreenName: user.ScreenName,
+		Created_At: datastore.SecondsToTime(time.Seconds()),
+	}
+	if _, err := datastore.Put(c, key, &tweetLikeUser); err != nil {
+		c.Errorf("LikeTweet TweetLikeUser failed to put: %v", err.String())
 		return err
 	}
 	return nil
@@ -169,12 +237,26 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 	}
 	//search
 	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order("-Point").Offset(page * length).Limit(length)
-	tweets := make([]Tweet, 0, length)
+	var tweets []Tweet
 	if _, err := q.GetAll(c, &tweets); err != nil {
 		c.Errorf("GetTweetsByHashtag failed to get: %v", err.String())
 		return nil, err
 	}
-	return tweets, nil
+	var tweetsResult []Tweet
+	for _, tweet := range tweets {
+		q := datastore.NewQuery("TweetLikeUser").Filter("TweetKey =", tweet.Hashtag + ":" + tweet.Id_Str).Order("-Created_At").Limit(100)
+		c.Debugf("TweetLikeUser key: %s %s", tweet.Hashtag + ":" + tweet.Id_Str, tweet.Text)
+		if _, err := q.GetAll(c, &tweet.Users); err != nil {
+			c.Errorf("GetTweetsByHashtag failed to get users: %v", err.String())
+			return nil, err
+		}
+		c.Debugf("TweetLikeUser length: %d", len(tweet.Users))
+		for _, u := range tweet.Users {
+			c.Debugf("TweetLikeUser user: %s", u.UserId)
+		}
+		tweetsResult = append(tweetsResult, tweet)
+	}
+	return tweetsResult, nil
 }
 
 func MigrateTweet(c appengine.Context, offset, length int) os.Error {

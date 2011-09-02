@@ -70,6 +70,9 @@
                   <a data-key="{Hashtag|html}:{Id_Str}"><div class="button favorite" data-href="https://twitter.com/intent/favorite?tweet_id={Id_Str}"></div></a>
                   <a data-key="{Hashtag|html}:{Id_Str}"><div class="button retweet" data-href="https://twitter.com/intent/retweet?tweet_id={Id_Str}"></div></a>
                   <a data-key="{Hashtag|html}:{Id_Str}"><div class="button reply" data-href="https://twitter.com/intent/tweet?in_reply_to={Id_Str}"></div></a>
+                  <div class="like">
+                    <a data-key="{Hashtag|html}:{Id_Str}" class="like">like</a>
+                  </div>
                 </div>
                 <div class="subject_record">
                   <a data-key="{Hashtag|html}:{Id_Str}" class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name}">{Screen_name|html}</a>
@@ -77,7 +80,11 @@
                 </div>
                 <div class="text"> {Text|html}</div>
               </div>
-              <br clear="all" />
+              <div class="users">
+                  {.repeated section Users}
+                    <img src="http://img.tweetimag.es/i/{ScreenName}_m" />
+                  {.end}
+              </div>
             </div>
           {.end}
         </div>

@@ -21,3 +21,9 @@ indexes:
   - name: Hashtag
   - name: Point
     direction: desc
+
+- kind: TweetLikeUser
+  properties:
+  - name: TweetKey
+  - name: Created_At
+    direction: desc

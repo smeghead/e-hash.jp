@@ -51,6 +51,7 @@ func FindRequestToken(c appengine.Context, requestTokenString string) (TwitterRe
 }
 
 type TwitterUser struct {
+	SessionId string
 	Id string
 	ScreenName string
 	OauthToken string
@@ -69,7 +70,7 @@ func NewTwitterUser(m map[string]string) TwitterUser {
 
 func SaveUser(c appengine.Context, user TwitterUser) os.Error {
 	c.Debugf("SaveUser screen_name: %s", user.ScreenName)
-	key := datastore.NewKey("TwitterUser", user.Id, 0, nil)
+	key := datastore.NewKey("TwitterUser", user.SessionId, 0, nil)
 
 	user.Created_At = datastore.SecondsToTime(time.Seconds())
 
@@ -80,4 +81,18 @@ func SaveUser(c appengine.Context, user TwitterUser) os.Error {
 
 	c.Debugf("SaveUser ok")
 	return nil
+}
+
+func FindUser(c appengine.Context, sessionId string) (TwitterUser, os.Error) {
+	c.Debugf("FindUser sessionId: %s", sessionId)
+	key := datastore.NewKey("TwitterUser", sessionId, 0, nil)
+
+	var user TwitterUser
+	if err := datastore.Get(c, key, &user); err != nil {
+		c.Errorf("FindUser failed to get: %v", err.String())
+		return user, err
+	}
+
+	c.Debugf("FindUser ok")
+	return user, nil
 }

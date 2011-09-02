@@ -60,10 +60,31 @@ $(function(){
                $this.hasClass('retweet') ? 'retweet' :
                '';
     // increment point.
-    if (!type) return;
+    if (!type) return false;
     $.post('/point_up', {type: type, key: $this.data('key')},
       function(data){
-      });
+      }
+    );
+    return false;
+  });
+  $('div.like a.like').click(function(){
+    var $this = $(this);
+    $.post('/like', {key: $this.data('key'), url: document.location.pathname},
+      function(data){
+        if (data == 'needs_oauth') {
+          document.location.href = '/get_request_token';
+          return;
+        }
+        // update page.
+        if (data != '') {
+          var image = document.createElement('img');
+          image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+          $('.users', $this.parent().parent().parent().parent()).append(image);
+        }
+      }
+    );
+    $('body').css('cursor', 'default');
+    return false;
   });
   $('div.more-tweets').click(function(){
     var $this = $(this);

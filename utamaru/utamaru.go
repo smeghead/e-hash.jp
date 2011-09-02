@@ -5,6 +5,7 @@ import (
 	"appengine/datastore"
 	"fmt"
 	"http"
+	"time"
 	"template"
 	"strconv"
 )
@@ -21,6 +22,9 @@ func init() {
 	http.HandleFunc("/s/more", FrontSubjectMore)
 	http.HandleFunc("/hashtags", FrontHashtags)
 	http.HandleFunc("/about", FrontAbout)
+	http.HandleFunc("/point_up", PointUpHandler)
+	http.HandleFunc("/like", LikeHandler)
+	http.HandleFunc("/oauthlike", OauthLikeHandler)
 
 	http.HandleFunc("/cron/admin", CronAdmin)
 	http.HandleFunc("/cron/record_hashtags", RecordHashtags)
@@ -28,7 +32,6 @@ func init() {
 	http.HandleFunc("/cron/record_rss_hashtags", RecordRssHashtags)
 	http.HandleFunc("/cron/crawle_hashtags", CrawleHashtags)
 	http.HandleFunc("/worker/crawle_hashtag", WorkerCrawleHashtagHandler)
-	http.HandleFunc("/point_up", PointUpHandler)
 	http.HandleFunc("/home_test", HomeTestHandler)
 	http.HandleFunc("/get_request_token", GetReqestTokenHandler)
 	http.HandleFunc("/callback", GetAccessTokenHandler)
@@ -40,6 +43,7 @@ func ErrorPage(w http.ResponseWriter, message string, code int) {
 	w.WriteHeader(code)
 	var errorTemplate = template.MustParseFile("templates/error.html", nil)
 	if err := errorTemplate.Execute(w, map[string]interface{}{
+				"siteTitle": "ギミハッシュ.in α",
 				"ErrorMessage": message,
 			}); err != nil {
 		http.Error(w, err.String(), http.StatusInternalServerError)
@@ -112,11 +116,18 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
-	
+	user.SessionId = GetUniqId(r.RemoteAddr, r.UserAgent)
 	if err := SaveUser(c, *user); err != nil {
 		c.Errorf("SaveUser failed to save: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
-	//http.Redirect(w, r, "http://twitter.com/oauth/authorize?oauth_token=" + requestToken["oauth_token"], 302)
+	oneYearLater := time.LocalTime()
+	oneYearLater.Year += 1
+	http.SetCookie(w, &http.Cookie{
+		Name: "id",
+		Value: user.SessionId,
+		Path: "/",
+		Expires: *oneYearLater})
+	http.Redirect(w, r, "/oauthlike", 302)
 }

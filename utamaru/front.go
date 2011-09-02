@@ -2,15 +2,29 @@ package utamaru
 
 import (
 	"os"
+	"fmt"
 	"appengine"
 	"http"
 	"template"
 	"strconv"
+	"encoding/base64"
 )
 
 type HashtagListElement struct {
 	Hashtag Hashtag
 	Tweets []Tweet
+}
+
+func getCookie(r *http.Request, name string) string {
+	for _, c := range r.Cookie {
+		if c.Name == name {
+			return c.Value
+		}
+	}
+	return ""
+}
+func getSessionId(c appengine.Context, r *http.Request) string {
+	return getCookie(r, "id")
 }
 
 func getCommonMap(c appengine.Context) (map[string]interface{}, os.Error) {
@@ -48,6 +62,7 @@ var topTemplate = template.MustParseFile("templates/index.html", nil)
 func FrontTop(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
+	c.Debugf("session id: %s", getSessionId(c, r))
 	resultMap, err := getCommonMap(c)
 	if err != nil {
 		c.Errorf("FrontTop failed to retrieve resultMap: %v", err.String())
@@ -109,7 +124,7 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 
 	resultMap, err := getCommonMap(c)
 	if err != nil {
-		c.Errorf("FrontTop failed to retrieve resultMap: %v", err.String())
+		c.Errorf("FrontSubject failed to retrieve resultMap: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
 		return
 	}
@@ -132,6 +147,13 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
 	}
 	hle := HashtagListElement{h, tweets}
+	// debug
+	c.Debugf("FrontSubject user debug")
+	for _, t := range tweets {
+		for _, u := range t.Users {
+			c.Debugf("FrontSubject user: %v", u)
+		}
+	}
 
 	resultMap["elements"] = hle
 	if err := subjectTemplate.Execute(w, resultMap); err != nil {
@@ -139,6 +161,7 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
 		return
 	}
+	c.Debugf("FrontSubject end")
 }
 
 func FrontHashtags(w http.ResponseWriter, r *http.Request) {
@@ -189,7 +212,13 @@ func FrontAbout(w http.ResponseWriter, r *http.Request) {
 
 func PointUpHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	c.Debugf("PointUpHandler")
 
+	if r.Method != "POST" {
+		c.Errorf("PointUpHandler method not supported.")
+		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
+		return
+	}
 	key := r.FormValue("key")
 	pointType := r.FormValue("type")
 
@@ -199,6 +228,98 @@ func PointUpHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
 		return
 	}
+}
+
+func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("OauthLikeHandler")
+
+	keyBytes, _ := base64.StdEncoding.DecodeString(getCookie(r, "key"))
+	key := string(keyBytes)
+	url := getCookie(r, "url")
+	if len(url) == 0 {
+		url = "/"
+	}
+	c.Debugf("OauthLikeHandler key: %s url: %s", key, url)
+	sessionId := getSessionId(c, r)
+	if sessionId == "" {
+		c.Infof("no auth information. redirect to oauth confirmation.")
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	user, err := FindUser(c, sessionId)
+	if err != nil {
+		c.Infof("OauthLikeHandler failed to find user. %v", err)
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	if user.ScreenName == "" {
+		c.Infof("OauthLikeHandler failed to find user. empty user.")
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	c.Debugf("OauthLikeHandler user: %v", user)
+
+	err = LikeTweet(c, key, user)
+	if err != nil {
+		c.Errorf("OauthLikeHandler failed to point up. : %v", err)
+		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, url, 302)
+}
+
+func LikeHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("LikeHandler")
+
+	if r.Method != "POST" {
+		c.Errorf("LikeHandler method not supported.")
+		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	// パラメータの保存 Oauthの後にリダイレクトするため。
+	key := r.FormValue("key")
+	c.Debugf("LikeHandler key: %s", key)
+	http.SetCookie(w, &http.Cookie{
+		Name: "key",
+		Value: base64.StdEncoding.EncodeToString([]byte(key)),
+		Path: "/",
+	})
+	url := r.FormValue("url")
+	c.Debugf("LikeHandler url: %s", url)
+	http.SetCookie(w, &http.Cookie{
+		Name: "url",
+		Value: url,
+		Path: "/",
+	})
+	sessionId := getSessionId(c, r)
+	if sessionId == "" {
+		c.Infof("no auth information. redirect to oauth confirmation.")
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	user, err := FindUser(c, sessionId)
+	if err != nil {
+		c.Infof("LikeHandler failed to find user. %v", err)
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	if user.ScreenName == "" {
+		c.Infof("LikeHandler failed to find user. empty user.")
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	c.Debugf("LikeHandler user: %v", user)
+
+
+	err = LikeTweet(c, key, user)
+	if err != nil {
+		c.Errorf("LikeHandler failed to point up. : %v", err)
+		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, user.ScreenName)
 }
 
 var subjectMoreTemplate = template.MustParseFile("templates/subject_more.html", nil)

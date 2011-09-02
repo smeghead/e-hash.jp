@@ -147,6 +147,18 @@ div#sidead {
 	float: left;
 	width: 48px;
 	font-size: 8pt;
+	text-align: center;
+}
+.subject_block div.like {
+	float: right;
+	margin: 3px;
+}
+.subject_block div.like a.like {
+	cursor: pointer;
+	font-size: 13pt;
+	font-weight: bold;
+	color: white;
+	background-color: orange;
 }
 .subject_block .icon_block img {
 	width: 48px;
@@ -159,6 +171,9 @@ div#sidead {
 .subject_block .twitter-buttons {
 	float: right;
 	margin-right: 18px;
+}
+div.users {
+	clear: both;
 }
 .subject_block .twitter-buttons div.button {
 	margin: 2px 5px;
