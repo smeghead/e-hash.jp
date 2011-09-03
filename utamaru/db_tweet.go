@@ -95,6 +95,9 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 		}
 	}
 
+	if len(tweets) == 0 {
+		return nil
+	}
 	//Hashtag.LastStatusIdの記録
 	lastStatusId := tweets[len(tweets) - 1].Id_Str
 	if h, err := FindHashtag(c, hashtag); err == nil {

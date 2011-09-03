@@ -48,44 +48,44 @@ $(function(){
       if ($this.hasClass('retweeted') || $this.hasClass('favorited')) return;
       $this.parent().attr('href', $this.data('href'));
     });
+    //events
+    $('a.profile,a.reply,a.retweet,a.favorited', target).click(function(){
+      var $this = $(this);
+      var type = $this.hasClass('profile') ? 'profile' :
+                 $this.hasClass('reply') ? 'reply' :
+                 $this.hasClass('favorite') ? 'favorite' :
+                 $this.hasClass('retweet') ? 'retweet' :
+                 '';
+      // increment point.
+      if (!type) return false;
+      $.post('/point_up', {type: type, key: $this.data('key')},
+        function(data){
+        }
+      );
+      return false;
+    });
+    $('div.like a.like', target).click(function(){
+      var $this = $(this);
+      $.post('/like', {key: $this.data('key'), url: document.location.pathname},
+        function(data){
+          if (data == 'needs_oauth') {
+            document.location.href = '/get_request_token';
+            return;
+          }
+          // update page.
+          if (data != '') {
+            var image = document.createElement('img');
+            image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+            $('.users', $this.parent().parent().parent().parent()).append(image);
+          }
+        }
+      );
+      $('body').css('cursor', 'default');
+      return false;
+    });
   };
   initialize(document);
 
-  //events
-  $('a.profile,a.reply,a.retweet,a.favorited').click(function(){
-    var $this = $(this);
-    var type = $this.hasClass('profile') ? 'profile' :
-               $this.hasClass('reply') ? 'reply' :
-               $this.hasClass('favorite') ? 'favorite' :
-               $this.hasClass('retweet') ? 'retweet' :
-               '';
-    // increment point.
-    if (!type) return false;
-    $.post('/point_up', {type: type, key: $this.data('key')},
-      function(data){
-      }
-    );
-    return false;
-  });
-  $('div.like a.like').click(function(){
-    var $this = $(this);
-    $.post('/like', {key: $this.data('key'), url: document.location.pathname},
-      function(data){
-        if (data == 'needs_oauth') {
-          document.location.href = '/get_request_token';
-          return;
-        }
-        // update page.
-        if (data != '') {
-          var image = document.createElement('img');
-          image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-          $('.users', $this.parent().parent().parent().parent()).append(image);
-        }
-      }
-    );
-    $('body').css('cursor', 'default');
-    return false;
-  });
   $('div.more-tweets').click(function(){
     var $this = $(this);
     var hashtag = $this.data('hashtag');
@@ -122,7 +122,7 @@ _gaq.push(['_trackPageview']);
 })();
 //woopra
 function woopraReady(tracker) {
-  tracker.setDomain('gimmehash.in');
+  tracker.setDomain('e-hash.jp');
   tracker.setIdleTimeout(300000);
   tracker.track();
   return false;

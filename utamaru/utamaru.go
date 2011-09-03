@@ -43,7 +43,7 @@ func ErrorPage(w http.ResponseWriter, message string, code int) {
 	w.WriteHeader(code)
 	var errorTemplate = template.MustParseFile("templates/error.html", nil)
 	if err := errorTemplate.Execute(w, map[string]interface{}{
-				"siteTitle": "ギミハッシュ.in α",
+				"siteTitle": SiteTitle,
 				"ErrorMessage": message,
 			}); err != nil {
 		http.Error(w, err.String(), http.StatusInternalServerError)
@@ -100,6 +100,14 @@ func GetReqestTokenHandler(w http.ResponseWriter, r *http.Request) {
 func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("GetAccessTokenHandler")
+	if len(r.FormValue("denied")) > 0 {
+		//Oauth no thanks.
+		url := getCookie(r, "url")
+		if len(url) == 0 {
+			url = "/"
+		}
+		http.Redirect(w, r, url, 302)
+	}
 	oauthToken := r.FormValue("oauth_token")
 	oauthVerifier := r.FormValue("oauth_verifier")
 	c.Debugf("%s, %s", oauthToken, oauthVerifier)

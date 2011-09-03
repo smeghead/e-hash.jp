@@ -10,6 +10,8 @@ import (
 	"encoding/base64"
 )
 
+var SiteTitle = "#イーハッシュJP"
+
 type HashtagListElement struct {
 	Hashtag Hashtag
 	Tweets []Tweet
@@ -30,7 +32,7 @@ func getSessionId(c appengine.Context, r *http.Request) string {
 func getCommonMap(c appengine.Context) (map[string]interface{}, os.Error) {
 	commonMap := make(map[string]interface{})
 
-	commonMap["siteTitle"] = "ギミハッシュ.in α"
+	commonMap["siteTitle"] = SiteTitle
 	hashtagsForTicker, _ := GetPublicHashtags(c, map[string]interface{}{
 		"length": 5,
 	})

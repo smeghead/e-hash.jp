@@ -56,7 +56,7 @@ div#footer {
 h1 a,
 h1 a:hover,
 h1 a:visited {
-	color: white;
+	color: #FF00CC !important;
 }
 h2 a,
 h2 a:hover,

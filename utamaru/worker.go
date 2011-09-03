@@ -2,6 +2,7 @@ package utamaru
 
 // worker for queue tasks.
 import (
+	"fmt"
 	"appengine"
 	"http"
 )
@@ -25,14 +26,30 @@ func WorkerCrawleHashtagHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := SaveTweets(c, tweets, hashtag); err != nil {
 		c.Errorf("WorkerCrawleHashtagHandler failed to SaveTweets: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		//http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := UpdateHashtag(c, hashtag); err != nil {
 		c.Errorf("WorkerCrawleHashtagHandler failed to UpdateHashtag: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		//http.Error(w, err.String(), http.StatusInternalServerError)
 		return
+	}
+
+	if len(tweets) > 50 {
+		conf, err := GetTwitterConf(c)
+		if err != nil {
+			c.Errorf("oAuthHeader failed to load TwitterConf: %v", err.String())
+			return
+		}
+		// Post Status.
+		url := conf.Url + "s/" + Encode(hashtag[1:])
+		status := fmt.Sprintf("更新しました。%s %s %s", hashtag, ShorterUrl(c, url), SiteTitle)
+		if err := PostTweet(c, status); err != nil {
+			c.Errorf("FrontTop failed to debug post: %v", err.String())
+			//ErrorPage(w, err.String(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
