@@ -21,7 +21,7 @@ func(h *Hashtag) Valid() bool {
 	if !ContainsMultibyteChar(h.Name) {
 		return false
 	}
-	if len(h.Name) <= 5 {
+	if len(h.Name) <= 6 {
 		return false
 	}
 	return true
@@ -37,16 +37,17 @@ func SaveHashtag(c appengine.Context, hashtag string, count int) os.Error {
 		//insert
 		h.Name = hashtag
 		h.Count = count
-		if !h.Valid() {
-			c.Warningf("SaveHashtag invalid hashtag. ignoring... hashtag: %s", h.Name)
-			return nil
-		}
 	}
 	// Countは最大5にする。
 	if h.Count < 5 {
 		h.Count += 1
 	}
 	h.Date = datastore.SecondsToTime(time.Seconds())
+
+	if !h.Valid() {
+		c.Infof("SaveHashtag %s is invalid. ignore.", h.Name)
+		return nil
+	}
 
 	if _, err := datastore.Put(c, key, h); err != nil {
 		c.Errorf("SaveHashtag failed to put: %v", err.String())

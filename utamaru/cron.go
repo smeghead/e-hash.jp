@@ -142,10 +142,6 @@ func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, hashtag := range hashtags {
-		if !hashtag.Valid() {
-			c.Infof("CrawleHashtags ignore invalid hashtag: %s", hashtag.Name)
-			continue
-		}
 		c.Debugf("register taskqueue: %s", hashtag.Name)
 		t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": []string{hashtag.Name}})
 		if _, err := taskqueue.Add(c, t, ""); err != nil {

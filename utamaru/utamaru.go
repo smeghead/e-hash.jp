@@ -25,6 +25,8 @@ func init() {
 	http.HandleFunc("/point_up", PointUpHandler)
 	http.HandleFunc("/like", LikeHandler)
 	http.HandleFunc("/oauthlike", OauthLikeHandler)
+	http.HandleFunc("/post", PostHandler)
+	http.HandleFunc("/oauthpost", OauthPostHandler)
 
 	http.HandleFunc("/cron/admin", CronAdmin)
 	http.HandleFunc("/cron/record_hashtags", RecordHashtags)
@@ -126,7 +128,7 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	user.SessionId = GetUniqId(r.RemoteAddr, r.UserAgent)
 	if err := SaveUser(c, *user); err != nil {
-		c.Errorf("SaveUser failed to save: %v", err.String())
+		c.Errorf("GetReqestTokenHandler failed to save: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
@@ -137,5 +139,15 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 		Value: user.SessionId,
 		Path: "/",
 		Expires: *oneYearLater})
-	http.Redirect(w, r, "/oauthlike", 302)
+
+	oauthType := getCookie(r, "type")
+	c.Debugf("GetReqestTokenHandler oauthType: %s", oauthType)
+	if oauthType == "like" {
+		http.Redirect(w, r, "/oauthlike", 302)
+	} else if oauthType == "post" {
+		http.Redirect(w, r, "/oauthpost", 302)
+	} else {
+		c.Warningf("GetReqestTokenHandler unknown oauthType")
+		http.Redirect(w, r, "/", 302)
+	}
 }

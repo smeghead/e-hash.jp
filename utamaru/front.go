@@ -271,6 +271,110 @@ func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, 302)
 }
 
+func PostHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("PostHandler")
+
+	if r.Method != "POST" {
+		c.Errorf("PostHandler method not supported.")
+		ErrorPage(w, "Postに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+
+	// パラメータの保存 Oauthの後にリダイレクトするため。
+	http.SetCookie(w, &http.Cookie{
+		Name: "type",
+		Value: "post",
+		Path: "/",
+	})
+	status := r.FormValue("status")
+	c.Debugf("PostHandler status: %s", status)
+	http.SetCookie(w, &http.Cookie{
+		Name: "status",
+		Value: base64.StdEncoding.EncodeToString([]byte(status)),
+		Path: "/",
+	})
+	hashtag := r.FormValue("hashtag")
+	c.Debugf("PostHandler hashtag: %s", hashtag)
+	http.SetCookie(w, &http.Cookie{
+		Name: "hashtag",
+		Value: base64.StdEncoding.EncodeToString([]byte(hashtag)),
+		Path: "/",
+	})
+	url := r.FormValue("url")
+	c.Debugf("PostHandler url: %s", url)
+	http.SetCookie(w, &http.Cookie{
+		Name: "url",
+		Value: url,
+		Path: "/",
+	})
+	sessionId := getSessionId(c, r)
+	if sessionId == "" {
+		c.Infof("no auth information. redirect to oauth confirmation.")
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	user, err := FindUser(c, sessionId)
+	if err != nil {
+		c.Infof("PostHandler failed to find user. %v", err)
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	if user.ScreenName == "" {
+		c.Infof("PostHandler failed to find user. empty user.")
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	c.Debugf("PostHandler user: %v", user)
+
+	err = PostTweetByUser(c, status, user)
+	if err != nil {
+		c.Errorf("PostHandler failed to point up. : %v", err)
+		ErrorPage(w, "Postに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, user.ScreenName)
+}
+
+func OauthPostHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("OauthPostHandler")
+
+	statusBytes, _ := base64.StdEncoding.DecodeString(getCookie(r, "status"))
+	status := string(statusBytes)
+	url := getCookie(r, "url")
+	if len(url) == 0 {
+		url = "/"
+	}
+	c.Debugf("OauthPostHandler status: %s url: %s", status, url)
+	sessionId := getSessionId(c, r)
+	if sessionId == "" {
+		c.Infof("no auth information. redirect to oauth confirmation.")
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	user, err := FindUser(c, sessionId)
+	if err != nil {
+		c.Infof("OauthPostHandler failed to find user. %v", err)
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	if user.ScreenName == "" {
+		c.Infof("OauthPostHandler failed to find user. empty user.")
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	c.Debugf("OauthPostHandler user: %v", user)
+
+	err = PostTweetByUser(c, status, user)
+	if err != nil {
+		c.Errorf("OauthPostHandler failed to point up. : %v", err)
+		ErrorPage(w, "Postに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, url, 302)
+}
+
 func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Debugf("LikeHandler")
@@ -281,6 +385,11 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// パラメータの保存 Oauthの後にリダイレクトするため。
+	http.SetCookie(w, &http.Cookie{
+		Name: "type",
+		Value: "like",
+		Path: "/",
+	})
 	key := r.FormValue("key")
 	c.Debugf("LikeHandler key: %s", key)
 	http.SetCookie(w, &http.Cookie{

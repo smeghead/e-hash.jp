@@ -73,7 +73,7 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 			c.Infof("SaveTweets tweet is only hashtag: %s", hashtag)
 			continue
 		}
-		if len(tweet.To_User_Id_Str) > 0 {
+		if len(tweet.To_User_Id_Str) > 0 || tweet.Text[0:4] == "RT @" {
 			// RTは、無視する
 			c.Infof("SaveTweets tweet is RT: %s", hashtag)
 			continue
@@ -81,13 +81,11 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 		t := NewTweet(tweet)
 		t.Hashtag = hashtag
 		key := datastore.NewKey("Tweet", t.String(), 0, nil)
-		c.Debugf("SaveTweets key: %v", key)
 
 		var old Tweet
 		if err := datastore.Get(c, key, &old); err == nil {
 			// 既に存在する場合
 			t = CopyTweet(t, old)
-			c.Debugf("SaveTweets exists %s", t.Screen_name)
 		}
 		if _, err := datastore.Put(c, key, &t); err != nil {
 			c.Errorf("SaveTweets failed to put: %v", err.String())
@@ -206,7 +204,7 @@ func LikeTweet(c appengine.Context, keyString string, user TwitterUser) os.Error
 	}
 
 	// ユーザの記録
-	key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str, 0, nil)
+	key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
 	tweetLikeUser := TweetLikeUser{
 		TweetKey: tweet.Hashtag + ":" + tweet.Id_Str,
 		UserId: user.Id,
@@ -246,16 +244,12 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 		return nil, err
 	}
 	var tweetsResult []Tweet
+	c.Debugf("GetTweetsByHashtag length: %d", len(tweets))
 	for _, tweet := range tweets {
 		q := datastore.NewQuery("TweetLikeUser").Filter("TweetKey =", tweet.Hashtag + ":" + tweet.Id_Str).Order("-Created_At").Limit(100)
-		c.Debugf("TweetLikeUser key: %s %s", tweet.Hashtag + ":" + tweet.Id_Str, tweet.Text)
 		if _, err := q.GetAll(c, &tweet.Users); err != nil {
 			c.Errorf("GetTweetsByHashtag failed to get users: %v", err.String())
 			return nil, err
-		}
-		c.Debugf("TweetLikeUser length: %d", len(tweet.Users))
-		for _, u := range tweet.Users {
-			c.Debugf("TweetLikeUser user: %s", u.UserId)
 		}
 		tweetsResult = append(tweetsResult, tweet)
 	}

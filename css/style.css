@@ -56,7 +56,9 @@ div#footer {
 h1 a,
 h1 a:hover,
 h1 a:visited {
-	color: #FF00CC !important;
+	font-size: 40px;
+	color: #FFFFFF !important;
+/* 	color: #FF00CC !important; */
 }
 h2 a,
 h2 a:hover,
@@ -129,6 +131,23 @@ div#sidead {
 	margin: 20px;
 	text-align: center;
 }
+div#tweet-box {
+	text-align: right;
+	width: 610px;
+}
+div#tweet-box textarea {
+	width: 610px;
+	padding: 5px;
+	height: 40px;
+	border: 1px solid gray;
+	border-radius: 5px;
+}
+div#tweet-box input.post {
+}
+div#tweet-box #leave-letter-count {
+	color: #999999;
+	font-size: 16px;
+}
 .subject_block {
 	width: 600px;
 	margin: 30px 0px;
@@ -151,14 +170,16 @@ div#sidead {
 }
 .subject_block div.like {
 	float: right;
-	margin: 3px;
+	background-color: #FF6600;
+	border-radius: 3px;
 }
 .subject_block div.like a.like {
+	padding: 0px 5px;
+	display: block;
 	cursor: pointer;
 	font-size: 13pt;
 	font-weight: bold;
 	color: white;
-	background-color: orange;
 }
 .subject_block .icon_block img {
 	width: 48px;
@@ -317,8 +338,10 @@ div.errorpage-message {
 	height: 1000px;
 }
 div#social-bookmarks {
+	clear: right;
+	float: right;
 }
-div#social-bookmarks div.box {
+div#social-bookmarks div {
 	display: inline;
 	margin: 5px;
 }

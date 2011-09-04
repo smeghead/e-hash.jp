@@ -41,9 +41,15 @@ type ErrorResponse struct {
 }
 
 func oAuthHeader(c appengine.Context, method, url string, options map[string]interface{}) string {
-	withAccessToken := false
-	if options["withAccessToken"] != nil {
-		withAccessToken = options["withAccessToken"].(bool)
+	withUserAccessToken := false
+	var user *TwitterUser
+	if options["withUserAccessToken"] != nil {
+		withUserAccessToken = options["withUserAccessToken"].(bool)
+		user = options["user"].(*TwitterUser)
+	}
+	withApplicationAccessToken := false
+	if options["withApplicationAccessToken"] != nil {
+		withApplicationAccessToken = options["withApplicationAccessToken"].(bool)
 	}
 	var requestToken *TwitterRequestToken
 	if options["requestToken"] != nil {
@@ -69,8 +75,10 @@ func oAuthHeader(c appengine.Context, method, url string, options map[string]int
 	oauthMap["oauth_timestamp"] = strconv.Itoa64(time.Seconds())
 	oauthMap["oauth_nonce"] = strconv.Itoa64(rand.Int63())
 	oauthMap["oauth_version"] = "1.0"
-	if withAccessToken {
+	if withApplicationAccessToken {
 		oauthMap["oauth_token"] = conf.AccessToken
+	} else if withUserAccessToken {
+		oauthMap["oauth_token"] = user.OauthToken
 	} else if requestToken != nil {
 		oauthMap["oauth_token"] = requestToken.OauthToken
 		oauthMap["oauth_verifier"] = oauthVerifier
@@ -94,8 +102,10 @@ func oAuthHeader(c appengine.Context, method, url string, options map[string]int
 	msg := method + "&" + Encode(url) + "&" + oauth
 	c.Debugf("msg: %s", msg)
 	key := conf.ConsumerSecret + "&"
-	if withAccessToken {
+	if withApplicationAccessToken {
 		key += conf.AccessTokenSecret
+	} else if withUserAccessToken {
+		key += user.OauthSecret
 	} else if requestToken != nil {
 		key += requestToken.OauthSecret
 	}
@@ -185,7 +195,7 @@ func GetPublicTimeline(c appengine.Context) ([]TweetTw, os.Error) {
 	url := "http://api.twitter.com/statuses/public_timeline.json"
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Authorization", oAuthHeader(c, "GET", url, map[string]interface{}{
-		"withAccessToken": true,
+		"withApplicationAccessToken": true,
 	}))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
@@ -263,7 +273,7 @@ func GetTrends(c appengine.Context) ([]Trend, os.Error) {
 	url := "http://api.twitter.com/1/trends/1118370.json"
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Authorization", oAuthHeader(c, "GET", url, map[string]interface{}{
-		"withAccessToken": true,
+		"withApplicationAccessToken": true,
 	}))
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
@@ -294,7 +304,7 @@ func HomeTest(c appengine.Context) os.Error {
 	url := "http://api.twitter.com/statuses/friends_timeline.json"
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("Authorization", oAuthHeader(c, "GET", url, map[string]interface{}{
-		"withAccessToken": true,
+		"withApplicationAccessToken": true,
 	}))
 	c.Debugf("HomeTest Authorization: %v", request.Header.Get("Authorization"))
 	client := urlfetch.Client(c)
@@ -393,7 +403,7 @@ func PostTweet(c appengine.Context, status string) os.Error {
 	body := strings.NewReader("status=" + encodedStatus)
 	request, _ := http.NewRequest("POST", url, body)
 	request.Header.Set("Authorization", oAuthHeader(c, "POST", url, map[string]interface{}{
-		"withAccessToken": true,
+		"withApplicationAccessToken": true,
 		"status": encodedStatus,
 	}))
 	c.Debugf("PostTweet Authorization: %v", request.Header.Get("Authorization"))
@@ -412,6 +422,36 @@ func PostTweet(c appengine.Context, status string) os.Error {
 	if response.StatusCode != 200 {
 		c.Errorf("PostTweet failed to post status. StatusCode: %d", response.StatusCode)
 		return os.NewError("PostTweet failed to post status.")
+	}
+	return nil
+}
+
+func PostTweetByUser(c appengine.Context, status string, user TwitterUser) os.Error {
+	encodedStatus := Encode(status)
+	url := "http://api.twitter.com/statuses/update.json"
+	body := strings.NewReader("status=" + encodedStatus)
+	request, _ := http.NewRequest("POST", url, body)
+	request.Header.Set("Authorization", oAuthHeader(c, "POST", url, map[string]interface{}{
+		"withUserAccessToken": true,
+		"user": &user,
+		"status": encodedStatus,
+	}))
+	c.Debugf("PostTweetByUser Authorization: %v", request.Header.Get("Authorization"))
+	client := urlfetch.Client(c)
+	response, err := client.Do(request)
+	if err != nil {
+		c.Errorf("PostTweetByUser failed to api call: %v", err.String())
+		return err
+	}
+	jsonVal, err2 := ioutil.ReadAll(response.Body)
+	if err2 != nil {
+		c.Errorf("PostTweetByUser failed to read result: %v", err.String())
+		return err
+	}
+	c.Debugf("PostTweetByUser response: %v", string(jsonVal))
+	if response.StatusCode != 200 {
+		c.Errorf("PostTweetByUser failed to post status. StatusCode: %d", response.StatusCode)
+		return os.NewError("PostTweetByUser failed to post status.")
 	}
 	return nil
 }

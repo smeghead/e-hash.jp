@@ -80,8 +80,15 @@ $(function(){
           }
         }
       );
-      $('body').css('cursor', 'default');
       return false;
+    });
+    // user count.
+    $('div.subject_block', target).each(function(){
+      var $this = $(this);
+      var count = $('div.users img', $this).length;
+      if (count > 0) {
+        $('span.user-count', $this).text(count + ' ');
+      }
     });
   };
   initialize(document);
@@ -106,9 +113,53 @@ $(function(){
   var ticker_width =
     $('h1').css('width').replace('px', '') -
     $('h1 a').css('width').replace('px', '') - 10;
+  $('div#social-bookmarks').css('width', ticker_width + 'px');
   $('div#ticker').css('width', ticker_width + 'px');
   $('div#ticker-elements').html($('div#ticker-elements-hide').html());
   $('div#ticker-elements').jStockTicker({interval: 13});
+  $('div#ticker-elements a').click(function(){
+    var hashtag = $(this).text();
+    document.location.href = '/s/' + hashtag.substring(1);
+  });
+
+  //tweet
+  var additional_text = ' ' + $('#hashtag').text() + ' http://www.e-hash.jp/';
+  var button = $('div#tweet-box input.post');
+  var message = $('#leave-letter-count');
+  message.text(140 - additional_text.length);
+  $('div#tweet-box textarea').keyup(function(){
+    var status_len = $(this).val().length;
+    var len = 140 - additional_text.length - status_len;
+    message.text(len);
+    if (status_len != 0 && len >= 0) {
+      button.removeAttr('disabled');
+    } else {
+      button.attr('disabled', 'disabled');
+    }
+  });
+  $('div#tweet-box input.post').click(function(){
+    var $this = $(this);
+    var hashtag = $('#hashtag').text();
+    $.post('/post', {
+        hashtag: hashtag,
+        url: document.location.pathname,
+        status: $('#status').val() + ' ' + hashtag + ' http://www.e-hash.jp/'
+      },
+      function(data){
+        if (data == 'needs_oauth') {
+          document.location.href = '/get_request_token';
+          return;
+        }
+        // update page.
+        if (data != '') {
+          //TODO: show message
+          $this.text('');
+          alert('Twitterにつぶやきました');
+        }
+      }
+    );
+    return false;
+  });
 });
 
 var _gaq = _gaq || [];
