@@ -22,6 +22,7 @@ var HashtagRexexp string = "[#＃][^ ;'.,　\n]+"
 type User struct {
 	Id_Str string
 	Screen_name string
+	Profile_Image_Url string
 }
 
 type TweetTw struct {
@@ -426,7 +427,7 @@ func PostTweet(c appengine.Context, status string) os.Error {
 	return nil
 }
 
-func PostTweetByUser(c appengine.Context, status string, user TwitterUser) os.Error {
+func PostTweetByUser(c appengine.Context, status string, user TwitterUser) (*TweetTw, os.Error) {
 	encodedStatus := Encode(status)
 	url := "http://api.twitter.com/statuses/update.json"
 	body := strings.NewReader("status=" + encodedStatus)
@@ -441,18 +442,20 @@ func PostTweetByUser(c appengine.Context, status string, user TwitterUser) os.Er
 	response, err := client.Do(request)
 	if err != nil {
 		c.Errorf("PostTweetByUser failed to api call: %v", err.String())
-		return err
+		return nil, err
 	}
 	jsonVal, err2 := ioutil.ReadAll(response.Body)
 	if err2 != nil {
 		c.Errorf("PostTweetByUser failed to read result: %v", err.String())
-		return err
+		return nil, err
 	}
 	c.Debugf("PostTweetByUser response: %v", string(jsonVal))
 	if response.StatusCode != 200 {
 		c.Errorf("PostTweetByUser failed to post status. StatusCode: %d", response.StatusCode)
-		return os.NewError("PostTweetByUser failed to post status.")
+		return nil, os.NewError("PostTweetByUser failed to post status.")
 	}
-	return nil
+	var tweet TweetTw
+	json.Unmarshal(jsonVal, &tweet)
+	return &tweet, nil
 }
 

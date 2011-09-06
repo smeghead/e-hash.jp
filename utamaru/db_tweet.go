@@ -54,6 +54,9 @@ func NewTweet(tw TweetTw) Tweet {
 //	}
 	t.Profile_Image_Url = tw.Profile_Image_Url
 	createAtTime, _ := time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", tw.Created_At)
+	if createAtTime == nil {
+		createAtTime = time.LocalTime()
+	}
 	t.Created_At = datastore.SecondsToTime(createAtTime.Seconds())
 	return t
 }
@@ -105,6 +108,18 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 			c.Errorf("SaveTweets failed to put hashtag: %v", er.String())
 		}
 	}
+	return nil
+}
+
+func SaveTweet(c appengine.Context, t Tweet, hashtag string) os.Error {
+	t.Hashtag = hashtag
+	key := datastore.NewKey("Tweet", t.String(), 0, nil)
+
+	if _, err := datastore.Put(c, key, &t); err != nil {
+		c.Errorf("SaveTweet failed to put: %v", err.String())
+		return err
+	}
+
 	return nil
 }
 

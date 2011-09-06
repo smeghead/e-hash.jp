@@ -6,11 +6,11 @@
     <title>{siteTitle|html}について - {siteTitle|html}</title>
     <meta name="description" content="Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。">
     <meta name="keywords" content="{siteTitle|html},日本語ハッシュタグ,ハッシュタグ,大喜利,Twitter,ツイッター">
-    <meta property="og:title" content="{SiteTitle}" />
+    <meta property="og:title" content="{SiteTitle|html}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://www.e-hash.jp/" />
     <meta property="og:image" content="http://www.e-hash.jp/favicon.ico" />
-    <meta property="og:site_name" content="{SiteTitle}" />
+    <meta property="og:site_name" content="{SiteTitle|html}" />
     <meta property="fb:admins" content="100001493178908" />
     <link href="/css/default.css" type="text/css" rel="stylesheet"></link>
     <link href="/css/style.css" type="text/css" rel="stylesheet"></link>
@@ -32,25 +32,24 @@
       </div>
       <div id="social-bookmarks">
         <div>
+          <g:plusone size="medium"></g:plusone>
+        </div>
+        <div>
           <a href="http://b.hatena.ne.jp/entry/http://www.e-hash.jp/" class="hatena-bookmark-button" data-hatena-bookmark-title="#イーハッシュJP" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
         </div>
         <div>
           <iframe src="http://www.facebook.com/plugins/like.php?app_id=168512816559710&amp;href=http%3A%2F%2Fwww.e-hash.jp%2F&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=dark&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:21px;" allowTransparency="true"></iframe>
         </div>
+        <div id="user-info">
+        {.section user.ScreenName}
+          <img src="http://img.tweetimag.es/i/{user.ScreenName|html}_m" />
+          <a href="/signout">サインアウト</a>
+        {.end}
+        </div>
       </div>
       <h1><a href="/">{siteTitle|html}</a></h1>
       <div class="clear"></div>
     </div>
-    <!--
-    <div id="social-bookmarks">
-      <div>
-      <a href="http://b.hatena.ne.jp/entry/http://www.gimmehash.in" class="hatena-bookmark-button" data-hatena-bookmark-title="ギミハッシュ.in α" data-hatena-bookmark-layout="vertical" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
-      </div>
-      <div>
-        <iframe src="http://www.facebook.com/plugins/like.php?app_id=275762465771737&amp;href=http%3A%2F%2Fwww.gimmehash.in%2F&amp;send=false&amp;layout=box_count&amp;width=60&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=90" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:60px; height:90px;" allowTransparency="true"></iframe>
-      </div>
-    </div>
-    -->
     <div id="topad">
       <script type="text/javascript"><!--
         google_ad_client = "ca-pub-6994803411870749";
@@ -76,6 +75,18 @@
         <div id="introduction">
           <span>
             Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。
+          </span>
+        </div>
+        <div id="service">
+          <span>
+            <p>このサイトでは、TwitterのOAuth認証を行なうことで、日本語ハッシュタグに関連するつぶやきに、Like! したり、日本語ハッシュタグに関するつぶやきを登録することができるようになります。</p>
+            <p>是非、認証を行なって、このサイトでLike!したりつぶやいて下さい。</p>
+            <p>今後、細々と改善していきたいです。日本語ハッシュタグに関するつぶやきや反応を見て、楽しんでもらえれば嬉しいです。</p>
+          </span>
+        </div>
+        <div id="contact">
+          <span>
+            このサイトについてのお問合せは、<a id="contact-to" href="#">こちら</a>まで。
           </span>
         </div>
         <div class="virtual-blank">
@@ -125,5 +136,7 @@
     tfb.showbadge();
     --></script>
     <!-- end of twitter follow badge -->
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
+    </script>
   </body>
 </html>

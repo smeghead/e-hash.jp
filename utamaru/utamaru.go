@@ -27,6 +27,7 @@ func init() {
 	http.HandleFunc("/oauthlike", OauthLikeHandler)
 	http.HandleFunc("/post", PostHandler)
 	http.HandleFunc("/oauthpost", OauthPostHandler)
+	http.HandleFunc("/signout", SignoutHandler)
 
 	http.HandleFunc("/cron/admin", CronAdmin)
 	http.HandleFunc("/cron/record_hashtags", RecordHashtags)

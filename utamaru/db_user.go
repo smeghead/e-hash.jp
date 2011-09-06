@@ -96,3 +96,16 @@ func FindUser(c appengine.Context, sessionId string) (TwitterUser, os.Error) {
 	c.Debugf("FindUser ok")
 	return user, nil
 }
+
+func DeleteUser(c appengine.Context, sessionId string) os.Error {
+	c.Debugf("DeleteUser sessionId: %s", sessionId)
+	key := datastore.NewKey("TwitterUser", sessionId, 0, nil)
+
+	if err := datastore.Delete(c, key); err != nil {
+		c.Errorf("DeleteUser failed to get: %v", err.String())
+		return err
+	}
+
+	c.Debugf("DeleteUser ok")
+	return nil
+}

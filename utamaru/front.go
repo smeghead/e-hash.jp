@@ -17,6 +17,20 @@ type HashtagListElement struct {
 	Tweets []Tweet
 }
 
+func getUser(c appengine.Context, w http.ResponseWriter, r *http.Request) TwitterUser {
+	sessionId := getSessionId(c, r)
+	if sessionId == "" {
+		c.Infof("no auth information. redirect to oauth confirmation.")
+		return TwitterUser{}
+	}
+	user, err := FindUser(c, sessionId)
+	if err != nil {
+		c.Infof("OauthLikeHandler failed to find user. %v", err)
+		return TwitterUser{}
+	}
+	return user
+}
+
 func getCookie(r *http.Request, name string) string {
 	for _, c := range r.Cookie {
 		if c.Name == name {
@@ -29,9 +43,10 @@ func getSessionId(c appengine.Context, r *http.Request) string {
 	return getCookie(r, "id")
 }
 
-func getCommonMap(c appengine.Context) (map[string]interface{}, os.Error) {
+func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}, os.Error) {
 	commonMap := make(map[string]interface{})
 
+	commonMap["user"] = user
 	commonMap["siteTitle"] = SiteTitle
 	hashtagsForTicker, _ := GetPublicHashtags(c, map[string]interface{}{
 		"length": 5,
@@ -64,8 +79,8 @@ var topTemplate = template.MustParseFile("templates/index.html", nil)
 func FrontTop(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
-	c.Debugf("session id: %s", getSessionId(c, r))
-	resultMap, err := getCommonMap(c)
+	user := getUser(c, w, r)
+	resultMap, err := getCommonMap(c, user)
 	if err != nil {
 		c.Errorf("FrontTop failed to retrieve resultMap: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -124,7 +139,8 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	hashtag := "#" + path[3:]
 	c.Debugf("FrontSubject hashtag: %s", hashtag)
 
-	resultMap, err := getCommonMap(c)
+	user := getUser(c, w, r)
+	resultMap, err := getCommonMap(c, user)
 	if err != nil {
 		c.Errorf("FrontSubject failed to retrieve resultMap: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -170,7 +186,8 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	var hashtagsTemplate = template.MustParseFile("templates/hashtags.html", nil)
 	c := appengine.NewContext(r)
 
-	resultMap, err := getCommonMap(c)
+	user := getUser(c, w, r)
+	resultMap, err := getCommonMap(c, user)
 	if err != nil {
 		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -198,7 +215,8 @@ var aboutTemplate = template.MustParseFile("templates/about.html", nil)
 func FrontAbout(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
-	resultMap, err := getCommonMap(c)
+	user := getUser(c, w, r)
+	resultMap, err := getCommonMap(c, user)
 	if err != nil {
 		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -243,18 +261,7 @@ func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {
 		url = "/"
 	}
 	c.Debugf("OauthLikeHandler key: %s url: %s", key, url)
-	sessionId := getSessionId(c, r)
-	if sessionId == "" {
-		c.Infof("no auth information. redirect to oauth confirmation.")
-		http.Redirect(w, r, url, 302)
-		return
-	}
-	user, err := FindUser(c, sessionId)
-	if err != nil {
-		c.Infof("OauthLikeHandler failed to find user. %v", err)
-		http.Redirect(w, r, url, 302)
-		return
-	}
+	user := getUser(c, w, r)
 	if user.ScreenName == "" {
 		c.Infof("OauthLikeHandler failed to find user. empty user.")
 		http.Redirect(w, r, url, 302)
@@ -262,7 +269,7 @@ func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Debugf("OauthLikeHandler user: %v", user)
 
-	err = LikeTweet(c, key, user)
+	err := LikeTweet(c, key, user)
 	if err != nil {
 		c.Errorf("OauthLikeHandler failed to point up. : %v", err)
 		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
@@ -308,18 +315,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		Value: url,
 		Path: "/",
 	})
-	sessionId := getSessionId(c, r)
-	if sessionId == "" {
-		c.Infof("no auth information. redirect to oauth confirmation.")
-		fmt.Fprint(w, "needs_oauth")
-		return
-	}
-	user, err := FindUser(c, sessionId)
-	if err != nil {
-		c.Infof("PostHandler failed to find user. %v", err)
-		fmt.Fprint(w, "needs_oauth")
-		return
-	}
+	user := getUser(c, w, r)
 	if user.ScreenName == "" {
 		c.Infof("PostHandler failed to find user. empty user.")
 		fmt.Fprint(w, "needs_oauth")
@@ -327,19 +323,35 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Debugf("PostHandler user: %v", user)
 
-	err = PostTweetByUser(c, status, user)
+	tweet, err := PostTweetByUser(c, status, user)
 	if err != nil {
 		c.Errorf("PostHandler failed to point up. : %v", err)
 		ErrorPage(w, "Postに失敗しました。", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprint(w, user.ScreenName)
+
+	//新しいTweetの保存
+	t := NewTweet(*tweet)
+	t.Screen_name = tweet.User.Screen_name
+	t.Profile_Image_Url = tweet.User.Profile_Image_Url
+	t.UserId_Str = tweet.User.Id_Str
+	SaveTweet(c, t, hashtag)
+	var tweets = []Tweet{t}
+	if err := subjectMoreTemplate.Execute(w, map[string]interface{}{
+				"Tweets": tweets,
+			}); err != nil {
+		c.Errorf("FrontSubjectMore failed to merge template: %v", err.String())
+		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func OauthPostHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Debugf("OauthPostHandler")
 
+	hashtagBytes, _ := base64.StdEncoding.DecodeString(getCookie(r, "hashtag"))
+	hashtag := string(hashtagBytes)
 	statusBytes, _ := base64.StdEncoding.DecodeString(getCookie(r, "status"))
 	status := string(statusBytes)
 	url := getCookie(r, "url")
@@ -347,18 +359,7 @@ func OauthPostHandler(w http.ResponseWriter, r *http.Request) {
 		url = "/"
 	}
 	c.Debugf("OauthPostHandler status: %s url: %s", status, url)
-	sessionId := getSessionId(c, r)
-	if sessionId == "" {
-		c.Infof("no auth information. redirect to oauth confirmation.")
-		http.Redirect(w, r, url, 302)
-		return
-	}
-	user, err := FindUser(c, sessionId)
-	if err != nil {
-		c.Infof("OauthPostHandler failed to find user. %v", err)
-		http.Redirect(w, r, url, 302)
-		return
-	}
+	user := getUser(c, w, r)
 	if user.ScreenName == "" {
 		c.Infof("OauthPostHandler failed to find user. empty user.")
 		http.Redirect(w, r, url, 302)
@@ -366,15 +367,41 @@ func OauthPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Debugf("OauthPostHandler user: %v", user)
 
-	err = PostTweetByUser(c, status, user)
+	tweet, err := PostTweetByUser(c, status, user)
 	if err != nil {
 		c.Errorf("OauthPostHandler failed to point up. : %v", err)
 		ErrorPage(w, "Postに失敗しました。", http.StatusInternalServerError)
 		return
 	}
+	//新しいTweetの保存
+	t := NewTweet(*tweet)
+	t.Screen_name = tweet.User.Screen_name
+	t.UserId_Str = tweet.User.Id_Str
+	SaveTweet(c, t, hashtag)
 	http.Redirect(w, r, url, 302)
 }
 
+func SignoutHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("SignoutHandler")
+
+	url := getCookie(r, "url")
+	if len(url) == 0 {
+		url = "/"
+	}
+	c.Debugf("SignoutHandler url: %s", url)
+	sessionId := getSessionId(c, r)
+	if sessionId == "" {
+		c.Infof("no auth information. redirect to oauth confirmation.")
+		return
+	}
+	if err := DeleteUser(c, sessionId); err != nil {
+		c.Errorf("SignoutHandler failed to delete user: %v", err)
+	}
+	c.Debugf("SignoutHandler ok")
+
+	http.Redirect(w, r, url, 302)
+}
 func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Debugf("LikeHandler")
@@ -404,18 +431,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 		Value: url,
 		Path: "/",
 	})
-	sessionId := getSessionId(c, r)
-	if sessionId == "" {
-		c.Infof("no auth information. redirect to oauth confirmation.")
-		fmt.Fprint(w, "needs_oauth")
-		return
-	}
-	user, err := FindUser(c, sessionId)
-	if err != nil {
-		c.Infof("LikeHandler failed to find user. %v", err)
-		fmt.Fprint(w, "needs_oauth")
-		return
-	}
+	user := getUser(c, w, r)
 	if user.ScreenName == "" {
 		c.Infof("LikeHandler failed to find user. empty user.")
 		fmt.Fprint(w, "needs_oauth")
@@ -423,8 +439,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	c.Debugf("LikeHandler user: %v", user)
 
-
-	err = LikeTweet(c, key, user)
+	err := LikeTweet(c, key, user)
 	if err != nil {
 		c.Errorf("LikeHandler failed to point up. : %v", err)
 		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)

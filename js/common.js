@@ -152,14 +152,27 @@ $(function(){
         }
         // update page.
         if (data != '') {
-          //TODO: show message
+          // show message
           $this.text('');
+          var tweet = $(data);
+          initialize(tweet);
+          tweet.insertBefore($('div#subject_blocks').first());
           alert('Twitterにつぶやきました');
         }
       }
     );
     return false;
   });
+
+  // hashtags tagcloud
+  if ($.fn.tagcloud) {
+    $.fn.tagcloud.defaults = {
+        size: {start: 14, end: 23, unit: 'pt'}
+        //color: {start: '#cde', end: '#f52'}
+    };
+    $('a.subject_link').tagcloud();
+  }
+  $('a#contact-to').attr('href', 'mailto:smeghead7+e-hash.jp@gmail.com?subject=' + document.location.hostname + 'についての問合せ');
 });
 
 var _gaq = _gaq || [];

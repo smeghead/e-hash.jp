@@ -21,7 +21,7 @@ func(h *Hashtag) Valid() bool {
 	if !ContainsMultibyteChar(h.Name) {
 		return false
 	}
-	if len(h.Name) <= 6 {
+	if len(h.Name) < 6 {
 		return false
 	}
 	return true

@@ -37,7 +37,9 @@ func GetHashtagsFromRss(c appengine.Context) ([]Hashtag, os.Error) {
 			c.Debugf("GetHashtagsFromRss hit hashtag. %s", item.Title)
 			var h Hashtag
 			h.Name = item.Title
-			hashtags = append(hashtags, h)
+			if h.Valid() {
+				hashtags = append(hashtags, h)
+			}
 		}
 	}
 	return hashtags, nil
