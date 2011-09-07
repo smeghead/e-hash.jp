@@ -43,23 +43,41 @@ $(function(){
       });
       $(this).html(html);
     });
-    $('div.twitter-buttons div.button', target).each(function(){
-      var $this = $(this);
-      if ($this.hasClass('retweeted') || $this.hasClass('favorited')) return;
-      $this.parent().attr('href', $this.data('href'));
-    });
+//    $('div.twitter-buttons div.button', target).each(function(){
+//      var $this = $(this);
+//      if ($this.hasClass('retweeted') || $this.hasClass('favorited')) return;
+//      $this.parent().attr('href', $this.data('href'));
+//    });
     //events
-    $('a.profile,a.reply,a.retweet,a.favorited', target).click(function(){
+    $('a.profile', target).click(function(){
       var $this = $(this);
-      var type = $this.hasClass('profile') ? 'profile' :
-                 $this.hasClass('reply') ? 'reply' :
-                 $this.hasClass('favorite') ? 'favorite' :
-                 $this.hasClass('retweet') ? 'retweet' :
-                 '';
-      // increment point.
       if (!type) return false;
-      $.post('/point_up', {type: type, key: $this.data('key')},
+      $.post('/point_up', {type: 'profile', key: $this.data('key')},
         function(data){
+        }
+      );
+      return false;
+    });
+    $('a.retweet', target).click(function(){
+      var $this = $(this);
+      // increment point.
+      $.post('/retweet', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
+        function(data){
+          $('div.retweet', $this)
+            .removeClass('retweet')
+            .addClass('retweeted');
+        }
+      );
+      return false;
+    });
+    $('a.favorite', target).click(function(){
+      var $this = $(this);
+      // increment point.
+      $.post('/favorite', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
+        function(data){
+          $('div.favorite', $this)
+            .removeClass('favorite')
+            .addClass('favorited');
         }
       );
       return false;

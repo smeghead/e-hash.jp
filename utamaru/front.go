@@ -250,6 +250,68 @@ func PointUpHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func FavoriteHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("FavoriteHandler")
+
+	if r.Method != "POST" {
+		c.Errorf("FavoriteHandler method not supported.")
+		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	key := r.FormValue("key")
+
+	if err := PointUpTweet(c, key, "favorite"); err != nil {
+		c.Errorf("FavoriteHandler failed to point up. : %v", err)
+		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	statusId := r.FormValue("statusId")
+	user := getUser(c, w, r)
+	if user.ScreenName == "" {
+		c.Infof("FavoriteHandler failed to find user. empty user.")
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	if err := FavoriteTweetByUser(c, statusId, user); err != nil {
+		c.Errorf("FavoriteHandler failed to point up. : %v", err)
+		ErrorPage(w, "favoriteに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, "ok")
+}
+
+func RetweetHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Debugf("RetweetHandler")
+
+	if r.Method != "POST" {
+		c.Errorf("RetweetHandler method not supported.")
+		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	key := r.FormValue("key")
+
+	if err := PointUpTweet(c, key, "retweet"); err != nil {
+		c.Errorf("RetweetHandler failed to point up. : %v", err)
+		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	statusId := r.FormValue("statusId")
+	user := getUser(c, w, r)
+	if user.ScreenName == "" {
+		c.Infof("RetweetHandler failed to find user. empty user.")
+		fmt.Fprint(w, "needs_oauth")
+		return
+	}
+	if err := RetweetTweetByUser(c, statusId, user); err != nil {
+		c.Errorf("RetweetHandler failed to point up. : %v", err)
+		ErrorPage(w, "retweetに失敗しました。", http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprintf(w, "ok")
+}
+
 func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Debugf("OauthLikeHandler")

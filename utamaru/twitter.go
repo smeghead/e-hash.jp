@@ -2,6 +2,7 @@ package utamaru
 
 import (
 	"os"
+	"fmt"
 	"bytes"
 	"time"
 	"rand"
@@ -457,5 +458,60 @@ func PostTweetByUser(c appengine.Context, status string, user TwitterUser) (*Twe
 	var tweet TweetTw
 	json.Unmarshal(jsonVal, &tweet)
 	return &tweet, nil
+}
+
+func FavoriteTweetByUser(c appengine.Context, statusId string, user TwitterUser) os.Error {
+	url := fmt.Sprintf("http://api.twitter.com/1/favorites/create/%s.json", statusId)
+	request, _ := http.NewRequest("POST", url, bytes.NewBufferString(""))
+	request.Header.Set("Authorization", oAuthHeader(c, "POST", url, map[string]interface{}{
+		"withUserAccessToken": true,
+		"user": &user,
+	}))
+	c.Debugf("FavoriteTweetByUser Authorization: %v", request.Header.Get("Authorization"))
+	client := urlfetch.Client(c)
+	response, err := client.Do(request)
+	if err != nil {
+		c.Errorf("FavoriteTweetByUser failed to api call: %v", err.String())
+		return err
+	}
+	jsonVal, err2 := ioutil.ReadAll(response.Body)
+	if err2 != nil {
+		c.Errorf("FavoriteTweetByUser failed to read result: %v", err.String())
+		return err
+	}
+	c.Debugf("FavoriteTweetByUser response: %v", string(jsonVal))
+	if response.StatusCode != 200 {
+		c.Errorf("FavoriteTweetByUser failed to post status. StatusCode: %d", response.StatusCode)
+		return os.NewError("FavoriteTweetByUser failed to post status.")
+	}
+	return nil
+}
+
+func RetweetTweetByUser(c appengine.Context, statusId string, user TwitterUser) os.Error {
+	url := fmt.Sprintf("http://api.twitter.com/1/statuses/retweet/%s.json", statusId)
+	c.Debugf("RetweetTweetByUser url: %s", url)
+	request, _ := http.NewRequest("POST", url, bytes.NewBufferString(""))
+	request.Header.Set("Authorization", oAuthHeader(c, "POST", url, map[string]interface{}{
+		"withUserAccessToken": true,
+		"user": &user,
+	}))
+	c.Debugf("RetweetTweetByUser Authorization: %v", request.Header.Get("Authorization"))
+	client := urlfetch.Client(c)
+	response, err := client.Do(request)
+	if err != nil {
+		c.Errorf("RetweetTweetByUser failed to api call: %v", err.String())
+		return err
+	}
+	jsonVal, err2 := ioutil.ReadAll(response.Body)
+	if err2 != nil {
+		c.Errorf("RetweetTweetByUser failed to read result: %v", err.String())
+		return err
+	}
+	c.Debugf("RetweetTweetByUser response: %v", string(jsonVal))
+	if response.StatusCode != 200 {
+		c.Errorf("RetweetTweetByUser failed to post status. StatusCode: %d", response.StatusCode)
+		return os.NewError("RetweetTweetByUser failed to post status.")
+	}
+	return nil
 }
 
