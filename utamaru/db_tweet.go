@@ -76,9 +76,10 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 			c.Infof("SaveTweets tweet is only hashtag: %s", hashtag)
 			continue
 		}
+		c.Debugf("SaveTweets tweet : %s", tweet.Text)
 		if len(tweet.To_User_Id_Str) > 0 || tweet.Text[0:4] == "RT @" {
 			// RTは、無視する
-			c.Infof("SaveTweets tweet is RT: %s", hashtag)
+			c.Infof("SaveTweets tweet is RT: %s", tweet.Text)
 			continue
 		}
 		t := NewTweet(tweet)
@@ -259,7 +260,6 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 		return nil, err
 	}
 	var tweetsResult []Tweet
-	c.Debugf("GetTweetsByHashtag length: %d", len(tweets))
 	for _, tweet := range tweets {
 		q := datastore.NewQuery("TweetLikeUser").Filter("TweetKey =", tweet.Hashtag + ":" + tweet.Id_Str).Order("-Created_At").Limit(100)
 		if _, err := q.GetAll(c, &tweet.Users); err != nil {

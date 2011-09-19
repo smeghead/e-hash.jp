@@ -21,7 +21,7 @@ func(h *Hashtag) Valid() bool {
 	if !ContainsMultibyteChar(h.Name) {
 		return false
 	}
-	if len(h.Name) < 6 {
+	if len(h.Name) < 1 + 3 * 5 { //バイト数
 		return false
 	}
 	return true
@@ -44,6 +44,7 @@ func SaveHashtag(c appengine.Context, hashtag string, count int) os.Error {
 	}
 	h.Date = datastore.SecondsToTime(time.Seconds())
 
+	c.Debugf("SaveHashtag Name: %s", h.Name)
 	if !h.Valid() {
 		c.Infof("SaveHashtag %s is invalid. ignore.", h.Name)
 		return nil
@@ -62,7 +63,7 @@ func SaveHashtag(c appengine.Context, hashtag string, count int) os.Error {
 
 func DecrementOldHashtags(c appengine.Context, length int) os.Error {
 	// 古くてカウントが多いもののカウントを減らす
-	q := datastore.NewQuery("Hashtag").Order("Date").Limit(length)
+	q := datastore.NewQuery("Hashtag").Order("-Count").Limit(length)
 	hashtags := make([]Hashtag, 0, length)
 	if _, err := q.GetAll(c, &hashtags); err != nil {
 		c.Errorf("DecrementOldHashtags failed to search hashtags for decrement")
@@ -71,11 +72,17 @@ func DecrementOldHashtags(c appengine.Context, length int) os.Error {
 	c.Infof("DecrementOldHashtags got old hashtags len: %d", len(hashtags))
 	r := rand.New(rand.NewSource(time.Seconds()))
 	for _, h := range hashtags {
-		if h.Count <= 3 {
-			continue;
-		}
+//		if h.Count <= 4 {
+//			continue;
+//		}
 		c.Debugf("DecrementOldHashtags old hashtag decrement before: %v (%d)", h.Name, h.Count)
-		h.Count = (r.Int() % 3) + 1 // 1 or 2 or 3
+		h.Count -= (r.Int() % 3) + 1 // 1 or 2 or 3
+		if h.Count > 5 {
+			h.Count = 5
+		}
+		if h.Count < 1 {
+			h.Count = 1
+		}
 		c.Infof("DecrementOldHashtags old hashtag decrement after : %v (%d)", h.Name, h.Count)
 		key := datastore.NewKey("Hashtag", h.Name, 0, nil)
 		if _, err := datastore.Put(c, key, &h); err != nil {

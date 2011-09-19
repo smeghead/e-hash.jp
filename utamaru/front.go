@@ -54,7 +54,8 @@ func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}
 	commonMap["Common_HashtagsForTicker"] = hashtagsForTicker
 
 	hashtagsHot, err := GetPublicHashtags(c, map[string]interface{}{
-		"length": 10,
+		"length": 5,
+		"order": "-View",
 	})
 	if err != nil {
 		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err.String())
@@ -63,7 +64,7 @@ func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}
 	commonMap["Common_HashtagsHot"] = hashtagsHot
 
 	hashtagsNew, err := GetPublicHashtags(c, map[string]interface{}{
-		"length": 10,
+		"length": 5,
 		"order": "-Date",
 	})
 	if err != nil {
@@ -100,7 +101,6 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	topCount := 5
 	hles := make([]HashtagListElement, 0, topCount)
 	for _, h := range hashtagsForTop {
-		c.Debugf("FrontTop hashtag: %v", h.Name)
 		tweets, err := GetTweetsByHashtag(c, h.Name, map[string]interface{}{
 			"length": 2,
 		})
@@ -137,7 +137,6 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	hashtag := "#" + path[3:]
-	c.Debugf("FrontSubject hashtag: %s", hashtag)
 
 	user := getUser(c, w, r)
 	resultMap, err := getCommonMap(c, user)
@@ -174,6 +173,7 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resultMap["elements"] = hle
+	resultMap["encodedhashtag"] = Encode(hashtag[1:])
 	if err := subjectTemplate.Execute(w, resultMap); err != nil {
 		c.Errorf("FrontSubject failed to merge template: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -461,6 +461,11 @@ func SignoutHandler(w http.ResponseWriter, r *http.Request) {
 		c.Errorf("SignoutHandler failed to delete user: %v", err)
 	}
 	c.Debugf("SignoutHandler ok")
+	http.SetCookie(w, &http.Cookie{
+		Name: "id",
+		Value: "",
+		Path: "/",
+	})
 
 	http.Redirect(w, r, url, 302)
 }

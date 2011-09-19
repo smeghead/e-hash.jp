@@ -3,6 +3,34 @@ $(function(){
     s = '0000' + s;
     return s.substring(s.length - n);
   };
+  var message_display = function(mes){
+    var box = $(document.createElement('div'));
+    box.addClass('message');
+    box.text(mes);
+    $('body').append(box);
+    $('.message').show('slow');
+    setTimeout(function(){
+      $('.message').hide('slow');
+      $('body').remove('.message');
+    }, 5000);
+  };
+  var existsInPage = function (element) {
+    var topLocation = 0;
+    do {
+      topLocation += element.offsetTop  || 0;
+      if (element.offsetParent == document.body)
+        if (element.position == 'absolute') break;
+
+      element = element.offsetParent;
+    } while (element);
+
+    var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop || 0;
+
+    var browserHeight = window.innerHeight ||
+      (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientHeight) ||
+      (document.body && document.body.clientHeight) || 0;
+    return (topLocation > scrollPosition) && (topLocation < scrollPosition + browserHeight);
+  };
 
   //initialize
   var initialize = function(target){
@@ -23,9 +51,10 @@ $(function(){
         date_string + '</a>');
       $(this).show();
     });
-    $('a.subject_link', target).click(function(){
-      document.location.href = '/s/' + encodeURIComponent($(this).text().substring(1));
-      return false;
+    $('a.subject_link', target).each(function(){
+      var $this = $(this);
+      var hashtag = $this.data('hashtag');
+      $this.attr('href', '/s/' + encodeURIComponent(hashtag.substring(1)));
     });
     $('div.text', target).each(function(){
       var html = $(this).html();
@@ -43,11 +72,6 @@ $(function(){
       });
       $(this).html(html);
     });
-//    $('div.twitter-buttons div.button', target).each(function(){
-//      var $this = $(this);
-//      if ($this.hasClass('retweeted') || $this.hasClass('favorited')) return;
-//      $this.parent().attr('href', $this.data('href'));
-//    });
     //events
     $('a.profile', target).click(function(){
       var $this = $(this);
@@ -66,6 +90,7 @@ $(function(){
           $('div.retweet', $this)
             .removeClass('retweet')
             .addClass('retweeted');
+          message_display('Retweetしました');
         }
       );
       return false;
@@ -78,6 +103,7 @@ $(function(){
           $('div.favorite', $this)
             .removeClass('favorite')
             .addClass('favorited');
+          message_display('Favoriteしました');
         }
       );
       return false;
@@ -95,6 +121,7 @@ $(function(){
             var image = document.createElement('img');
             image.src = 'http://img.tweetimag.es/i/' + data + '_m';
             $('.users', $this.parent().parent().parent().parent()).append(image);
+            message_display('Like!しました');
           }
         }
       );
@@ -124,7 +151,18 @@ $(function(){
       initialize(data_element);
       $('div#subject_blocks').append(data_element);
       $this.data('page', page);
+      $this.text('もっと読む')
     });
+  });
+  $('div.more-tweets').each(function(){
+    var $this = $(this);
+    setInterval(function(){
+      var org_text = $this.text();
+      if (existsInPage($this.get(0))) {
+        $this.text('読み込み中...');
+        $this.click();
+      }
+    }, 1000);
   });
 
   //ticker
@@ -175,7 +213,7 @@ $(function(){
           var tweet = $(data);
           initialize(tweet);
           tweet.insertBefore($('div#subject_blocks').first());
-          alert('Twitterにつぶやきました');
+          message_display('Twitterにつぶやきました');
         }
       }
     );

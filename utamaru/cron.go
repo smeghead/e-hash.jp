@@ -69,6 +69,12 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("RecordTrendsHashtags")
+	// decrement old hashtag
+	if err := DecrementOldHashtags(c, 20); err != nil {
+		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+	}
+
 	trends, err := GetTrends(c)
 	if err != nil {
 		c.Errorf("RecordTrendsHashtags failed to GetTrends: %v", err.String())
@@ -93,16 +99,17 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	// decrement old hashtag
-	if err := DecrementOldHashtags(c, 5); err != nil {
-		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
-	}
 }
 
 func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("RecordRssHashtags")
+	// decrement old hashtag
+	if err := DecrementOldHashtags(c, 20); err != nil {
+		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+	}
+
 	hashtags, err := GetHashtagsFromRss(c)
 	if err != nil {
 		c.Errorf("RecordRssHashtags failed to GetTrends: %v", err.String())
@@ -119,11 +126,6 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		c.Debugf("RecordRssHashtags saved: %s", h.Name)
-	}
-	// decrement old hashtag
-	if err := DecrementOldHashtags(c, 5); err != nil {
-		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
 	}
 	c.Debugf("RecordRssHashtags end .. ok")
 	fmt.Fprintf(w, "end<br>\n")
