@@ -44,7 +44,7 @@ func WorkerCrawleHashtagHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		// Post Status.
 		url := conf.Url + "s/" + Encode(hashtag[1:])
-		status := fmt.Sprintf("更新しました。%s %s %s", hashtag, ShorterUrl(c, url), SiteTitle)
+		status := fmt.Sprintf("更新しました。「%s」 %s %s", hashtag[1:], ShorterUrl(c, url), SiteTitle)
 		if err := PostTweet(c, status); err != nil {
 			c.Errorf("FrontTop failed to debug post: %v", err.String())
 			//ErrorPage(w, err.String(), http.StatusInternalServerError)

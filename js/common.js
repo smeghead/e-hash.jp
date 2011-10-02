@@ -64,7 +64,7 @@ $(function(){
       });
       var hashtag_regexp = /[#＃][^ .;:　\n]+/g;
       html = html.replace(hashtag_regexp, function(x){
-        return '<a class="twitter-hashtag" href="http://twitter.com/#!/search?q=' + encodeURIComponent(x) + '" target="_blank">' + x + '</a>';
+        return '<a class="twitter-hashtag" href="/s/' + encodeURIComponent(x.substring(1)) + '">' + x + '</a>';
       });
       var at_regexp = /@[_a-z0-9]+/ig;
       html = html.replace(at_regexp, function(x){
@@ -91,6 +91,12 @@ $(function(){
             .removeClass('retweet')
             .addClass('retweeted');
           message_display('Retweetしました');
+          // update page.
+          if (data != '') {
+            var image = document.createElement('img');
+            image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+            $('.users', $this.parent().parent().parent()).append(image);
+          }
         }
       );
       return false;
@@ -104,6 +110,13 @@ $(function(){
             .removeClass('favorite')
             .addClass('favorited');
           message_display('Favoriteしました');
+          console.log(data)
+          // update page.
+          if (data != '') {
+            var image = document.createElement('img');
+            image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+            $('.users', $this.parent().parent().parent()).append(image);
+          }
         }
       );
       return false;

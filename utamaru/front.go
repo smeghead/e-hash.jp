@@ -242,12 +242,14 @@ func PointUpHandler(w http.ResponseWriter, r *http.Request) {
 	key := r.FormValue("key")
 	pointType := r.FormValue("type")
 
-	err := PointUpTweet(c, key, pointType)
+	user := getUser(c, w, r)
+	err := PointUpTweet(c, key, pointType, user)
 	if err != nil {
 		c.Errorf("PointUpHandler failed to point up. : %v", err)
 		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
 		return
 	}
+	fmt.Fprintf(w, user.ScreenName)
 }
 
 func FavoriteHandler(w http.ResponseWriter, r *http.Request) {
@@ -261,13 +263,13 @@ func FavoriteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	key := r.FormValue("key")
 
-	if err := PointUpTweet(c, key, "favorite"); err != nil {
+	user := getUser(c, w, r)
+	if err := PointUpTweet(c, key, "favorite", user); err != nil {
 		c.Errorf("FavoriteHandler failed to point up. : %v", err)
 		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
 		return
 	}
 	statusId := r.FormValue("statusId")
-	user := getUser(c, w, r)
 	if user.ScreenName == "" {
 		c.Infof("FavoriteHandler failed to find user. empty user.")
 		fmt.Fprint(w, "needs_oauth")
@@ -278,7 +280,7 @@ func FavoriteHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, "favoriteに失敗しました。", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "ok")
+	fmt.Fprintf(w, user.ScreenName)
 }
 
 func RetweetHandler(w http.ResponseWriter, r *http.Request) {
@@ -292,13 +294,13 @@ func RetweetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	key := r.FormValue("key")
 
-	if err := PointUpTweet(c, key, "retweet"); err != nil {
+	user := getUser(c, w, r)
+	if err := PointUpTweet(c, key, "retweet", user); err != nil {
 		c.Errorf("RetweetHandler failed to point up. : %v", err)
 		ErrorPage(w, "ポイントアップに失敗しました。", http.StatusInternalServerError)
 		return
 	}
 	statusId := r.FormValue("statusId")
-	user := getUser(c, w, r)
 	if user.ScreenName == "" {
 		c.Infof("RetweetHandler failed to find user. empty user.")
 		fmt.Fprint(w, "needs_oauth")
@@ -309,7 +311,7 @@ func RetweetHandler(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, "retweetに失敗しました。", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, "ok")
+	fmt.Fprintf(w, user.ScreenName)
 }
 
 func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {

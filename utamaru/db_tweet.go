@@ -11,6 +11,7 @@ import (
 
 type TweetLikeUser struct {
 	TweetKey string
+	LikeType string
 	UserId string
 	ScreenName string
 	Created_At datastore.Time
@@ -141,13 +142,14 @@ func UpdateTweet(c appengine.Context, hashtag string) os.Error {
 	return nil
 }
 
-func PointUpTweet(c appengine.Context, keyString, pointType string) os.Error {
+func PointUpTweet(c appengine.Context, keyString, pointType string, user TwitterUser) os.Error {
+	c.Debugf("PointUpTweet start")
 	//search
 	var tweet Tweet
 
 	c.Debugf("tweet pointType: %s key: %s", pointType, keyString)
+	key := datastore.NewKey("Tweet", keyString, 0, nil)
 	err := datastore.RunInTransaction(c, func(c appengine.Context) os.Error {
-		key := datastore.NewKey("Tweet", keyString, 0, nil)
 		if err := datastore.Get(c, key, &tweet); err != nil {
 			c.Errorf("PointUpTweet failed to get: %v", err.String())
 			return err
@@ -179,6 +181,26 @@ func PointUpTweet(c appengine.Context, keyString, pointType string) os.Error {
 		c.Errorf("Transaction failed: %v", err)
 		return err
 	}
+	// ユーザの記録
+	c.Debugf("PointUpTweet user.ScreenName: %v", user)
+	if user.ScreenName != "" {
+		c.Debugf("PointUpTweet save user")
+		tweetLikeUser := TweetLikeUser{
+			TweetKey: tweet.Hashtag + ":" + tweet.Id_Str,
+			LikeType: pointType,
+			UserId: user.Id,
+			ScreenName: user.ScreenName,
+			Created_At: datastore.SecondsToTime(time.Seconds()),
+		}
+		c.Debugf("PointUpTweet user %v", tweetLikeUser)
+		key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
+		if _, err := datastore.Put(c, key, &tweetLikeUser); err != nil {
+			c.Errorf("PointUpTweet TweetLikeUser failed to put: %v", err.String())
+			return err
+		}
+		c.Debugf("PointUpTweet saved user")
+	}
+	c.Debugf("PointUpTweet end")
 	return nil
 }
 
@@ -223,6 +245,7 @@ func LikeTweet(c appengine.Context, keyString string, user TwitterUser) os.Error
 	key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
 	tweetLikeUser := TweetLikeUser{
 		TweetKey: tweet.Hashtag + ":" + tweet.Id_Str,
+		LikeType: "like",
 		UserId: user.Id,
 		ScreenName: user.ScreenName,
 		Created_At: datastore.SecondsToTime(time.Seconds()),

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="icon.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2"
+     inkscape:cx="158.30801"
+     inkscape:cy="433.77049"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1210"
+     inkscape:window-height="789"
+     inkscape:window-x="1"
+     inkscape:window-y="53"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g5368"
+       transform="matrix(0.9525,0,0,0.96,-21.308141,445.31771)">
+      <g
+         transform="translate(0,-0.50001335)"
+         id="g5350">
+        <rect
+           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="rect2993"
+           width="149.79829"
+           height="17.618176"
+           x="90.963371"
+           y="178.91817" />
+        <rect
+           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="rect2993-9"
+           width="149.79829"
+           height="17.618176"
+           x="90.963371"
+           y="243.18803" />
+      </g>
+      <g
+         transform="translate(0.8625164,0)"
+         id="g5354">
+        <rect
+           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="rect2993-0"
+           width="149.79829"
+           height="17.618176"
+           x="144.46303"
+           y="-205.94402"
+           transform="matrix(0,1,-1,0,0,0)" />
+        <rect
+           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+           id="rect2993-9-3"
+           width="149.79829"
+           height="17.618176"
+           x="144.46303"
+           y="-141.67416"
+           transform="matrix(0,1,-1,0,0,0)" />
+      </g>
+    </g>
+    <rect
+       style="fill:none;stroke:none"
+       id="rect5378"
+       width="179.10112"
+       height="179.10112"
+       x="47.125351"
+       y="566.35486"
+       inkscape:export-filename="/home/smeghead/work/go/utamaru/images/icon.png"
+       inkscape:export-xdpi="64"
+       inkscape:export-ydpi="64" />
+  </g>
+</svg>
