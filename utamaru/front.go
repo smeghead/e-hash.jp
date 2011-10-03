@@ -521,11 +521,14 @@ func FrontSubjectMore(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("FrontSubjectMore hashtag: %s", hashtag)
 	page, _ := strconv.Atoi(pageStr)
 	c.Debugf("FrontSubjectMore page: %d", page)
+	sort := r.FormValue("sort")
+	c.Debugf("FrontSubjectMore sort: %s", sort)
 
 	var tweets []Tweet
 	tweets, err := GetTweetsByHashtag(c, hashtag, map[string]interface{}{
 		"length": 20,
 		"page": page,
+		"sort": sort,
 	})
 	if err != nil {
 		c.Errorf("FrontSubjectMore failed to retrieve tweets: %v", err.String())

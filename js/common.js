@@ -155,7 +155,9 @@ $(function(){
     var $this = $(this);
     var hashtag = $this.data('hashtag');
     var page = $this.data('page') + 1;
-    $.get('/s/more', {hashtag: hashtag, page: page}, function(data){
+    var sort = document.location.search && document.location.search.indexOf('sort=new') > -1 ? 'new' : '';
+    console.log('sort: ' + sort);
+    $.get('/s/more', {hashtag: hashtag, page: page, sort: sort}, function(data){
       if (!data) {
         $('div.more-tweets').hide('slow');
         return;
