@@ -367,3 +367,12 @@ div.message {
 	font-size: 20pt;
 	padding: 30px;
 }
+div#sort-box a {
+	margin: 1px;
+	padding: 5px;
+}
+div#sort-box a.current {
+	color: white;
+	background-color: #000066;
+	border-radius: 5px;
+}

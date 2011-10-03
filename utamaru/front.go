@@ -154,24 +154,20 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	} else {
 		ViewHashtag(c, h)
 	}
+	sort := r.FormValue("sort")
 
 	var tweets []Tweet
 	tweets, err = GetTweetsByHashtag(c, hashtag, map[string]interface{}{
 		"length": 20,
+		"sort": sort,
 	})
 	if err != nil {
 		c.Errorf("FrontSubject failed to retrieve tweets: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
 	}
 	hle := HashtagListElement{h, tweets}
-	// debug
-	c.Debugf("FrontSubject user debug")
-	for _, t := range tweets {
-		for _, u := range t.Users {
-			c.Debugf("FrontSubject user: %v", u)
-		}
-	}
 
+	resultMap["sort"] = sort
 	resultMap["elements"] = hle
 	resultMap["encodedhashtag"] = Encode(hashtag[1:])
 	if err := subjectTemplate.Execute(w, resultMap); err != nil {

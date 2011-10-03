@@ -275,8 +275,17 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 	if options["page"] != nil {
 		page = options["page"].(int)
 	}
+	order := "-Point"
+	if options["sort"] != nil {
+		c.Debugf("GetTweetsByHashtag sort: %v", options["sort"].(string))
+		if options["sort"].(string) == "new" {
+			order = "-Created_At"
+		}
+	}
+	c.Debugf("GetTweetsByHashtag order: %v", order)
+
 	//search
-	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order("-Point").Offset(page * length).Limit(length)
+	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order(order).Offset(page * length).Limit(length)
 	var tweets []Tweet
 	if _, err := q.GetAll(c, &tweets); err != nil {
 		c.Errorf("GetTweetsByHashtag failed to get: %v", err.String())

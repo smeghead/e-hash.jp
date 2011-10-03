@@ -86,6 +86,10 @@
             <input type="submit" class="post" value="Twitterにつぶやく" disabled="disabled" />
           </form>
         </div>
+        <div id="sort-box">
+          <a href="/s/{encodedhashtag}"{.section sort}{.or} class="current"{.end}>人気順</a>
+          <a href="/s/{encodedhashtag}?sort=new"{.section sort} class="current"{.end}>新しい順</a>
+        </div>
         <div id="subject_blocks">
           {.repeated section elements.Tweets}
             <div class="subject_block">
