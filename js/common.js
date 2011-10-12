@@ -110,7 +110,6 @@ $(function(){
             .removeClass('favorite')
             .addClass('favorited');
           message_display('Favoriteしました');
-          console.log(data)
           // update page.
           if (data != '') {
             var image = document.createElement('img');
@@ -156,7 +155,6 @@ $(function(){
     var hashtag = $this.data('hashtag');
     var page = $this.data('page') + 1;
     var sort = document.location.search && document.location.search.indexOf('sort=new') > -1 ? 'new' : '';
-    console.log('sort: ' + sort);
     $.get('/s/more', {hashtag: hashtag, page: page, sort: sort}, function(data){
       if (!data) {
         $('div.more-tweets').hide('slow');
@@ -254,21 +252,6 @@ _gaq.push(['_trackPageview']);
   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
-//woopra
-function woopraReady(tracker) {
-  tracker.setDomain('e-hash.jp');
-  tracker.setIdleTimeout(300000);
-  tracker.track();
-  return false;
-}
-(function() {
-  var wsc = document.createElement('script');
-  wsc.src = document.location.protocol+'//static.woopra.com/js/woopra.js';
-  wsc.type = 'text/javascript';
-  wsc.async = true;
-  var ssc = document.getElementsByTagName('script')[0];
-  ssc.parentNode.insertBefore(wsc, ssc);
 })();
 
 //  vim: set ts=2 sw=2 sts=2 expandtab fenc=utf-8:
