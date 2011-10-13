@@ -1,26 +1,26 @@
-        {.repeated section Tweets}
+        {{range .Tweets}}
         <div class="subject_block">
           <div class="icon_block">
-            <a class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name}" data-key="{Hashtag|html}:{Id_Str}"><img class="icon" src="{Profile_Image_Url}" /></a>
+            <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name}}" data-key="{{.Hashtag|html}}:{{.Id_Str}}"><img class="icon" src="{{.Profile_Image_Url}}" /></a>
           </div>
           <div class="subject_right">
             <div class="twitter-buttons">
-              <a class="favorite" data-statusid=":{Id_Str|html}" data-key="{Hashtag|html}:{Id_Str|html}"><div class="button favorite"></div></a>
-              <a class="retweet" data-statusid=":{Id_Str|html}" data-key="{Hashtag|html}:{Id_Str|html}"><div class="button retweet"></div></a>
+              <a class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><div class="button favorite"></div></a>
+              <a class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><div class="button retweet"></div></a>
               <div class="like">
-                <a data-key="{Hashtag|html}:{Id_Str|html}" class="like"><span class="user-count"></span>Like!</a>
+                <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="like"><span class="user-count"></span>Like!</a>
               </div>
             </div>
             <div class="subject_record">
-              <a data-key="{Hashtag|html}:{Id_Str}" class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name}">{Screen_name|html}</a>
-              <span data-screenname="{Screen_name}" data-statusid="{Id_Str}/" class="create_at">{Created_At}</span>
+              <a data-key="{{.Hashtag|html}}:{{.Id_Str}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name}}">{{.Screen_name|html}}</a>
+              <span data-screenname="{{.Screen_name}}" data-statusid="{{.Id_Str}}/" class="create_at">{{.Created_At}}</span>
             </div>
-            <div class="text"> {Text|html}</div>
+            <div class="text"> {{.Text|html}}</div>
           </div>
           <div class="users">
-              {.repeated section Users}
-                <img src="http://img.tweetimag.es/i/{ScreenName}_m" />
-              {.end}
+              {{range .Users}}
+                <img src="http://img.tweetimag.es/i/{{.ScreenName}}_m" />
+              {{end}}
           </div>
         </div>
-        {.end}
+        {{end}}
