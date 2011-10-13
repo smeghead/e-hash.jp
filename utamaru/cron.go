@@ -162,7 +162,7 @@ func CronAdmin(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	var adminTemplate = template.MustParseFile("templates/admin.html", nil)
+	var adminTemplate, _ = template.ParseFile("templates/admin.html")
 	c.Infof("CronAdmin")
 	if err := adminTemplate.Execute(w, nil); err != nil {
 		c.Errorf("FrontTop failed to merge template: %v", err.String())

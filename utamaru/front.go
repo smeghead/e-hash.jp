@@ -16,6 +16,13 @@ type HashtagListElement struct {
 	Hashtag Hashtag
 	Tweets []Tweet
 }
+func mustParseFile(templateName string) *template.Template {
+	tmpl, err := template.ParseFile("templates/" + templateName + ".html")
+	if err != nil {
+		fmt.Printf("error failed to parse template. %v\n", err)
+	}
+	return tmpl
+}
 
 func getUser(c appengine.Context, w http.ResponseWriter, r *http.Request) TwitterUser {
 	sessionId := getSessionId(c, r)
@@ -32,7 +39,7 @@ func getUser(c appengine.Context, w http.ResponseWriter, r *http.Request) Twitte
 }
 
 func getCookie(r *http.Request, name string) string {
-	for _, c := range r.Cookie {
+	for _, c := range r.Cookies() {
 		if c.Name == name {
 			return c.Value
 		}
@@ -76,7 +83,6 @@ func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}
 	return commonMap, nil
 }
 
-var topTemplate = template.MustParseFile("templates/index.html", nil)
 func FrontTop(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -119,6 +125,8 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	}
 	resultMap["elements"] = hles
 
+var topTemplate = mustParseFile("index")
+	c.Debugf("parsedd")
 	if err := topTemplate.Execute(w, resultMap); err != nil {
 		c.Errorf("FrontTop failed to merge template: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -126,7 +134,7 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var subjectTemplate = template.MustParseFile("templates/subject.html", nil)
+var subjectTemplate = mustParseFile("subject")
 func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -178,8 +186,8 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("FrontSubject end")
 }
 
+var hashtagsTemplate = mustParseFile("hashtags")
 func FrontHashtags(w http.ResponseWriter, r *http.Request) {
-	var hashtagsTemplate = template.MustParseFile("templates/hashtags.html", nil)
 	c := appengine.NewContext(r)
 
 	user := getUser(c, w, r)
@@ -207,7 +215,7 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var aboutTemplate = template.MustParseFile("templates/about.html", nil)
+var aboutTemplate = mustParseFile("about")
 func FrontAbout(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -513,7 +521,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, user.ScreenName)
 }
 
-var subjectMoreTemplate = template.MustParseFile("templates/subject_more.html", nil)
+var subjectMoreTemplate = mustParseFile("subject_more")
 func FrontSubjectMore(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	hashtag := r.FormValue("hashtag")

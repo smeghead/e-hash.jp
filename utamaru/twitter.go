@@ -96,7 +96,7 @@ func oAuthHeader(c appengine.Context, method, url string, options map[string]int
 		mapKeys[i] = k
 		i++
 	}
-	sort.SortStrings(mapKeys)
+	sort.StringsAreSorted(mapKeys)
 	for _, k := range mapKeys {
 		oauthArray = append(oauthArray, k + Encode("=") + Encode(oauthMap[k]))
 	}
@@ -143,11 +143,11 @@ func GetRequestToken(c appengine.Context) (*TwitterRequestToken, os.Error) {
 		return nil, err
 	}
 	s := string(bytes)
-	splited := strings.Split(s, "&", -1)
+	splited := strings.Split(s, "&")
 	resMap := make(map[string]string, 3)
 	for _, e := range splited {
 		c.Debugf("elem: %s", e)
-		keyValue := strings.Split(e, "=", -1)
+		keyValue := strings.Split(e, "=")
 		if len(keyValue) == 2 {
 			c.Debugf("keyvalue: %s", keyValue)
 			resMap[keyValue[0]] = keyValue[1]
@@ -178,11 +178,11 @@ func GetAccessToken(c appengine.Context, requestToken TwitterRequestToken, oauth
 		return nil, err
 	}
 	s := string(bytes)
-	splited := strings.Split(s, "&", -1)
+	splited := strings.Split(s, "&")
 	resMap := make(map[string]string, 3)
 	for _, e := range splited {
 		c.Debugf("elem: %s", e)
-		keyValue := strings.Split(e, "=", -1)
+		keyValue := strings.Split(e, "=")
 		if len(keyValue) == 2 {
 			c.Debugf("keyvalue: %s", keyValue)
 			resMap[keyValue[0]] = keyValue[1]
@@ -250,7 +250,7 @@ func InvokePublicTimelineStream(c appengine.Context, procTweet func(TweetTw) os.
 			return nil
 		case nr > 0:
 			str += string(buf[0:nr])
-			tweetsStrings := strings.Split(str, "\n", -1)
+			tweetsStrings := strings.Split(str, "\n")
 			str = tweetsStrings[len(tweetsStrings) - 1]
 			if len(tweetsStrings) > 1 {
 				for _, e := range tweetsStrings {

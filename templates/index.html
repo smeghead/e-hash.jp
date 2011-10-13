@@ -3,17 +3,18 @@
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja"
     xmlns:og="http://ogp.me/ns#"
-    xmlns:fb="http://www.facebook.com/2008/fbml">
+    xmlns:fb="http://www.facebook.com/2008/fbml"
+    xmlns:g="http://base.google.com/ns/1.0">
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>{siteTitle|html}</title>
-    <meta name="description" content="Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。">
-    <meta name="keywords" content="{siteTitle|html},日本語ハッシュタグ,ハッシュタグ,大喜利,Twitter,ツイッター">
-    <meta property="og:title" content="{siteTitle|html}" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>{{.siteTitle|html}}</title>
+    <meta name="description" content="Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。" />
+    <meta name="keywords" content="{{.siteTitle|html}},日本語ハッシュタグ,ハッシュタグ,大喜利,Twitter,ツイッター" />
+    <meta property="og:title" content="{{.siteTitle|html}}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://www.e-hash.jp/" />
     <meta property="og:image" content="http://www.e-hash.jp/favicon.ico" />
-    <meta property="og:site_name" content="{siteTitle|html}" />
+    <meta property="og:site_name" content="{{.siteTitle|html}}" />
     <meta property="fb:admins" content="100001493178908" />
     <link href="/css/default.css" type="text/css" rel="stylesheet"></link>
     <link href="/css/style.css" type="text/css" rel="stylesheet"></link>
@@ -29,9 +30,9 @@
         <div id="ticker-elements">
         </div>
         <div id="ticker-elements-hide">
-          {.repeated section Common_HashtagsForTicker}
-            <span><a class="subject_link" href="#" data-hashtag="{Name|html}">{Name|html}</a></span>
-          {.end}
+          {{range .Common_HashtagsForTicker}}
+            <span><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></span>
+          {{end}}
         </div>
       </div>
       <div id="social-bookmarks">
@@ -45,13 +46,11 @@
           <iframe src="http://www.facebook.com/plugins/like.php?app_id=168512816559710&amp;href=http%3A%2F%2Fwww.e-hash.jp%2F&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe>
         </div>
         <div id="user-info">
-        {.section user.ScreenName}
-          <img src="http://img.tweetimag.es/i/{user.ScreenName|html}_m" />
+          <img src="http://img.tweetimag.es/i/{{.user.ScreenName|html}}_m" />
           <a href="/signout">サインアウト</a>
-        {.end}
         </div>
       </div>
-      <h1><a href="/">{siteTitle|html}</a></h1>
+      <h1><a href="/">{{.siteTitle|html}}</a></h1>
       <div class="clear"></div>
     </div>
     <div id="topad">
@@ -73,7 +72,7 @@
         <ul class="menu">
           <li><a href="/" class="active"><span>トップ</span></a></li>
           <li><a href="/hashtags"><span>ハッシュタグ一覧</span></a></li>
-          <li><a href="/about"><span>{siteTitle|html}について</span></a></li>
+          <li><a href="/about"><span>{{.siteTitle|html}}について</span></a></li>
         </ul>
       </div>
       <div id="main">
@@ -82,39 +81,39 @@
             Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。
           </span>
         </div>
-        {.repeated section elements}
-          <h2><a class="subject_link" href="#" data-hashtag="{Hashtag.Name|html}">{Hashtag.Name|html}</a></h2>
-          {.repeated section Tweets}
+        {{range .elements}}
+          <h2><a class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}">{{.Hashtag.Name|html}}</a></h2>
+          {{range .Tweets}}
             <div class="subject_block">
               <div class="icon_block">
-                <a class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name|html}" data-key="{Hashtag|html}:{Id_Str|html}"><img class="icon" src="{Profile_Image_Url|html}" /></a>
+                <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
               </div>
               <div class="subject_right">
                 <div class="twitter-buttons">
-                  <a class="favorite" data-statusid=":{Id_Str|html}" data-key="{Hashtag|html}:{Id_Str|html}"><div class="button favorite"></div></a>
-                  <a class="retweet" data-statusid=":{Id_Str|html}" data-key="{Hashtag|html}:{Id_Str|html}"><div class="button retweet"></div></a>
+                  <a class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><div class="button favorite"></div></a>
+                  <a class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><div class="button retweet"></div></a>
                   <div class="like">
-                    <a data-key="{Hashtag|html}:{Id_Str|html}" class="like"><span class="user-count"></span>Like!</a>
+                    <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="like"><span class="user-count"></span>Like!</a>
                   </div>
                 </div>
                 <div class="subject_record">
-                  <a data-key="{Hashtag|html}:{Id_Str|html}" class="profile" href="https://twitter.com/intent/user?screen_name={Screen_name|html}">{Screen_name|html}</a>
-                  <span data-screenname="{Screen_name|html}" data-statusid="{Id_Str|html}/" class="create_at">{Created_At|html}</span>
+                  <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}">{{.Screen_name|html}}</a>
+                  <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
                 </div>
-                <div class="text"> {Text|html}</div>
+                <div class="text"> {{.Text|html}}</div>
               </div>
               <div class="users">
-                  {.repeated section Users}
-                    <img src="http://img.tweetimag.es/i/{ScreenName|html}_m" />
-                  {.end}
+                  {{range .Users}}
+                    <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
+                  {{end}}
               </div>
             </div>
-          {.end}
+          {{end}}
           <div class="more">
-            <a class="subject_link" href="#" data-hashtag="{Hashtag.Name|html}">{Hashtag.Name|html}をもっと見る</a>
+            <a class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}">{{.Hashtag.Name|html}}をもっと見る</a>
           </div>
           <hr />
-        {.end}
+        {{end}}
         <div class="totop">
           <a href="#top">↑一番上へ</a>
         </div>
@@ -122,9 +121,9 @@
       <div id="sidebar">
         <div class="subject_list">
           <h5>人気</h5>
-          {.repeated section Common_HashtagsHot}
-            <span><a class="subject_link" href="#" data-hashtag="{Name|html}">{Name|html}</a></span>&nbsp;
-          {.end}
+          {{range .Common_HashtagsHot}}
+            <span><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></span>&nbsp;
+          {{end}}
         </div>
         <hr />
         <div id="sidead">
@@ -143,9 +142,9 @@
         <hr />
         <div class="subject_list">
           <h5>最新</h5>
-          {.repeated section Common_HashtagsNew}
-            <span><a class="subject_link" href="#" data-hashtag="{Name|html}">{Name|html}</a></span>&nbsp;
-          {.end}
+          {{range .Common_HashtagsNew}}
+            <span><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></span>&nbsp;
+          {{end}}
         </div>
       </div>
       <br clear="all"/>

@@ -46,7 +46,7 @@ func init() {
 
 func ErrorPage(w http.ResponseWriter, message string, code int) {
 	w.WriteHeader(code)
-	var errorTemplate = template.MustParseFile("templates/error.html", nil)
+	var errorTemplate, _ = template.ParseFile("templates/error.html")
 	if err := errorTemplate.Execute(w, map[string]interface{}{
 				"siteTitle": SiteTitle,
 				"ErrorMessage": message,
@@ -129,7 +129,7 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return
 	}
-	user.SessionId = GetUniqId(r.RemoteAddr, r.UserAgent)
+	user.SessionId = GetUniqId(r.RemoteAddr, r.UserAgent())
 	if err := SaveUser(c, *user); err != nil {
 		c.Errorf("GetReqestTokenHandler failed to save: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)

@@ -22,7 +22,7 @@ func NewRequestToken(m map[string]string) TwitterRequestToken {
 
 func SaveRequestToken(c appengine.Context, requestToken TwitterRequestToken) os.Error {
 	c.Debugf("SaveRequestToken requestToken: %s", requestToken.OauthToken)
-	key := datastore.NewKey("TwitterRequestToken", requestToken.OauthToken, 0, nil)
+	key := datastore.NewKey(c, "TwitterRequestToken", requestToken.OauthToken, 0, nil)
 
 	requestToken.Created_At = datastore.SecondsToTime(time.Seconds())
 
@@ -38,7 +38,7 @@ func SaveRequestToken(c appengine.Context, requestToken TwitterRequestToken) os.
 func FindRequestToken(c appengine.Context, requestTokenString string) (TwitterRequestToken, os.Error) {
 	c.Debugf("FindRequestToken requestToken: %s", requestTokenString)
 	//search
-	key := datastore.NewKey("TwitterRequestToken", requestTokenString, 0, nil)
+	key := datastore.NewKey(c, "TwitterRequestToken", requestTokenString, 0, nil)
 
 	var requestToken TwitterRequestToken
 	if err := datastore.Get(c, key, &requestToken); err != nil {
@@ -70,7 +70,7 @@ func NewTwitterUser(m map[string]string) TwitterUser {
 
 func SaveUser(c appengine.Context, user TwitterUser) os.Error {
 	c.Debugf("SaveUser screen_name: %s", user.ScreenName)
-	key := datastore.NewKey("TwitterUser", user.SessionId, 0, nil)
+	key := datastore.NewKey(c, "TwitterUser", user.SessionId, 0, nil)
 
 	user.Created_At = datastore.SecondsToTime(time.Seconds())
 
@@ -85,7 +85,7 @@ func SaveUser(c appengine.Context, user TwitterUser) os.Error {
 
 func FindUser(c appengine.Context, sessionId string) (TwitterUser, os.Error) {
 	c.Debugf("FindUser sessionId: %s", sessionId)
-	key := datastore.NewKey("TwitterUser", sessionId, 0, nil)
+	key := datastore.NewKey(c, "TwitterUser", sessionId, 0, nil)
 
 	var user TwitterUser
 	if err := datastore.Get(c, key, &user); err != nil {
@@ -99,7 +99,7 @@ func FindUser(c appengine.Context, sessionId string) (TwitterUser, os.Error) {
 
 func DeleteUser(c appengine.Context, sessionId string) os.Error {
 	c.Debugf("DeleteUser sessionId: %s", sessionId)
-	key := datastore.NewKey("TwitterUser", sessionId, 0, nil)
+	key := datastore.NewKey(c, "TwitterUser", sessionId, 0, nil)
 
 	if err := datastore.Delete(c, key); err != nil {
 		c.Errorf("DeleteUser failed to get: %v", err.String())

@@ -185,7 +185,7 @@ $(function(){
   $('div#social-bookmarks').css('width', ticker_width + 'px');
   $('div#ticker').css('width', ticker_width + 'px');
   $('div#ticker-elements').html($('div#ticker-elements-hide').html());
-  $('div#ticker-elements').jStockTicker({interval: 13});
+  $('div#ticker-elements').jStockTicker({speed: 2, interval: 40});
   $('div#ticker-elements a').click(function(){
     var hashtag = $(this).text();
     document.location.href = '/s/' + hashtag.substring(1);

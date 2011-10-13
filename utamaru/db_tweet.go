@@ -85,7 +85,7 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 		}
 		t := NewTweet(tweet)
 		t.Hashtag = hashtag
-		key := datastore.NewKey("Tweet", t.String(), 0, nil)
+		key := datastore.NewKey(c, "Tweet", t.String(), 0, nil)
 
 		var old Tweet
 		if err := datastore.Get(c, key, &old); err == nil {
@@ -105,7 +105,7 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 	lastStatusId := tweets[len(tweets) - 1].Id_Str
 	if h, err := FindHashtag(c, hashtag); err == nil {
 		h.LastStatusId = lastStatusId
-		key := datastore.NewKey("Hashtag", hashtag, 0, nil)
+		key := datastore.NewKey(c, "Hashtag", hashtag, 0, nil)
 		if _, er := datastore.Put(c, key, &h); er != nil {
 			c.Errorf("SaveTweets failed to put hashtag: %v", er.String())
 		}
@@ -115,7 +115,7 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) os.Error 
 
 func SaveTweet(c appengine.Context, t Tweet, hashtag string) os.Error {
 	t.Hashtag = hashtag
-	key := datastore.NewKey("Tweet", t.String(), 0, nil)
+	key := datastore.NewKey(c, "Tweet", t.String(), 0, nil)
 
 	if _, err := datastore.Put(c, key, &t); err != nil {
 		c.Errorf("SaveTweet failed to put: %v", err.String())
@@ -128,7 +128,7 @@ func SaveTweet(c appengine.Context, t Tweet, hashtag string) os.Error {
 func UpdateTweet(c appengine.Context, hashtag string) os.Error {
 	//search
 	h := new(Hashtag)
-	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
+	key := datastore.NewKey(c, "Hashtag", hashtag, 0, nil)
 
 	if err := datastore.Get(c, key, h); err != nil {
 		return err
@@ -148,7 +148,7 @@ func PointUpTweet(c appengine.Context, keyString, pointType string, user Twitter
 	var tweet Tweet
 
 	c.Debugf("tweet pointType: %s key: %s", pointType, keyString)
-	key := datastore.NewKey("Tweet", keyString, 0, nil)
+	key := datastore.NewKey(c, "Tweet", keyString, 0, nil)
 	err := datastore.RunInTransaction(c, func(c appengine.Context) os.Error {
 		if err := datastore.Get(c, key, &tweet); err != nil {
 			c.Errorf("PointUpTweet failed to get: %v", err.String())
@@ -176,7 +176,7 @@ func PointUpTweet(c appengine.Context, keyString, pointType string, user Twitter
 			return err
 		}
 		return nil
-	})
+	}, nil)
 	if err != nil {
 		c.Errorf("Transaction failed: %v", err)
 		return err
@@ -193,7 +193,7 @@ func PointUpTweet(c appengine.Context, keyString, pointType string, user Twitter
 			Created_At: datastore.SecondsToTime(time.Seconds()),
 		}
 		c.Debugf("PointUpTweet user %v", tweetLikeUser)
-		key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
+		key := datastore.NewKey(c, "TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
 		if _, err := datastore.Put(c, key, &tweetLikeUser); err != nil {
 			c.Errorf("PointUpTweet TweetLikeUser failed to put: %v", err.String())
 			return err
@@ -219,7 +219,7 @@ func LikeTweet(c appengine.Context, keyString string, user TwitterUser) os.Error
 	err := datastore.RunInTransaction(c, func(c appengine.Context) os.Error {
 
 		c.Debugf("tweet key: %s", keyString)
-		key := datastore.NewKey("Tweet", keyString, 0, nil)
+		key := datastore.NewKey(c, "Tweet", keyString, 0, nil)
 		if err := datastore.Get(c, key, &tweet); err != nil {
 			c.Errorf("LikeTweet failed to get: %v", err.String())
 			return err
@@ -235,14 +235,14 @@ func LikeTweet(c appengine.Context, keyString string, user TwitterUser) os.Error
 		}
 
 		return nil
-	})
+	}, nil)
 	if err != nil {
 		c.Errorf("Transaction failed: %v", err)
 		return err
 	}
 
 	// ユーザの記録
-	key := datastore.NewKey("TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
+	key := datastore.NewKey(c, "TweetLikeUser", tweet.Hashtag + ":" + tweet.Id_Str + ":" + user.ScreenName, 0, nil)
 	tweetLikeUser := TweetLikeUser{
 		TweetKey: tweet.Hashtag + ":" + tweet.Id_Str,
 		LikeType: "like",
@@ -318,7 +318,7 @@ func MigrateTweet(c appengine.Context, offset, length int) os.Error {
 	c.Debugf("MigrateTweet got old tweets len: %d", len(tweets))
 	for _, tweet := range tweets {
 		c.Debugf("MigrateTweet old tweet : %v", tweet.Text)
-		key := datastore.NewKey("Tweet", tweet.Hashtag + ":" + tweet.Id_Str, 0, nil)
+		key := datastore.NewKey(c, "Tweet", tweet.Hashtag + ":" + tweet.Id_Str, 0, nil)
 		if _, err := datastore.Put(c, key, &tweet); err != nil {
 			c.Errorf("MigrateTweet failed to put old tweet decrement: %v", err.String())
 			return err

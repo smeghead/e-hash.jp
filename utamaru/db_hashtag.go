@@ -31,7 +31,7 @@ func SaveHashtag(c appengine.Context, hashtag string, count int) os.Error {
 	c.Debugf("SaveHashtag hashtag: %s (%d)", hashtag, count)
 	//search
 	h := new(Hashtag)
-	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
+	key := datastore.NewKey(c, "Hashtag", hashtag, 0, nil)
 
 	if err := datastore.Get(c, key, h); err != nil {
 		//insert
@@ -84,7 +84,7 @@ func DecrementOldHashtags(c appengine.Context, length int) os.Error {
 			h.Count = 1
 		}
 		c.Infof("DecrementOldHashtags old hashtag decrement after : %v (%d)", h.Name, h.Count)
-		key := datastore.NewKey("Hashtag", h.Name, 0, nil)
+		key := datastore.NewKey(c, "Hashtag", h.Name, 0, nil)
 		if _, err := datastore.Put(c, key, &h); err != nil {
 			c.Errorf("DecrementOldHashtags failed to put old hashtag decrement: %v", err.String())
 			return err
@@ -96,7 +96,7 @@ func DecrementOldHashtags(c appengine.Context, length int) os.Error {
 func UpdateHashtag(c appengine.Context, hashtag string) os.Error {
 	//search
 	h := new(Hashtag)
-	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
+	key := datastore.NewKey(c, "Hashtag", hashtag, 0, nil)
 
 	if err := datastore.Get(c, key, h); err != nil {
 		c.Errorf("UpdateHashtag failed to get: %v", err.String())
@@ -114,7 +114,7 @@ func UpdateHashtag(c appengine.Context, hashtag string) os.Error {
 func FindHashtag(c appengine.Context, hashtag string) (Hashtag, os.Error) {
 	//search
 	var h Hashtag
-	key := datastore.NewKey("Hashtag", hashtag, 0, nil)
+	key := datastore.NewKey(c, "Hashtag", hashtag, 0, nil)
 
 	if err := datastore.Get(c, key, &h); err != nil {
 		c.Errorf("FindHashtag failed to get: %v", err.String())
@@ -126,7 +126,7 @@ func FindHashtag(c appengine.Context, hashtag string) (Hashtag, os.Error) {
 func ViewHashtag(c appengine.Context, hashtag Hashtag) os.Error {
 	hashtag.View += 1
 
-	key := datastore.NewKey("Hashtag", hashtag.Name, 0, nil)
+	key := datastore.NewKey(c, "Hashtag", hashtag.Name, 0, nil)
 	if _, err := datastore.Put(c, key, &hashtag); err != nil {
 		c.Errorf("ViewHashtag failed to put: %v", err.String())
 		return err
@@ -207,7 +207,7 @@ func MigrateHashtag(c appengine.Context, offset, length int) os.Error {
 	c.Debugf("MigrateHashtag got hashtags len: %d", len(hashtags))
 	for _, hashtag := range hashtags {
 		c.Debugf("MigrateHashtag old hashtag : %v", hashtag.Name)
-		key := datastore.NewKey("Hashtag", hashtag.Name, 0, nil)
+		key := datastore.NewKey(c, "Hashtag", hashtag.Name, 0, nil)
 		if _, err := datastore.Put(c, key, &hashtag); err != nil {
 			c.Errorf("MigrateHashtag failed to put hashtag migrate: %v", err.String())
 			return err

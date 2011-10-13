@@ -18,7 +18,7 @@ type TwitterConf struct {
 func GetTwitterConf(c appengine.Context) (TwitterConf, os.Error) {
 	c.Infof("GetTwitterConf")
 	conf := new(TwitterConf)
-	key := datastore.NewKey("TwitterConf", "singleton", 0, nil)
+	key := datastore.NewKey(c, "TwitterConf", "singleton", 0, nil)
 
 	if err := datastore.Get(c, key, conf); err != nil {
 		c.Infof("GetTwitterConf failed to load: %v", err)
