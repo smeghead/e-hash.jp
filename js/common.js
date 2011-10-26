@@ -87,6 +87,10 @@ $(function(){
       // increment point.
       $.post('/retweet', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
         function(data){
+          if (data == 'needs_oauth') {
+            document.location.href = '/get_request_token';
+            return;
+          }
           $('div.retweet', $this)
             .removeClass('retweet')
             .addClass('retweeted');
@@ -95,7 +99,7 @@ $(function(){
           if (data != '') {
             var image = document.createElement('img');
             image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.parent().parent().parent()).append(image);
+            $('.users', $this.parent().parent().parent().parent()).append(image);
           }
         }
       );
@@ -106,6 +110,10 @@ $(function(){
       // increment point.
       $.post('/favorite', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
         function(data){
+          if (data == 'needs_oauth') {
+            document.location.href = '/get_request_token';
+            return;
+          }
           $('div.favorite', $this)
             .removeClass('favorite')
             .addClass('favorited');
@@ -114,7 +122,7 @@ $(function(){
           if (data != '') {
             var image = document.createElement('img');
             image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.parent().parent().parent()).append(image);
+            $('.users', $this.parent().parent().parent().parent()).append(image);
           }
         }
       );
