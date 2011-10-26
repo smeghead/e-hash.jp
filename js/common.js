@@ -120,7 +120,7 @@ $(function(){
       );
       return false;
     });
-    $('div.like a.like', target).click(function(){
+    $('div.feedback a.like', target).click(function(){
       var $this = $(this);
       $.post('/like', {key: $this.data('key'), url: document.location.pathname},
         function(data){
@@ -156,6 +156,7 @@ $(function(){
     var page = $this.data('page') + 1;
     var sort = document.location.search && document.location.search.indexOf('sort=new') > -1 ? 'new' : '';
     $.get('/s/more', {hashtag: hashtag, page: page, sort: sort}, function(data){
+      data = data.replace(/^\s+/g, '');
       if (!data) {
         $('div.more-tweets').hide('slow');
         return;
@@ -244,14 +245,14 @@ $(function(){
   $('a#contact-to').attr('href', 'mailto:smeghead7+e-hash.jp@gmail.com?subject=' + document.location.hostname + 'についての問合せ');
 });
 
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-25384750-1']);
-_gaq.push(['_trackPageview']);
+// var _gaq = _gaq || [];
+// _gaq.push(['_setAccount', 'UA-25384750-1']);
+// _gaq.push(['_trackPageview']);
 
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
+// (function() {
+//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+//   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+// })();
 
 //  vim: set ts=2 sw=2 sts=2 expandtab fenc=utf-8:

@@ -461,17 +461,17 @@ func SignoutHandler(w http.ResponseWriter, r *http.Request) {
 	sessionId := getSessionId(c, r)
 	if sessionId == "" {
 		c.Infof("no auth information. redirect to oauth confirmation.")
-		return
+	} else {
+		if err := DeleteUser(c, sessionId); err != nil {
+			c.Errorf("SignoutHandler failed to delete user: %v", err)
+		}
+		c.Debugf("SignoutHandler ok")
+		http.SetCookie(w, &http.Cookie{
+			Name: "id",
+			Value: "",
+			Path: "/",
+		})
 	}
-	if err := DeleteUser(c, sessionId); err != nil {
-		c.Errorf("SignoutHandler failed to delete user: %v", err)
-	}
-	c.Debugf("SignoutHandler ok")
-	http.SetCookie(w, &http.Cookie{
-		Name: "id",
-		Value: "",
-		Path: "/",
-	})
 
 	http.Redirect(w, r, url, 302)
 }

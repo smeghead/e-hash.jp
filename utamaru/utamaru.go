@@ -97,6 +97,7 @@ func GetReqestTokenHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c.Errorf("GetReqestTokenHandler failed to post: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
 	}
 	SaveRequestToken(c, *requestToken)
 	http.Redirect(w, r, "http://twitter.com/oauth/authorize?oauth_token=" + requestToken.OauthToken, 302)

@@ -70,7 +70,7 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("RecordTrendsHashtags")
 	// decrement old hashtag
-	if err := DecrementOldHashtags(c, 20); err != nil {
+	if err := DecrementOldHashtags(c, 50); err != nil {
 		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
 	}
@@ -105,7 +105,7 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("RecordRssHashtags")
 	// decrement old hashtag
-	if err := DecrementOldHashtags(c, 20); err != nil {
+	if err := DecrementOldHashtags(c, 50); err != nil {
 		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
 	}

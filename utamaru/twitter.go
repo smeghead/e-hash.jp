@@ -96,7 +96,7 @@ func oAuthHeader(c appengine.Context, method, url string, options map[string]int
 		mapKeys[i] = k
 		i++
 	}
-	sort.StringsAreSorted(mapKeys)
+	sort.Strings(mapKeys)
 	for _, k := range mapKeys {
 		oauthArray = append(oauthArray, k + Encode("=") + Encode(oauthMap[k]))
 	}
@@ -111,9 +111,12 @@ func oAuthHeader(c appengine.Context, method, url string, options map[string]int
 	} else if requestToken != nil {
 		key += requestToken.OauthSecret
 	}
+	c.Debugf("key: %s", key)
+	c.Debugf("msg: %s", msg)
 	h := hmac.NewSHA1([]byte(key))
 	h.Write([]byte(msg))
 	oauthMap["oauth_signature"] = base64.StdEncoding.EncodeToString(h.Sum())
+	c.Debugf("oauth_signature: %s", oauthMap["oauth_signature"])
 
 	oauthArray = make([]string, 0, 10)
 	for k, v := range oauthMap {
@@ -133,13 +136,18 @@ func GetRequestToken(c appengine.Context) (*TwitterRequestToken, os.Error) {
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
-		c.Errorf("GetPublicTimeline failed to api call: %v", err.String())
+		c.Errorf("GetRequestToken failed to api call: %v", err.String())
 		return nil, err
 	}
 	bytes, err2 := ioutil.ReadAll(response.Body)
 	c.Debugf("response body: %s", string(bytes))
+	c.Debugf("response StatusCode: %d", response.StatusCode)
+	if response.StatusCode != http.StatusOK {
+		c.Errorf("GetRequestToken failed to get token. bad status code: %d", response.StatusCode)
+		return nil, os.NewError("GetRequestToken failed to get token.")
+	}
 	if err2 != nil {
-		c.Errorf("GetPublicTimeline failed to read result: %v", err.String())
+		c.Errorf("GetRequestToken failed to read result: %v", err.String())
 		return nil, err
 	}
 	s := string(bytes)
