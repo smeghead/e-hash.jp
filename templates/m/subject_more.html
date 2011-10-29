@@ -4,8 +4,8 @@
           <div class="subject_block ui-button-text">
             <div class="subject_right">
               <div class="subject_record ui-li-heading">
-                <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
-                <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}">{{.Screen_name|html}}</a>
+                <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
+                <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-ajax="false">{{.Screen_name|html}}</a>
                 <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
               </div>
               <span class="text"> {{.Text|html}}</span>

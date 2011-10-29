@@ -327,14 +327,17 @@ div.virtual-blank {
     height: 25px;
 }  
 #ticker {
-	float: right
+    float: right;
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
 }
 #ticker-elements-hide {
 	display: none;
 }  
 #ticker-elements {
     position: relative;  
-    height: 50px;
+    height: 25px;
 }  
 #ticker-elements span {
     padding-right: 20px;  

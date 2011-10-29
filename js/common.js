@@ -60,15 +60,15 @@ $(function(){
       var html = $(this).html();
       var url_regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
       html = html.replace(url_regexp, function(x){
-        return '<a class="twitter-url" href="' + x + '" target="_blank">' + x + '</a>';
+        return '<a class="twitter-url" href="' + x + '" target="_blank" data-ajax="false">' + x + '</a>';
       });
       var hashtag_regexp = /[#＃][^ .;:　\n]+/g;
       html = html.replace(hashtag_regexp, function(x){
-        return '<a class="twitter-hashtag" href="/s/' + encodeURIComponent(x.substring(1)) + '">' + x + '</a>';
+        return '<a class="twitter-hashtag" href="/s/' + encodeURIComponent(x.substring(1)) + '" data-ajax="false">' + x + '</a>';
       });
       var at_regexp = /@[_a-z0-9]+/ig;
       html = html.replace(at_regexp, function(x){
-        return '<a class="twitter-at" href="http://twitter.com/#!/' + encodeURIComponent(x.substring(1)) + '" target="_blank">' + x + '</a>';
+        return '<a class="twitter-at" href="http://twitter.com/#!/' + encodeURIComponent(x.substring(1)) + '" target="_blank" data-ajax="false">' + x + '</a>';
       });
       $(this).html(html);
     });
@@ -249,23 +249,17 @@ $(function(){
       $('h1 a').css('width').replace('px', '') - 10;
     $('div#social-bookmarks').css('width', ticker_width + 'px');
     $('div#ticker').css('width', ticker_width + 'px');
-    $('div#ticker-elements').html($('div#ticker-elements-hide').html());
-    $('div#ticker-elements').jStockTicker({speed: 2, interval: 40});
-    $('div#ticker-elements a').click(function(){
-      var hashtag = $(this).text();
-      document.location.href = '/s/' + hashtag.substring(1);
-    });
   }
 });
 
-// var _gaq = _gaq || [];
-// _gaq.push(['_setAccount', 'UA-25384750-1']);
-// _gaq.push(['_trackPageview']);
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-25384750-1']);
+_gaq.push(['_trackPageview']);
 
-// (function() {
-//   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-//   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-//   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-// })();
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
 
 //  vim: set ts=2 sw=2 sts=2 expandtab fenc=utf-8:
