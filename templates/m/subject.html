@@ -38,15 +38,19 @@
     </div><!-- /header -->
 
     <div id="ad-space">
-      <script type="text/javascript">
-        var admob_vars = {
-          pubid: 'a14eabd42f1fd86', // publisher id
-          bgcolor: '000000', // background color (hex)
-          text: 'FFFFFF', // font-color (hex)
-          test: false // test mode, set to false to receive live ads
+      <script type="text/javascript"><!--
+        // XHTML should not attempt to parse these strings, declare them CDATA.
+        /* <![CDATA[ */
+        window.googleAfmcRequest = {
+          client: 'ca-mb-pub-6994803411870749',
+          format: '320x50_mb',
+          output: 'html',
+          slotname: '9118938290',
         };
+        /* ]]> */
+      //-->
       </script>
-      <script type="text/javascript" src="http://mmv.admob.com/static/iphone/iadmob.js"></script>
+      <script type="text/javascript"    src="http://pagead2.googlesyndication.com/pagead/show_afmc_ads.js"></script>
     </div>
     <div data-role="content">
       <div id="main">
@@ -82,19 +86,10 @@
                 <span class="text"> {{.Text|html}}</span>
                 <div class="twitter-buttons ui-li-desc">
                   <div data-role="controlgroup" data-type="horizontal">
-                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
-                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
+                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り</span></a>
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式RT</span></a>
                     <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!" data-ajax="false" data-theme="e"><span class="user-count"></span>(・∀・)ｲｲ!!</a>
                   </div>
-<!--                   <div class="feedback ui-block-b"> -->
-<!--                     <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a> -->
-<!--                   </div> -->
-<!--                   <div class="feedback ui-block-b"> -->
-<!--                     <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a> -->
-<!--                   </div> -->
-<!--                   <div class="feedback ui-block-b"> -->
-<!--                     <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-theme="e" title="(・∀・)ｲｲ!!と思ったらクリック!"><span class="user-count"></span>(・∀・)ｲｲ!!</a> -->
-<!--                   </div> -->
                 </div>
               </div>
               <div class="users ui-li-desc">
@@ -108,11 +103,11 @@
           </ul>
         </div>
         <br clear="all" />
-        <div class="more-tweets" data-hashtag="{{.elements.Hashtag.Name}}" data-page="0">
+        <div class="more-tweets" data-role="button" data-hashtag="{{.elements.Hashtag.Name}}" data-page="0">
           もっと読む
         </div>
         <div class="totop">
-          <a href="#top">↑一番上へ</a>
+          <a href="#top" data-ajax="false">↑一番上へ</a>
         </div>
       </div>
     </div>
