@@ -51,10 +51,11 @@
       <p>Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。</p>
 
         {{range .elements}}
-          <h2><a class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}" data-ajax="false">{{.Hashtag.Name|html}}</a></h2>
-          <ul data-role="listview" data-theme="g">
+          <a class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}" data-role="button" data-icon="star" data-theme="a" data-ajax="false">{{.Hashtag.Name|html}}</a>
+          <br clear="all" />
+          <ul data-role="listview" data-theme="e">
           {{range .Tweets}}
-            <li class="ui-li ui-btn-down-c ui-btn-up-c">
+            <li class="ui-li">
             <div class="subject_block ui-button-text">
               <div class="subject_right">
                 <div class="subject_record ui-li-heading">
@@ -64,15 +65,20 @@
                 </div>
                 <span class="text"> {{.Text|html}}</span>
                 <div class="twitter-buttons ui-li-desc">
-                  <div class="feedback ui-block-b">
-                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+                  <div data-role="controlgroup" data-type="horizontal">
+                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
+                    <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!" data-ajax="false" data-theme="e"><span class="user-count"></span>(・∀・)ｲｲ!!</a>
                   </div>
-                  <div class="feedback ui-block-b">
-                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
-                  </div>
-                  <div class="feedback ui-block-b">
-                    <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!" data-ajax="false"><span class="user-count"></span>(・∀・)ｲｲ!!</a>
-                  </div>
+<!--                   <div class="feedback ui-block-b"> -->
+<!--                     <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a> -->
+<!--                   </div> -->
+<!--                   <div class="feedback ui-block-b"> -->
+<!--                     <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a> -->
+<!--                   </div> -->
+<!--                   <div class="feedback ui-block-b"> -->
+<!--                     <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!" data-ajax="false" data-theme="e"><span class="user-count"></span>(・∀・)ｲｲ!!</a> -->
+<!--                   </div> -->
                 </div>
               </div>
               <div class="users ui-li-desc">
@@ -85,9 +91,9 @@
           {{end}}
           </ul>
           <br clear="all" />
-          <div class="more">
-            <a data-role="button" class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}" data-ajax="false">{{.Hashtag.Name|html}}をもっと見る</a>
-          </div>
+<!--           <div class="more"> -->
+<!--             <a data-role="button" class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}" data-ajax="false">{{.Hashtag.Name|html}}をもっと見る</a> -->
+<!--           </div> -->
         {{end}}
         <div class="totop">
           <a href="#top">↑一番上へ</a>

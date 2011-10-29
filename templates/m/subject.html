@@ -69,7 +69,7 @@
         </div>
         <br clear="all" />
         <div id="subject_blocks">
-          <ul data-role="listview" data-theme="g">
+          <ul data-role="listview" data-theme="e">
           {{range .elements.Tweets}}
             <li class="ui-li ui-btn-down-c ui-btn-up-c">
             <div class="subject_block ui-button-text">
@@ -81,15 +81,20 @@
                 </div>
                 <span class="text"> {{.Text|html}}</span>
                 <div class="twitter-buttons ui-li-desc">
-                  <div class="feedback ui-block-b">
-                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+                  <div data-role="controlgroup" data-type="horizontal">
+                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
+                    <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!" data-ajax="false" data-theme="e"><span class="user-count"></span>(・∀・)ｲｲ!!</a>
                   </div>
-                  <div class="feedback ui-block-b">
-                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
-                  </div>
-                  <div class="feedback ui-block-b">
-                    <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!"><span class="user-count"></span>(・∀・)ｲｲ!!</a>
-                  </div>
+<!--                   <div class="feedback ui-block-b"> -->
+<!--                     <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-theme="e"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a> -->
+<!--                   </div> -->
+<!--                   <div class="feedback ui-block-b"> -->
+<!--                     <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-theme="e"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a> -->
+<!--                   </div> -->
+<!--                   <div class="feedback ui-block-b"> -->
+<!--                     <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-theme="e" title="(・∀・)ｲｲ!!と思ったらクリック!"><span class="user-count"></span>(・∀・)ｲｲ!!</a> -->
+<!--                   </div> -->
                 </div>
               </div>
               <div class="users ui-li-desc">

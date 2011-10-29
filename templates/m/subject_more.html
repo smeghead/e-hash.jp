@@ -1,6 +1,6 @@
-      <ul data-role="listview" data-theme="g">
+      <ul data-role="listview" data-theme="e">
         {{range .Tweets}}
-          <li class="ui-li ui-btn-down-c ui-btn-up-c">
+          <li class="ui-li ui-btn-down-a ui-btn-up-a">
           <div class="subject_block ui-button-text">
             <div class="subject_right">
               <div class="subject_record ui-li-heading">
@@ -10,33 +10,11 @@
               </div>
               <span class="text"> {{.Text|html}}</span>
               <div class="twitter-buttons ui-li-desc">
-                <div class="feedback ui-block-b">
-                  <a data-role="button" class="favorite ui-btn ui-btn-corner-all ui-shadow ui-btn-down-g ui-btn-up-g" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}">
-                    <span class="ui-btn-inner ui-btn-corner-all" aria-hidden="true">
-                      <span class="ui-btn-text">
-                        <span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span>
-                      </span>
-                    </span>
-                  </a>
-                </div>
-                <div class="feedback ui-block-b">
-                  <a data-role="button" class="retweet ui-btn ui-btn-corner-all ui-shadow ui-btn-down-g ui-btn-up-g" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}">
-                    <span class="ui-btn-inner ui-btn-corner-all" aria-hidden="true">
-                      <span class="ui-btn-text">
-                        <span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span>
-                      </span>
-                    </span>
-                  </a>
-                </div>
-                <div class="feedback ui-block-b">
-                  <a data-role="button" class="like ui-btn ui-btn-corner-all ui-shadow ui-btn-down-g ui-btn-up-g" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!">
-                    <span class="ui-btn-inner ui-btn-corner-all" aria-hidden="true">
-                      <span class="ui-btn-text">
-                        <span class="user-count"></span>(・∀・)ｲｲ!!
-                      </span>
-                    </span>
-                  </a>
-                </div>
+                  <div data-type="horizontal" data-role="controlgroup" class="ui-corner-all ui-controlgroup ui-controlgroup-horizontal">
+                    <a data-theme="e" data-ajax="false" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-statusid=":{{.Id_Str|html}}" class="favorite ui-btn ui-btn-up-e ui-corner-left" data-role="button"><span aria-hidden="true" class="ui-btn-inner ui-corner-left"><span class="ui-btn-text"><span title="Twitterでお気に入りに登録" class="button favorite">お気に入り！</span></span></span></a>
+                    <a data-theme="e" data-ajax="false" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-statusid=":{{.Id_Str|html}}" class="retweet ui-btn ui-btn-up-e" data-role="button"><span aria-hidden="true" class="ui-btn-inner"><span class="ui-btn-text"><span title="Twitterで公式リツイートして、フォロワーに知らせる" class="button retweet">公式リツイート</span></span></span></a>
+                    <a data-theme="e" data-ajax="false" title="(・∀・)ｲｲ!!と思ったらクリック!" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="like ui-btn ui-corner-right ui-controlgroup-last ui-btn-up-e" data-role="button"><span aria-hidden="true" class="ui-btn-inner ui-corner-right ui-controlgroup-last"><span class="ui-btn-text"><span class="user-count"></span>(・∀・)ｲｲ!!</span></span></a>
+                  </div>
               </div>
             </div>
             <div class="users ui-li-desc">

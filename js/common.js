@@ -128,7 +128,7 @@ $(function(){
       );
       return false;
     });
-    $('div.feedback a.like', target).click(function(){
+    $('a.like', target).click(function(){
       var $this = $(this);
       $.post('/like', {key: $this.data('key'), url: document.location.pathname},
         function(data){
@@ -165,7 +165,8 @@ $(function(){
     var sort = document.location.search && document.location.search.indexOf('sort=new') > -1 ? 'new' : '';
     $.get('/s/more', {hashtag: hashtag, page: page, sort: sort}, function(data){
       data = data.replace(/^\s+/g, '');
-      if (!data) {
+      if (!data ||
+          (data.indexOf('<ul') > -1 && data.indexOf('<li') == -1)) { // condition of mobile versoin.
         $('div.more-tweets').hide('slow');
         return;
       }
