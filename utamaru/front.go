@@ -3,6 +3,7 @@ package utamaru
 import (
 	"os"
 	"fmt"
+	"strings"
 	"appengine"
 	"http"
 	"template"
@@ -16,8 +17,21 @@ type HashtagListElement struct {
 	Hashtag Hashtag
 	Tweets []Tweet
 }
-func mustParseFile(templateName string) *template.Template {
-	tmpl, err := template.ParseFile("templates/" + templateName + ".html")
+func isMobile(r *http.Request) bool {
+	mobileKeywords := []string{ "Android", "iPhone" }
+	for _, keyword := range mobileKeywords {
+		if strings.Index(r.UserAgent(), keyword) > -1 {
+			return true
+		}
+	}
+	return false
+}
+func mustParseFile(r *http.Request, templateName string) *template.Template {
+	prefix := "";
+	if isMobile(r) {
+		prefix = "m/"
+	}
+	tmpl, err := template.ParseFile("templates/" + prefix + templateName + ".html")
 	if err != nil {
 		fmt.Printf("error failed to parse template. %v\n", err)
 	}
@@ -125,7 +139,7 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	}
 	resultMap["elements"] = hles
 
-var topTemplate = mustParseFile("index")
+	var topTemplate = mustParseFile(r, "index")
 	c.Debugf("parsedd")
 	if err := topTemplate.Execute(w, resultMap); err != nil {
 		c.Errorf("FrontTop failed to merge template: %v", err.String())
@@ -134,7 +148,6 @@ var topTemplate = mustParseFile("index")
 	}
 }
 
-var subjectTemplate = mustParseFile("subject")
 func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -178,6 +191,7 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	resultMap["sort"] = sort
 	resultMap["elements"] = hle
 	resultMap["encodedhashtag"] = Encode(hashtag[1:])
+	var subjectTemplate = mustParseFile(r, "subject")
 	if err := subjectTemplate.Execute(w, resultMap); err != nil {
 		c.Errorf("FrontSubject failed to merge template: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -186,7 +200,6 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("FrontSubject end")
 }
 
-var hashtagsTemplate = mustParseFile("hashtags")
 func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -208,6 +221,7 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resultMap["hashtags"] = hashtags
+	var hashtagsTemplate = mustParseFile(r, "hashtags")
 	if err := hashtagsTemplate.Execute(w, resultMap); err != nil {
 		c.Errorf("FrontHashtags failed to merge template: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -215,7 +229,6 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var aboutTemplate = mustParseFile("about")
 func FrontAbout(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -227,6 +240,7 @@ func FrontAbout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var aboutTemplate = mustParseFile(r, "about")
 	if err := aboutTemplate.Execute(w, resultMap); err != nil {
 		c.Errorf("FrontHashtags failed to merge template: %v", err.String())
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
@@ -405,6 +419,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	t.UserId_Str = tweet.User.Id_Str
 	SaveTweet(c, t, hashtag)
 	var tweets = []Tweet{t}
+	var subjectMoreTemplate = mustParseFile(r, "subject_more")
 	if err := subjectMoreTemplate.Execute(w, map[string]interface{}{
 				"Tweets": tweets,
 			}); err != nil {
@@ -521,7 +536,6 @@ func LikeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, user.ScreenName)
 }
 
-var subjectMoreTemplate = mustParseFile("subject_more")
 func FrontSubjectMore(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	hashtag := r.FormValue("hashtag")
@@ -543,6 +557,7 @@ func FrontSubjectMore(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, err.String(), http.StatusInternalServerError)
 	}
 
+	var subjectMoreTemplate = mustParseFile(r, "subject_more")
 	if err := subjectMoreTemplate.Execute(w, map[string]interface{}{
 				"Tweets":tweets,
 			}); err != nil {

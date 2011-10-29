@@ -56,7 +56,7 @@ $(function(){
       var hashtag = $this.data('hashtag');
       $this.attr('href', '/s/' + encodeURIComponent(hashtag.substring(1)));
     });
-    $('div.text', target).each(function(){
+    $('.text', target).each(function(){
       var html = $(this).html();
       var url_regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
       html = html.replace(url_regexp, function(x){
@@ -94,12 +94,12 @@ $(function(){
           $('div.retweet', $this)
             .removeClass('retweet')
             .addClass('retweeted');
-          message_display('Retweetしました');
           // update page.
           if (data != '') {
             var image = document.createElement('img');
             image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.parent().parent().parent().parent()).append(image);
+            $('.users', $this.closest('div.subject_block')).append(image);
+            message_display('Retweetしました');
           }
         }
       );
@@ -117,12 +117,12 @@ $(function(){
           $('div.favorite', $this)
             .removeClass('favorite')
             .addClass('favorited');
-          message_display('Favoriteしました');
           // update page.
           if (data != '') {
             var image = document.createElement('img');
             image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.parent().parent().parent().parent()).append(image);
+            $('.users', $this.closest('div.subject_block')).append(image);
+            message_display('Favoriteしました');
           }
         }
       );
@@ -140,7 +140,7 @@ $(function(){
           if (data != '') {
             var image = document.createElement('img');
             image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.parent().parent().parent().parent()).append(image);
+            $('.users', $this.closest('div.subject_block')).append(image);
             message_display('Like!しました');
           }
         }
@@ -171,7 +171,9 @@ $(function(){
       }
       var data_element = $(data);
       initialize(data_element);
-      $('div#subject_blocks').append(data_element);
+      var blocks = $('div#subject_blocks');
+      blocks.append(data_element);
+      $('ul', blocks).listview();
       $this.data('page', page);
       $this.text('もっと読む')
     });
@@ -187,18 +189,6 @@ $(function(){
     }, 1000);
   });
 
-  //ticker
-  var ticker_width =
-    $('h1').css('width').replace('px', '') -
-    $('h1 a').css('width').replace('px', '') - 10;
-  $('div#social-bookmarks').css('width', ticker_width + 'px');
-  $('div#ticker').css('width', ticker_width + 'px');
-  $('div#ticker-elements').html($('div#ticker-elements-hide').html());
-  $('div#ticker-elements').jStockTicker({speed: 2, interval: 40});
-  $('div#ticker-elements a').click(function(){
-    var hashtag = $(this).text();
-    document.location.href = '/s/' + hashtag.substring(1);
-  });
 
   //tweet
   var additional_text = ' ' + $('#hashtag').text() + ' http://www.e-hash.jp/';
@@ -251,6 +241,21 @@ $(function(){
     $('a.subject_link').tagcloud();
   }
   $('a#contact-to').attr('href', 'mailto:smeghead7+e-hash.jp@gmail.com?subject=' + document.location.hostname + 'についての問合せ');
+
+  //ticker
+  if ($('h1 a').length > 0) {
+    var ticker_width =
+      $('h1').css('width').replace('px', '') -
+      $('h1 a').css('width').replace('px', '') - 10;
+    $('div#social-bookmarks').css('width', ticker_width + 'px');
+    $('div#ticker').css('width', ticker_width + 'px');
+    $('div#ticker-elements').html($('div#ticker-elements-hide').html());
+    $('div#ticker-elements').jStockTicker({speed: 2, interval: 40});
+    $('div#ticker-elements a').click(function(){
+      var hashtag = $(this).text();
+      document.location.href = '/s/' + hashtag.substring(1);
+    });
+  }
 });
 
 // var _gaq = _gaq || [];

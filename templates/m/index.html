@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja"
+    xmlns:og="http://ogp.me/ns#"
+    xmlns:fb="http://www.facebook.com/2008/fbml"
+    xmlns:g="http://base.google.com/ns/1.0">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>{{.siteTitle|html}}</title>
+    <meta name="description" content="Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。" />
+    <meta name="keywords" content="{{.siteTitle|html}},日本語ハッシュタグ,ハッシュタグ,大喜利,Twitter,ツイッター" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:title" content="{{.siteTitle|html}}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://www.e-hash.jp/" />
+    <meta property="og:image" content="http://www.e-hash.jp/favicon.ico" />
+    <meta property="og:site_name" content="{{.siteTitle|html}}" />
+    <meta property="fb:admins" content="100001493178908" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.css" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/mobile/1.0rc2/jquery.mobile-1.0rc2.min.js"></script>
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="/js/common.js" type="text/javascript"></script>
+  </head>
+  <body>
+  <div data-role="page" id="index">
+
+    <div data-role="header">
+      <h1>{{.siteTitle|html}}</h1>
+      <div data-role="navbar" data-iconpos="bottom">
+        <ul>
+          <li><a href="/" class="active" data-icon="home"><span>トップ</span></a></li>
+          <li><a href="/hashtags" data-icon="search"><span>ハッシュタグ一覧</span></a></li>
+          <li><a href="/about" data-icon="info"><span>#イーハッシュJPについて</span></a></li>
+        </ul>
+      </div><!-- /navbar -->
+    </div><!-- /header -->
+
+    <div data-role="content">
+      <p>Twitterの中で日本語ハッシュタグを使って行なわれている、大喜利・ムチャブリ・暇潰しなどなどを纏めてます。</p>
+
+        {{range .elements}}
+          <h2><a class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}">{{.Hashtag.Name|html}}</a></h2>
+          <ul data-role="listview" data-theme="g">
+          {{range .Tweets}}
+            <li class="ui-li ui-btn-down-c ui-btn-up-c">
+            <div class="subject_block ui-button-text">
+              <div class="subject_right">
+                <div class="subject_record ui-li-heading">
+                  <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
+                  <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}">{{.Screen_name|html}}</a>
+                  <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
+                </div>
+                <span class="text"> {{.Text|html}}</span>
+                <div class="twitter-buttons ui-li-desc">
+                  <div class="feedback ui-block-b">
+                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+                  </div>
+                  <div class="feedback ui-block-b">
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
+                  </div>
+                  <div class="feedback ui-block-b">
+                    <a data-role="button" class="like" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" title="(・∀・)ｲｲ!!と思ったらクリック!"><span class="user-count"></span>(・∀・)ｲｲ!!</a>
+                  </div>
+                </div>
+              </div>
+              <div class="users ui-li-desc">
+                  {{range .Users}}
+                    <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
+                  {{end}}
+              </div>
+            </div>
+            </li>
+          {{end}}
+          </ul>
+          <br clear="all" />
+          <div class="more">
+            <a data-role="button" class="subject_link" href="#" data-hashtag="{{.Hashtag.Name|html}}">{{.Hashtag.Name|html}}をもっと見る</a>
+          </div>
+        {{end}}
+        <div class="totop">
+          <a href="#top">↑一番上へ</a>
+        </div>
+    </div><!-- /content -->
+
+    <div data-role="footer">
+      <div id="copyright">
+        <img src="http://code.google.com/appengine/images/appengine-silver-120x30.gif" alt="Powered by Google App Engine" />
+        <img src="images/golang.png" alt="Powered by Golang" />
+        (c) smeghead, 2011.
+      </div>
+      <div class="facebook-like">
+        <div id="fb-root"></div>
+        <script src="/js/fb-like.js"></script>
+        <div class="fb-like" data-href="http://www.e-hash.jp/" data-send="true" data-width="450" data-show-faces="true" data-colorscheme="dark"></div>
+      </div>
+    </div><!-- /footer -->
+  </div><!-- /page -->
+
+  </body>
+</html>
