@@ -112,6 +112,9 @@ h2 a:hover,
 	text-decoration:none;
 	background-color: #FFDD66;
 }
+div#sidebar #qr-code {
+	text-align: center;
+}
 div#sidebar h5 {
 	margin-bottom: 10px;
 	font-weight: normal;

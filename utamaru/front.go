@@ -212,7 +212,7 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hashtags, err := GetHashtags(c, map[string]interface{}{
-		"length": 200,
+		"length": 300,
 	})
 	if err != nil {
 		c.Errorf("FrontHashtags failed to search hashtags: %v", err)

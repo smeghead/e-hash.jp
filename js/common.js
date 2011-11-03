@@ -33,129 +33,133 @@ $(function(){
   };
 
   //initialize
-  var initialize = function(target){
-    $('.create_at', target).each(function(){
-      var timestamp = $(this).text();
-      var d = new Date();
-      d.setTime(timestamp.substring(0, timestamp.length - 3));
-      var date_string = 
-        zero(d.getFullYear(), 4) + '年' +
-        zero((d.getMonth() + 1), 2) + '月' +
-        zero(d.getDate(), 2) + '日 ' +
-        zero(d.getHours(), 2) + ':' +
-        zero(d.getMinutes(), 2);
-      $(this).html(
-        '<a target="_blank" href="http://twitter.com/#!/' +
-        $(this).data('screenname') + '/status/' +
-        $(this).data('statusid') + '">' +
-        date_string + '</a>');
-      $(this).show();
-    });
-    $('a.subject_link', target).each(function(){
-      var $this = $(this);
-      var hashtag = $this.data('hashtag');
-      $this.attr('href', '/s/' + encodeURIComponent(hashtag.substring(1)));
-    });
-    $('.text', target).each(function(){
-      var html = $(this).html();
-      var url_regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
-      html = html.replace(url_regexp, function(x){
-        return '<a class="twitter-url" href="' + x + '" target="_blank" data-ajax="false">' + x + '</a>';
+  try {
+    var initialize = function(target){
+      $('.create_at', target).each(function(){
+        var timestamp = $(this).text();
+        var d = new Date();
+        d.setTime(timestamp.substring(0, timestamp.length - 3));
+        var date_string = 
+          zero(d.getFullYear(), 4) + '年' +
+          zero((d.getMonth() + 1), 2) + '月' +
+          zero(d.getDate(), 2) + '日 ' +
+          zero(d.getHours(), 2) + ':' +
+          zero(d.getMinutes(), 2);
+        $(this).html(
+          '<a target="_blank" href="http://twitter.com/#!/' +
+          $(this).data('screenname') + '/status/' +
+          $(this).data('statusid') + '">' +
+          date_string + '</a>');
+        $(this).show();
       });
-      var hashtag_regexp = /[#＃][^ .;:　\n]+/g;
-      html = html.replace(hashtag_regexp, function(x){
-        return '<a class="twitter-hashtag" href="/s/' + encodeURIComponent(x.substring(1)) + '" data-ajax="false">' + x + '</a>';
+      $('a.subject_link', target).each(function(){
+        var $this = $(this);
+        var hashtag = $this.data('hashtag');
+        $this.attr('href', '/s/' + encodeURIComponent(hashtag.substring(1)));
       });
-      var at_regexp = /@[_a-z0-9]+/ig;
-      html = html.replace(at_regexp, function(x){
-        return '<a class="twitter-at" href="http://twitter.com/#!/' + encodeURIComponent(x.substring(1)) + '" target="_blank" data-ajax="false">' + x + '</a>';
+      $('.text', target).each(function(){
+        var html = $(this).html();
+        var url_regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
+        html = html.replace(url_regexp, function(x){
+          return '<a class="twitter-url" href="' + x + '" target="_blank" data-ajax="false">' + x + '</a>';
+        });
+        var hashtag_regexp = /[#＃][^ .;:　\n]+/g;
+        html = html.replace(hashtag_regexp, function(x){
+          return '<a class="twitter-hashtag" href="/s/' + encodeURIComponent(x.substring(1)) + '" data-ajax="false">' + x + '</a>';
+        });
+        var at_regexp = /@[_a-z0-9]+/ig;
+        html = html.replace(at_regexp, function(x){
+          return '<a class="twitter-at" href="http://twitter.com/#!/' + encodeURIComponent(x.substring(1)) + '" target="_blank" data-ajax="false">' + x + '</a>';
+        });
+        $(this).html(html);
       });
-      $(this).html(html);
-    });
-    //events
-    $('a.profile', target).click(function(){
-      var $this = $(this);
-      if (!type) return false;
-      $.post('/point_up', {type: 'profile', key: $this.data('key')},
-        function(data){
+      //events
+      $('a.profile', target).click(function(){
+        var $this = $(this);
+        if (!type) return false;
+        $.post('/point_up', {type: 'profile', key: $this.data('key')},
+          function(data){
+          }
+        );
+        return false;
+      });
+      $('a.retweet', target).click(function(){
+        var $this = $(this);
+        // increment point.
+        $.post('/retweet', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
+          function(data){
+            if (data == 'needs_oauth') {
+              document.location.href = '/get_request_token';
+              return;
+            }
+            $('div.retweet', $this)
+              .removeClass('retweet')
+              .addClass('retweeted');
+            // update page.
+            if (data != '') {
+              var image = document.createElement('img');
+              image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+              $('.users', $this.closest('div.subject_block')).append(image);
+              message_display('Retweetしました');
+            }
+          }
+        );
+        return false;
+      });
+      $('a.favorite', target).click(function(){
+        var $this = $(this);
+        // increment point.
+        $.post('/favorite', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
+          function(data){
+            if (data == 'needs_oauth') {
+              document.location.href = '/get_request_token';
+              return;
+            }
+            $('div.favorite', $this)
+              .removeClass('favorite')
+              .addClass('favorited');
+            // update page.
+            if (data != '') {
+              var image = document.createElement('img');
+              image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+              $('.users', $this.closest('div.subject_block')).append(image);
+              message_display('Favoriteしました');
+            }
+          }
+        );
+        return false;
+      });
+      $('a.like', target).click(function(){
+        var $this = $(this);
+        $.post('/like', {key: $this.data('key'), url: document.location.pathname},
+          function(data){
+            if (data == 'needs_oauth') {
+              document.location.href = '/get_request_token';
+              return;
+            }
+            // update page.
+            if (data != '') {
+              var image = document.createElement('img');
+              image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+              $('.users', $this.closest('div.subject_block')).append(image);
+              message_display('(・∀・)ｲｲ!しました');
+            }
+          }
+        );
+        return false;
+      });
+      // user count.
+      $('div.subject_block', target).each(function(){
+        var $this = $(this);
+        var count = $('div.users img', $this).length;
+        if (count > 0) {
+          $('span.user-count', $this).text(count + ' ');
         }
-      );
-      return false;
-    });
-    $('a.retweet', target).click(function(){
-      var $this = $(this);
-      // increment point.
-      $.post('/retweet', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
-        function(data){
-          if (data == 'needs_oauth') {
-            document.location.href = '/get_request_token';
-            return;
-          }
-          $('div.retweet', $this)
-            .removeClass('retweet')
-            .addClass('retweeted');
-          // update page.
-          if (data != '') {
-            var image = document.createElement('img');
-            image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.closest('div.subject_block')).append(image);
-            message_display('Retweetしました');
-          }
-        }
-      );
-      return false;
-    });
-    $('a.favorite', target).click(function(){
-      var $this = $(this);
-      // increment point.
-      $.post('/favorite', {statusId: $this.data('statusid').replace(':', ''), key: $this.data('key')},
-        function(data){
-          if (data == 'needs_oauth') {
-            document.location.href = '/get_request_token';
-            return;
-          }
-          $('div.favorite', $this)
-            .removeClass('favorite')
-            .addClass('favorited');
-          // update page.
-          if (data != '') {
-            var image = document.createElement('img');
-            image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.closest('div.subject_block')).append(image);
-            message_display('Favoriteしました');
-          }
-        }
-      );
-      return false;
-    });
-    $('a.like', target).click(function(){
-      var $this = $(this);
-      $.post('/like', {key: $this.data('key'), url: document.location.pathname},
-        function(data){
-          if (data == 'needs_oauth') {
-            document.location.href = '/get_request_token';
-            return;
-          }
-          // update page.
-          if (data != '') {
-            var image = document.createElement('img');
-            image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-            $('.users', $this.closest('div.subject_block')).append(image);
-            message_display('Like!しました');
-          }
-        }
-      );
-      return false;
-    });
-    // user count.
-    $('div.subject_block', target).each(function(){
-      var $this = $(this);
-      var count = $('div.users img', $this).length;
-      if (count > 0) {
-        $('span.user-count', $this).text(count + ' ');
-      }
-    });
-  };
+      });
+    };
+  } catch (e) {
+    alert('エラーが発生しました。' + e.toString());
+  }
   initialize(document);
 
   $('div.more-tweets').click(function(){
@@ -174,7 +178,9 @@ $(function(){
       initialize(data_element);
       var blocks = $('div#subject_blocks');
       blocks.append(data_element);
-      $('ul', blocks).listview();
+      if ($('ul', blocks).length > 0) {
+        $('ul', blocks).listview();
+      }
       $this.data('page', page);
       $this.text('もっと読む')
     });
@@ -235,22 +241,26 @@ $(function(){
 
   // hashtags tagcloud
   if ($.fn.tagcloud) {
-    $.fn.tagcloud.defaults = {
-        size: {start: 14, end: 23, unit: 'pt'}
-        //color: {start: '#cde', end: '#f52'}
-    };
-    $('a.subject_link').tagcloud();
+    (function(){
+      $.fn.tagcloud.defaults = {
+          size: {start: 14, end: 23, unit: 'pt'}
+          //color: {start: '#cde', end: '#f52'}
+      };
+      $('a.subject_link').tagcloud();
+    })();
   }
   $('a#contact-to').attr('href', 'mailto:smeghead7+e-hash.jp@gmail.com?subject=' + document.location.hostname + 'についての問合せ');
 
   //ticker
-  if ($('h1 a').length > 0) {
-    var ticker_width =
-      $('h1').css('width').replace('px', '') -
-      $('h1 a').css('width').replace('px', '') - 10;
-    $('div#social-bookmarks').css('width', ticker_width + 'px');
-    $('div#ticker').css('width', ticker_width + 'px');
-  }
+  (function(){
+    if ($('h1 a').length > 0) {
+      var ticker_width =
+        $('h1').css('width').replace('px', '') -
+        $('h1 a').css('width').replace('px', '') - 10;
+      $('div#social-bookmarks').css('width', ticker_width + 'px');
+      $('div#ticker').css('width', ticker_width + 'px');
+    }
+  })();
 });
 
 var _gaq = _gaq || [];
