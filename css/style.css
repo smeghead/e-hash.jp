@@ -334,6 +334,7 @@ div.virtual-blank {
     width: 50%;
     white-space: nowrap;
     overflow: hidden;
+    display: none;
 }
 #ticker-elements-hide {
 	display: none;

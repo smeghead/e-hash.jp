@@ -259,6 +259,7 @@ $(function(){
         $('h1 a').css('width').replace('px', '') - 10;
       $('div#social-bookmarks').css('width', ticker_width + 'px');
       $('div#ticker').css('width', ticker_width + 'px');
+      $('div#ticker').show();
     }
   })();
 });
