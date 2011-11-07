@@ -190,6 +190,8 @@ $(function(){
     setInterval(function(){
       var org_text = $this.text();
       if (existsInPage($this.get(0))) {
+        if ($this.text() == '読み込み中...')
+          return;
         $this.text('読み込み中...');
         $this.click();
       }
