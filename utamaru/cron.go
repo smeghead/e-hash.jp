@@ -4,6 +4,8 @@ import (
 	"appengine"
 	"appengine/taskqueue"
 	"fmt"
+	"strconv"
+	"time"
 	"http"
 	"regexp"
 	"template"
@@ -165,6 +167,56 @@ func CronAdmin(w http.ResponseWriter, r *http.Request) {
 	var adminTemplate, _ = template.ParseFile("templates/admin.html")
 	c.Infof("CronAdmin")
 	if err := adminTemplate.Execute(w, nil); err != nil {
+		c.Errorf("FrontTop failed to merge template: %v", err.String())
+		http.Error(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func CronAdminDeleteTweet(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	p := r.FormValue("p")
+	page, _ := strconv.Atoi(p)
+	if page < 0 {
+		page = 0
+	}
+
+	if r.Method == "POST" {
+		r.FormValue("hashtags") //parseさせるため
+		hashtags := r.Form["hashtags"]
+		c.Debugf("CronAdminDeleteTweet: hashtags %v", hashtags)
+		c.Debugf("CronAdminDeleteTweet: hashtags length %v", len(hashtags))
+		for _, h := range(hashtags) {
+			c.Debugf("CronAdminDeleteTweet: hashtag %v", h)
+			//delete tweets
+			if err := DeleteTweetsByHashtag(c, h); err != nil {
+				c.Errorf("CronAdminDeleteTweet failed to delete tweets: %v", err)
+				ErrorPage(w, "CronAdminDeleteTweet failed to delete tweets", http.StatusInternalServerError)
+				return
+			}
+		}
+		url := fmt.Sprintf("/cron/delete_tweets?p=%d&complete=%d", page, time.Seconds())
+		c.Debugf("CronAdminDeleteTweet: redirect to %s", url)
+		http.Redirect(w, r, url, 302)
+		return
+	}
+	hashtags, err := GetHashtags(c, map[string]interface{}{
+		"page": page,
+		"length": 20,
+		"order": "View",
+	})
+	if err != nil {
+		c.Errorf("FrontHashtags failed to search hashtags: %v", err)
+		ErrorPage(w, "お探しのページが見付かりませんでした。", http.StatusNotFound)
+		return
+	}
+	var deleteTweetsTemplate, _ = template.ParseFile("templates/delete_tweets.html")
+	c.Infof("CronAdmin")
+	if err := deleteTweetsTemplate.Execute(w, map[string]interface{}{
+				"prev": page - 1,
+				"next": page + 1,
+				"hashtags": hashtags,
+			}); err != nil {
 		c.Errorf("FrontTop failed to merge template: %v", err.String())
 		http.Error(w, err.String(), http.StatusInternalServerError)
 		return

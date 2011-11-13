@@ -283,6 +283,19 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 		}
 	}
 	c.Debugf("GetTweetsByHashtag order: %v", order)
+	noCache := 0
+	if options["noCache"] != nil {
+		noCache = options["noCache"].(int)
+	}
+	if noCache == 0 {
+		// try to get cache.
+		hs, err := CacheGetTweetsByHashtag(c, hashtag, options)
+		if err == nil {
+			// got from memcached.
+			c.Debugf("GetTweetsByHashtag got from memcached")
+			return hs, nil
+		}
+	}
 
 	//search
 	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order(order).Offset(page * length).Limit(length)
@@ -299,6 +312,11 @@ func GetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]
 			return nil, err
 		}
 		tweetsResult = append(tweetsResult, tweet)
+	}
+	if noCache == 0 {
+		// cache.
+		CacheSetTweetsByHashtag(c, hashtag, tweetsResult, options)
+		c.Debugf("GetTweetsByHashtag tweets cached")
 	}
 	return tweetsResult, nil
 }
@@ -321,6 +339,41 @@ func MigrateTweet(c appengine.Context, offset, length int) os.Error {
 		key := datastore.NewKey(c, "Tweet", tweet.Hashtag + ":" + tweet.Id_Str, 0, nil)
 		if _, err := datastore.Put(c, key, &tweet); err != nil {
 			c.Errorf("MigrateTweet failed to put old tweet decrement: %v", err.String())
+			return err
+		}
+	}
+	return nil
+}
+
+func DeleteTweetsByHashtag(c appengine.Context, hashtag string) os.Error {
+	c.Debugf("DeleteTweetsByHashtag")
+	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order("Created_At").Limit(100)
+	var tweets []Tweet
+	keys, err := q.GetAll(c, &tweets)
+	if err != nil {
+		c.Errorf("DeleteTweetsByHashtag failed to get: %v", err.String())
+		return err
+	}
+	c.Debugf("DeleteTweetsByHashtag keys for delete: %v", keys)
+	for _, tweet := range tweets {
+		c.Infof("DeleteTweetsByHashtag tweet for delete: %v", tweet.Text)
+	}
+	if err = datastore.DeleteMulti(c, keys); err != nil {
+		c.Errorf("DeleteTweetsByHashtag failed to delete tweet: %v", err.String())
+		return err
+	}
+
+	//tweetを削除した結果、tweetが無かったら、Hashtagを削除する
+	length, err := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Count(c)
+	if err != nil {
+		c.Errorf("DeleteTweetsByHashtag failed to get count: %v", err.String())
+		return err
+	}
+	c.Debugf("DeleteTweetsByHashtag tweets length: %d", length)
+	if length == 0 {
+		c.Infof("DeleteTweetsByHashtag delete Hashtag: %s", hashtag)
+		if err := DeleteHashtag(c, hashtag); err != nil {
+			c.Errorf("DeleteTweetsByHashtag failed to delete hashtag: %v", err.String())
 			return err
 		}
 	}

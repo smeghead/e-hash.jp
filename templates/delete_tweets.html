@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+  <head>
+    <title>なにこれ？</title>
+    <link href="/css/default.css" type="text/css" rel="stylesheet"></link>
+    <link href="/css/style.css" type="text/css" rel="stylesheet"></link>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="/js/common.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(function(){
+        var button = $('.submit')
+        var current = 0;
+        $('li').each(function(){
+          if (current++ % 10 != 0) 
+            return;
+          var li = $(this);
+          li.append(button.clone());
+        });
+      })
+    </script>
+  </head>
+  <body>
+    <h1><a href="/">なにこれ？</a></h1>
+    <div id="delete-tweets">
+      <form id="form" action="" method="POST">
+        <ul>
+        {{range .hashtags}}
+          <li>
+            <input type="checkbox" name="hashtags" class="hashtags" value="{{.Name|html}}" />
+            {{.Name|html}}
+          </li>
+        {{end}}
+        </ul>
+        <input class="submit" type="submit" value="delete tweets." />
+      </form>
+      <div class="navi">
+        
+        <a href="?p={{.prev}}">prev</a>
+        <a href="?p={{.next}}">next</a>
+        
+      </div>
+    </div>
+  </body>
+</html>

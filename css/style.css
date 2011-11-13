@@ -1,6 +1,6 @@
 body {
 	text-align:center;
-	background-color: #29470D;
+	background-color: #CCCCFF;
 }
 a{color:#2D76B9;text-decoration:none;}
 a:hover{text-decoration:underline;}
@@ -19,7 +19,7 @@ b,strong{font-weight:bold;}
 fieldset,img{border:0;}
 /* layout */
 div#main-container {
-	background-color: #9BCBA1; /*rgba(171, 219, 177, 0.898438);
+	background-color: #9999CC; /*rgba(171, 219, 177, 0.898438);
 	_background-color: #ABDBB1;*/
 	width: 900px;
 	margin-left:auto;
@@ -390,4 +390,7 @@ div#sort-box a.current {
 	color: white;
 	background-color: #000066;
 	border-radius: 5px;
+}
+div#delete-tweets {
+	text-align: left;
 }

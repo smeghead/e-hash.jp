@@ -32,6 +32,7 @@ func init() {
 	http.HandleFunc("/signout", SignoutHandler)
 
 	http.HandleFunc("/cron/admin", CronAdmin)
+	http.HandleFunc("/cron/delete_tweets", CronAdminDeleteTweet)
 	http.HandleFunc("/cron/record_hashtags", RecordHashtags)
 	http.HandleFunc("/cron/record_trends_hashtags", RecordTrendsHashtags)
 	http.HandleFunc("/cron/record_rss_hashtags", RecordRssHashtags)

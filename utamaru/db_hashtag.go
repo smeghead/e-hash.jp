@@ -123,6 +123,17 @@ func FindHashtag(c appengine.Context, hashtag string) (Hashtag, os.Error) {
 	return h, nil
 }
 
+func DeleteHashtag(c appengine.Context, hashtag string) os.Error {
+	//search
+	key := datastore.NewKey(c, "Hashtag", hashtag, 0, nil)
+
+	if err := datastore.Delete(c, key); err != nil {
+		c.Errorf("DeleteHashtag failed to delete: %v", err.String())
+		return err
+	}
+	return nil
+}
+
 func ViewHashtag(c appengine.Context, hashtag Hashtag) os.Error {
 	hashtag.View += 1
 
@@ -136,12 +147,16 @@ func ViewHashtag(c appengine.Context, hashtag Hashtag) os.Error {
 
 func GetHashtags(c appengine.Context, options map[string]interface{}) ([]Hashtag, os.Error) {
 	length := options["length"].(int)
+	page := 0
+	if options["page"] != nil {
+		page = options["page"].(int)
+	}
 	order := "Crawled"
 	if options["order"] != nil {
 		order = options["order"].(string)
 	}
 	//search
-	q := datastore.NewQuery("Hashtag").Order(order).Limit(length)
+	q := datastore.NewQuery("Hashtag").Order(order).Offset(length * page).Limit(length)
 	hashtags := make([]Hashtag, 0, length)
 	if _, err := q.GetAll(c, &hashtags); err != nil {
 		c.Errorf("GetHashtags failed to get: %v", err.String())
