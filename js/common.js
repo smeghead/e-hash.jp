@@ -197,6 +197,21 @@ $(function(){
       }
     }, 1000);
   });
+  $('div.hashtags-more a').click(function(){
+    var $this = $(this);
+    var page = $this.closest('.hashtags-more').prev('div').data('page') + 1;
+
+    $.get('/hashtags_more', {page: page}, function(data){
+      var more = $(data);
+      if ($('a', more).length == 0) {
+        $this.hide();
+        return;
+      }
+      more.insertBefore($this.closest('.hashtags-more'));
+      $('a.subject_link', more).tagcloud();
+    });
+    return false;
+  });
 
 
   //tweet

@@ -347,7 +347,7 @@ func MigrateTweet(c appengine.Context, offset, length int) os.Error {
 
 func DeleteTweetsByHashtag(c appengine.Context, hashtag string) os.Error {
 	c.Debugf("DeleteTweetsByHashtag")
-	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order("Created_At").Limit(100)
+	q := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Order("Created_At").Limit(300)
 	var tweets []Tweet
 	keys, err := q.GetAll(c, &tweets)
 	if err != nil {

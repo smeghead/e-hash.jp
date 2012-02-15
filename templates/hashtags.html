@@ -76,10 +76,13 @@
       </div>
       <div id="main">
         <h2>ハッシュタグ一覧</h2>
-        <div class="subject_list">
+        <div class="subject_list" data-page="0">
           {{range .hashtags}}
           <span><a class="subject_link" href="#" rel="{{.Count}}" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></span>
           {{end}}
+        </div>
+        <div class="hashtags-more">
+          <a href="#">もっと読む</a>
         </div>
         <div class="totop">
           <a href="#top">↑一番上へ</a>

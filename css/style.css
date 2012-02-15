@@ -394,3 +394,17 @@ div#sort-box a.current {
 div#delete-tweets {
 	text-align: left;
 }
+div.navi {
+	padding: 0 10px 0 10px;
+}
+div.navi a {
+	text-decoration: underline;
+	font-size: 200%;
+	font-weight: bold;
+	padding: 0 10px 0 10px;
+	background-color: #33f;
+	color: white;
+}
+li.hashtag label {
+	cursor: pointer;
+}

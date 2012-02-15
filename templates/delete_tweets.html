@@ -24,22 +24,26 @@
   <body>
     <h1><a href="/">なにこれ？</a></h1>
     <div id="delete-tweets">
+      <div class="navi">
+        <a href="?p={{.prev}}">prev</a>
+        <a href="?p={{.next}}">next</a>
+      </div>
       <form id="form" action="" method="POST">
         <ul>
         {{range .hashtags}}
-          <li>
-            <input type="checkbox" name="hashtags" class="hashtags" value="{{.Name|html}}" />
-            {{.Name|html}}
+          <li class="hashtag">
+            <input type="checkbox" name="hashtags" class="hashtags" id="{{.Name|html}}" value="{{.Name|html}}" />
+            <label for="{{.Name|html}}">
+              {{.Name|html}}
+            </label>
           </li>
         {{end}}
         </ul>
         <input class="submit" type="submit" value="delete tweets." />
       </form>
       <div class="navi">
-        
         <a href="?p={{.prev}}">prev</a>
         <a href="?p={{.next}}">next</a>
-        
       </div>
     </div>
   </body>

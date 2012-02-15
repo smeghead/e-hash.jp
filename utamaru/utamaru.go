@@ -21,6 +21,7 @@ func init() {
 	http.HandleFunc("/s/", FrontSubject)
 	http.HandleFunc("/s/more", FrontSubjectMore)
 	http.HandleFunc("/hashtags", FrontHashtags)
+	http.HandleFunc("/hashtags_more", FrontHashtagsMore)
 	http.HandleFunc("/about", FrontAbout)
 	http.HandleFunc("/retweet", RetweetHandler)
 	http.HandleFunc("/favorite", FavoriteHandler)

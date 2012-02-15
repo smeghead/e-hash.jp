@@ -229,6 +229,34 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func FrontHashtagsMore(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+	pageStr := r.FormValue("page")
+	page, _ := strconv.Atoi(pageStr)
+	c.Debugf("FrontHashtags page: %d", page)
+
+	hashtags, err := GetHashtags(c, map[string]interface{}{
+		"page": page,
+		"length": 300,
+	})
+	if err != nil {
+		c.Errorf("FrontHashtags failed to search hashtags: %v", err)
+		ErrorPage(w, "お探しのページが見付かりませんでした。", http.StatusNotFound)
+		return
+	}
+
+	var hashtagsMoreTemplate = mustParseFile(r, "hashtags_more")
+	if err := hashtagsMoreTemplate.Execute(w, map[string]interface{}{
+				"page": page,
+				"hashtags": hashtags,
+			}); err != nil {
+		c.Errorf("FrontHashtags failed to merge template: %v", err.String())
+		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func FrontAbout(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
