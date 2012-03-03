@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/taskqueue"
 	"fmt"
+	"strings"
 	"strconv"
 	"time"
 	"http"
@@ -60,6 +61,9 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 		matches := reg.FindAllString(t.Text, 5)
 		for _, hashtag := range matches {
 			fmt.Fprintf(w, "<b>%v</b><br>\n", hashtag)
+			if (strings.Index(hashtag, "RT") > -1 || strings.Index(hashtag, "rt") > -1 || strings.Index(hashtag, "公式") > -1) {
+				continue;
+			}
 			if err := SaveHashtag(c, hashtag, 0); err != nil {
 				http.Error(w, err.String(), http.StatusInternalServerError)
 				return
@@ -94,6 +98,9 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 		matches := reg.FindAllString(t.Name, 5)
 		for _, hashtag := range matches {
 			fmt.Fprintf(w, "<b>%v</b><br>\n", hashtag)
+			if (strings.Index(hashtag, "RT") > -1 || strings.Index(hashtag, "rt") > -1 || strings.Index(hashtag, "公式") > -1) {
+				continue;
+			}
 			if err := SaveHashtag(c, hashtag, 0); err != nil {
 				c.Errorf("RecordTrendsHashtags failed to SaveHashtag: %v", err.String())
 				http.Error(w, err.String(), http.StatusInternalServerError)
@@ -121,6 +128,9 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("RecordRssHashtags len(hashtag): %d", len(hashtags))
 	for _, h := range hashtags {
 		fmt.Fprintf(w, "<b>%v</b><br>\n", h.Name)
+		if (strings.Index(h.Name, "RT") > -1 || strings.Index(h.Name, "rt") > -1 || strings.Index(h.Name, "公式") > -1) {
+			continue;
+		}
 		c.Debugf("RecordRssHashtags try to save: %s", h.Name)
 		if err := SaveHashtag(c, h.Name, 5); err != nil {
 			c.Errorf("RecordRssHashtags failed to SaveHashtag: %v", err.String())
