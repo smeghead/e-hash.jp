@@ -7,9 +7,9 @@ import (
 	"strings"
 	"strconv"
 	"time"
-	"http"
+	"net/http"
 	"regexp"
-	"template"
+	"html/template"
 )
 
 // Stream API Version.
@@ -19,7 +19,7 @@ import (
 // 		reg, err := regexp.Compile("[#＃][^ ;'.,\n]+")
 // 		if err != nil {
 // 			c.Errorf("RecordHashtags failed to compile regexp: %v", err.String())
-// 			http.Error(w, err.String(), http.StatusInternalServerError)
+// 			http.Error(w, fmt.Sprintf("%s", err).String(), http.StatusInternalServerError)
 // 			return err
 // 		}
 // 		matches := reg.FindAllString(t.Text, 5)
@@ -27,7 +27,7 @@ import (
 // 			c.Debugf("RecordHashtags hashtag: %v", hashtag)
 // 			if err := SaveHashtag(c, hashtag); err != nil {
 // 				c.Errorf("RecordHashtags failed to SaveHashtag: %v", err.String())
-// 				http.Error(w, err.String(), http.StatusInternalServerError)
+// 				http.Error(w, fmt.Sprintf("%s", err).String(), http.StatusInternalServerError)
 // 				return err
 // 			}
 // 		}
@@ -35,7 +35,7 @@ import (
 // 	})
 // 	if err != nil {
 // 		c.Errorf("RecordHashtags failed to InvokePublicTimelineStream: %v", err.String())
-// 		http.Error(w, err.String(), http.StatusInternalServerError)
+// 		http.Error(w, fmt.Sprintf("%s", err).String(), http.StatusInternalServerError)
 // 	}
 // 	return
 // }
@@ -45,12 +45,12 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 	//public timeline
 	tweets, err := GetPublicTimeline(c)
 	if err != nil {
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	reg, err := regexp.Compile(HashtagRexexp)
 	if err != nil {
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	for _, t := range tweets {
@@ -65,7 +65,7 @@ func RecordHashtags(w http.ResponseWriter, r *http.Request) {
 				continue;
 			}
 			if err := SaveHashtag(c, hashtag, 0); err != nil {
-				http.Error(w, err.String(), http.StatusInternalServerError)
+				http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 				return
 			}
 		}
@@ -77,21 +77,21 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 	c.Infof("RecordTrendsHashtags")
 	// decrement old hashtag
 	if err := DecrementOldHashtags(c, 50); err != nil {
-		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 	}
 
 	trends, err := GetTrends(c)
 	if err != nil {
-		c.Errorf("RecordTrendsHashtags failed to GetTrends: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("RecordTrendsHashtags failed to GetTrends: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	for _, t := range trends {
 		reg, err := regexp.Compile(HashtagRexexp)
 		if err != nil {
-			c.Errorf("RecordTrendsHashtags regexp compile error: %v", err.String())
-			http.Error(w, err.String(), http.StatusInternalServerError)
+			c.Errorf("RecordTrendsHashtags regexp compile error: %v", err)
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 			return
 		}
 		fmt.Fprintf(w, "%v<br>\n", t.Name)
@@ -102,8 +102,8 @@ func RecordTrendsHashtags(w http.ResponseWriter, r *http.Request) {
 				continue;
 			}
 			if err := SaveHashtag(c, hashtag, 0); err != nil {
-				c.Errorf("RecordTrendsHashtags failed to SaveHashtag: %v", err.String())
-				http.Error(w, err.String(), http.StatusInternalServerError)
+				c.Errorf("RecordTrendsHashtags failed to SaveHashtag: %v", err)
+				http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 				return
 			}
 		}
@@ -115,14 +115,14 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 	c.Infof("RecordRssHashtags")
 	// decrement old hashtag
 	if err := DecrementOldHashtags(c, 50); err != nil {
-		c.Errorf("RecordTrendsHashtags failed to DecrementOldHashtags: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("RecordRssHashtags failed to DecrementOldHashtags: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 	}
 
 	hashtags, err := GetHashtagsFromRss(c)
 	if err != nil {
-		c.Errorf("RecordRssHashtags failed to GetTrends: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("RecordRssHashtags failed to GetTrends: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	c.Debugf("RecordRssHashtags len(hashtag): %d", len(hashtags))
@@ -133,8 +133,8 @@ func RecordRssHashtags(w http.ResponseWriter, r *http.Request) {
 		}
 		c.Debugf("RecordRssHashtags try to save: %s", h.Name)
 		if err := SaveHashtag(c, h.Name, 5); err != nil {
-			c.Errorf("RecordRssHashtags failed to SaveHashtag: %v", err.String())
-			http.Error(w, err.String(), http.StatusInternalServerError)
+			c.Errorf("RecordRssHashtags failed to SaveHashtag: %v", err)
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 			return
 		}
 		c.Debugf("RecordRssHashtags saved: %s", h.Name)
@@ -150,8 +150,8 @@ func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 		"length": 3,
 	})
 	if err != nil {
-		c.Errorf("CrawleHashtags failed to retrieve hashtags: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("CrawleHashtags failed to retrieve hashtags: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -159,7 +159,7 @@ func CrawleHashtags(w http.ResponseWriter, r *http.Request) {
 		c.Debugf("register taskqueue: %s", hashtag.Name)
 		t := taskqueue.NewPOSTTask("/worker/crawle_hashtag", map[string][]string{"hashtag": []string{hashtag.Name}})
 		if _, err := taskqueue.Add(c, t, ""); err != nil {
-			http.Error(w, err.String(), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 			return
 		}
 	}
@@ -170,15 +170,15 @@ func CronAdmin(w http.ResponseWriter, r *http.Request) {
 	hashtag := r.FormValue("hashtag")
 	if len(hashtag) > 0 {
 		if err := SaveHashtag(c, hashtag, 3); err != nil {
-			http.Error(w, err.String(), http.StatusInternalServerError)
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 			return
 		}
 	}
-	var adminTemplate, _ = template.ParseFile("templates/admin.html")
+	var adminTemplate, _ = template.ParseFiles("templates/admin.html")
 	c.Infof("CronAdmin")
 	if err := adminTemplate.Execute(w, nil); err != nil {
-		c.Errorf("FrontTop failed to merge template: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontTop failed to merge template: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -205,7 +205,7 @@ func CronAdminDeleteTweet(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-		url := fmt.Sprintf("/cron/delete_tweets?p=%d&complete=%d", page, time.Seconds())
+		url := fmt.Sprintf("/cron/delete_tweets?p=%d&complete=%d", page, time.Now().Unix())
 		c.Debugf("CronAdminDeleteTweet: redirect to %s", url)
 		http.Redirect(w, r, url, 302)
 		return
@@ -220,15 +220,15 @@ func CronAdminDeleteTweet(w http.ResponseWriter, r *http.Request) {
 		ErrorPage(w, "お探しのページが見付かりませんでした。", http.StatusNotFound)
 		return
 	}
-	var deleteTweetsTemplate, _ = template.ParseFile("templates/delete_tweets.html")
+	var deleteTweetsTemplate, _ = template.ParseFiles("templates/delete_tweets.html")
 	c.Infof("CronAdmin")
 	if err := deleteTweetsTemplate.Execute(w, map[string]interface{}{
 				"prev": page - 1,
 				"next": page + 1,
 				"hashtags": hashtags,
 			}); err != nil {
-		c.Errorf("FrontTop failed to merge template: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontTop failed to merge template: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }

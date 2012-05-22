@@ -1,9 +1,9 @@
 package utamaru
 
 import (
-	"os"
 	"fmt"
-	"json"
+	"time"
+	"encoding/json"
 	"appengine"
 	"appengine/memcache"
 )
@@ -20,7 +20,7 @@ func CacheSetSubjects(c appengine.Context, subjects []Hashtag, options map[strin
 	item := &memcache.Item{
 		Key:   "TopSubjects|" + string(optionsVal),
 		Value: jsonVal,
-		Expiration: int32(cacheLifetime),
+		Expiration: time.Duration(cacheLifetime) * time.Second,
 	}
 	c.Debugf("CacheSetSubjects Key: %s Expiration: %d", item.Key, item.Expiration)
 
@@ -34,7 +34,7 @@ func CacheSetSubjects(c appengine.Context, subjects []Hashtag, options map[strin
 	}
 }
 
-func CacheGetSubjects(c appengine.Context, options map[string]interface{}) ([]Hashtag, os.Error) {
+func CacheGetSubjects(c appengine.Context, options map[string]interface{}) ([]Hashtag, error) {
 	optionsVal, _ := json.Marshal(options)
 	c.Debugf("CacheGetSubjects Key: %s", "TopSubjects|" + string(optionsVal))
 	item, err := memcache.Get(c, "TopSubjects|" + string(optionsVal))
@@ -63,7 +63,7 @@ func CacheSetTweetsByHashtag(c appengine.Context, hashtag string, tweets []Tweet
 	item := &memcache.Item{
 		Key:   fmt.Sprintf("TweetsByHashtag|%s|%s", hashtag, string(optionsVal)),
 		Value: jsonVal,
-		Expiration: int32(cacheLifetime),
+		Expiration: time.Duration(cacheLifetime) * time.Second,
 	}
 	c.Debugf("CacheSetTweetsByHashtag Key: %s Expiration: %d", item.Key, item.Expiration)
 
@@ -77,7 +77,7 @@ func CacheSetTweetsByHashtag(c appengine.Context, hashtag string, tweets []Tweet
 	}
 }
 
-func CacheGetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]interface{}) ([]Tweet, os.Error) {
+func CacheGetTweetsByHashtag(c appengine.Context, hashtag string, options map[string]interface{}) ([]Tweet, error) {
 	optionsVal, _ := json.Marshal(options)
 	key := fmt.Sprintf("TweetsByHashtag|%s|%s", hashtag, string(optionsVal))
 	c.Debugf("CacheGetTweetsByHashtag Key: %s", key)

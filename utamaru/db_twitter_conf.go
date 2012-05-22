@@ -1,7 +1,6 @@
 package utamaru
 
 import (
-	"os"
 	"appengine"
 	"appengine/datastore"
 )
@@ -15,7 +14,7 @@ type TwitterConf struct {
 	GoogleShortUrlApiKey string
 }
 
-func GetTwitterConf(c appengine.Context) (TwitterConf, os.Error) {
+func GetTwitterConf(c appengine.Context) (TwitterConf, error) {
 	c.Infof("GetTwitterConf")
 	conf := new(TwitterConf)
 	key := datastore.NewKey(c, "TwitterConf", "singleton", 0, nil)
@@ -23,9 +22,9 @@ func GetTwitterConf(c appengine.Context) (TwitterConf, os.Error) {
 	if err := datastore.Get(c, key, conf); err != nil {
 		c.Infof("GetTwitterConf failed to load: %v", err)
 		c.Infof("GetTwitterConf try to initialize config.")
-		if _, err = datastore.Put(c, key, conf); err != nil {
-			c.Errorf("GetTwitterConf failed to load: %v", err)
-		}
+//		if _, err = datastore.Put(c, key, conf); err != nil {
+//			c.Errorf("GetTwitterConf failed to load: %v", err)
+//		}
 		return *conf, err
 	}
 	if _, err := datastore.Put(c, key, conf); err != nil {

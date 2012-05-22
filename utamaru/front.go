@@ -1,12 +1,11 @@
 package utamaru
 
 import (
-	"os"
 	"fmt"
 	"strings"
 	"appengine"
-	"http"
-	"template"
+	"net/http"
+	"html/template"
 	"strconv"
 	"encoding/base64"
 )
@@ -31,7 +30,7 @@ func mustParseFile(r *http.Request, templateName string) *template.Template {
 	if isMobile(r) {
 		prefix = "m/"
 	}
-	tmpl, err := template.ParseFile("templates/" + prefix + templateName + ".html")
+	tmpl, err := template.ParseFiles("templates/" + prefix + templateName + ".html")
 	if err != nil {
 		fmt.Printf("error failed to parse template. %v\n", err)
 	}
@@ -64,7 +63,7 @@ func getSessionId(c appengine.Context, r *http.Request) string {
 	return getCookie(r, "id")
 }
 
-func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}, os.Error) {
+func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}, error) {
 	commonMap := make(map[string]interface{})
 
 	commonMap["user"] = user
@@ -79,7 +78,7 @@ func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}
 		"order": "-View",
 	})
 	if err != nil {
-		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err.String())
+		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err)
 		return commonMap, err
 	}
 	commonMap["Common_HashtagsHot"] = hashtagsHot
@@ -89,7 +88,7 @@ func getCommonMap(c appengine.Context, user TwitterUser) (map[string]interface{}
 		"order": "-Date",
 	})
 	if err != nil {
-		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err.String())
+		c.Errorf("getCommonMap failed to retrieve hashtags: %v", err)
 		return commonMap, err
 	}
 	commonMap["Common_HashtagsNew"] = hashtagsNew
@@ -103,8 +102,8 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	user := getUser(c, w, r)
 	resultMap, err := getCommonMap(c, user)
 	if err != nil {
-		c.Errorf("FrontTop failed to retrieve resultMap: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontTop failed to retrieve resultMap: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -113,8 +112,8 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 		"order": "random",
 	})
 	if err != nil {
-		c.Errorf("FrontTop failed to retrieve hashtags: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontTop failed to retrieve hashtags: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -125,8 +124,8 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 			"length": 2,
 		})
 		if err != nil {
-			c.Errorf("FrontTop failed to retrieve tweets: %v", err.String())
-			ErrorPage(w, err.String(), http.StatusInternalServerError)
+			c.Errorf("FrontTop failed to retrieve tweets: %v", err)
+			ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		}
 		if len(tweets) == 0 {
 			continue
@@ -142,8 +141,8 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	var topTemplate = mustParseFile(r, "index")
 	c.Debugf("parsedd")
 	if err := topTemplate.Execute(w, resultMap); err != nil {
-		c.Errorf("FrontTop failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontTop failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -162,8 +161,8 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	user := getUser(c, w, r)
 	resultMap, err := getCommonMap(c, user)
 	if err != nil {
-		c.Errorf("FrontSubject failed to retrieve resultMap: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontSubject failed to retrieve resultMap: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -183,8 +182,8 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 		"sort": sort,
 	})
 	if err != nil {
-		c.Errorf("FrontSubject failed to retrieve tweets: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontSubject failed to retrieve tweets: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 	}
 	hle := HashtagListElement{h, tweets}
 
@@ -193,8 +192,8 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	resultMap["encodedhashtag"] = Encode(hashtag[1:])
 	var subjectTemplate = mustParseFile(r, "subject")
 	if err := subjectTemplate.Execute(w, resultMap); err != nil {
-		c.Errorf("FrontSubject failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontSubject failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	c.Debugf("FrontSubject end")
@@ -206,8 +205,8 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	user := getUser(c, w, r)
 	resultMap, err := getCommonMap(c, user)
 	if err != nil {
-		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 
@@ -223,8 +222,8 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	resultMap["hashtags"] = hashtags
 	var hashtagsTemplate = mustParseFile(r, "hashtags")
 	if err := hashtagsTemplate.Execute(w, resultMap); err != nil {
-		c.Errorf("FrontHashtags failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontHashtags failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -251,8 +250,8 @@ func FrontHashtagsMore(w http.ResponseWriter, r *http.Request) {
 				"page": page,
 				"hashtags": hashtags,
 			}); err != nil {
-		c.Errorf("FrontHashtags failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontHashtags failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -263,15 +262,15 @@ func FrontAbout(w http.ResponseWriter, r *http.Request) {
 	user := getUser(c, w, r)
 	resultMap, err := getCommonMap(c, user)
 	if err != nil {
-		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 
 	var aboutTemplate = mustParseFile(r, "about")
 	if err := aboutTemplate.Execute(w, resultMap); err != nil {
-		c.Errorf("FrontHashtags failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontHashtags failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -451,8 +450,8 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	if err := subjectMoreTemplate.Execute(w, map[string]interface{}{
 				"Tweets": tweets,
 			}); err != nil {
-		c.Errorf("FrontSubjectMore failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontSubjectMore failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -581,16 +580,16 @@ func FrontSubjectMore(w http.ResponseWriter, r *http.Request) {
 		"sort": sort,
 	})
 	if err != nil {
-		c.Errorf("FrontSubjectMore failed to retrieve tweets: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontSubjectMore failed to retrieve tweets: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 	}
 
 	var subjectMoreTemplate = mustParseFile(r, "subject_more")
 	if err := subjectMoreTemplate.Execute(w, map[string]interface{}{
 				"Tweets":tweets,
 			}); err != nil {
-		c.Errorf("FrontSubjectMore failed to merge template: %v", err.String())
-		ErrorPage(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("FrontSubjectMore failed to merge template: %v", err)
+		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }

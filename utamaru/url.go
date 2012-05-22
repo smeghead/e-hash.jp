@@ -2,8 +2,8 @@ package utamaru
 
 import (
 	"bytes"
-	"json"
-	"http"
+	"encoding/json"
+	"net/http"
 	"appengine"
 	"appengine/urlfetch"
 	"io/ioutil"
@@ -18,14 +18,14 @@ func ShorterUrl(c appengine.Context, longUrl string) string {
 	c.Debugf("ShorterUrl long url: %s", longUrl)
 	conf, err := GetTwitterConf(c)
 	if err != nil {
-		c.Errorf("ShorterUrl failed to load TwitterConf: %v", err.String())
+		c.Errorf("ShorterUrl failed to load TwitterConf: %v", err)
 		return ""
 	}
 
 	url := "https://www.googleapis.com/urlshortener/v1/url?key=" + conf.GoogleShortUrlApiKey 
 	jsonInput, err := json.Marshal(map[string]string{"longUrl": longUrl})
 	if err != nil {
-		c.Errorf("ShorterUrl failed to marshal json: %v", err.String())
+		c.Errorf("ShorterUrl failed to marshal json: %v", err)
 		return ""
 	}
 	c.Debugf("body: %s", string(jsonInput))
@@ -35,12 +35,12 @@ func ShorterUrl(c appengine.Context, longUrl string) string {
 	client := urlfetch.Client(c)
 	response, err := client.Do(request)
 	if err != nil {
-		c.Errorf("ShorterUrl failed to api call: %v", err.String())
+		c.Errorf("ShorterUrl failed to api call: %v", err)
 		return ""
 	}
 	jsonVal, err2 := ioutil.ReadAll(response.Body)
 	if err2 != nil {
-		c.Errorf("ShorterUrl failed to read result: %v", err.String())
+		c.Errorf("ShorterUrl failed to read result: %v", err)
 		return ""
 	}
 	c.Debugf("ShorterUrl response: %v", string(jsonVal))

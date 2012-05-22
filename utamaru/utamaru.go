@@ -2,18 +2,17 @@ package utamaru
 
 import (
 	"appengine"
-	"appengine/datastore"
 	"fmt"
-	"http"
+	"net/http"
 	"time"
-	"template"
+	"html/template"
 	"strconv"
 )
 
 type Greeting struct {
 	Author string
 	Content string
-	Date datastore.Time
+	Date time.Time
 }
 
 func init() {
@@ -48,12 +47,12 @@ func init() {
 
 func ErrorPage(w http.ResponseWriter, message string, code int) {
 	w.WriteHeader(code)
-	var errorTemplate, _ = template.ParseFile("templates/error.html")
+	var errorTemplate, _ = template.ParseFiles("templates/error.html")
 	if err := errorTemplate.Execute(w, map[string]interface{}{
 				"siteTitle": SiteTitle,
 				"ErrorMessage": message,
 			}); err != nil {
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 }
@@ -63,7 +62,7 @@ func HomeTestHandler(w http.ResponseWriter, r *http.Request) {
 	c.Infof("HomeTestHandler")
 	err := HomeTest(c)
 	if err != nil {
-		c.Errorf("HomeTestHandler failed to post: %v", err.String())
+		c.Errorf("HomeTestHandler failed to post: %v", err)
 	}
 	fmt.Fprint(w, "end");
 }
@@ -75,7 +74,7 @@ func MigrateTweetHandler(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("conv : %d", offset)
 	err := MigrateTweet(c, offset, 200)
 	if err != nil {
-		c.Errorf("MigrateTweetHandler failed to post: %v", err.String())
+		c.Errorf("MigrateTweetHandler failed to post: %v", err)
 	}
 	fmt.Fprint(w, "end");
 }
@@ -87,7 +86,7 @@ func MigrateHashtagHandler(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("conv : %d", offset)
 	err := MigrateHashtag(c, offset, 200)
 	if err != nil {
-		c.Errorf("MigrateHashtagHandler failed to post: %v", err.String())
+		c.Errorf("MigrateHashtagHandler failed to post: %v", err)
 	}
 	fmt.Fprint(w, "end");
 }
@@ -97,8 +96,8 @@ func GetReqestTokenHandler(w http.ResponseWriter, r *http.Request) {
 	c.Infof("GetReqestTokenHandler")
 	requestToken, err := GetRequestToken(c)
 	if err != nil {
-		c.Errorf("GetReqestTokenHandler failed to post: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("GetReqestTokenHandler failed to post: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	SaveRequestToken(c, *requestToken)
@@ -121,30 +120,31 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 	c.Debugf("%s, %s", oauthToken, oauthVerifier)
 	requestToken, err := FindRequestToken(c, oauthToken)
 	if err != nil {
-		c.Errorf("GetAccessTokenHandler failed to find requestToken: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("GetAccessTokenHandler failed to find requestToken: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	c.Debugf("requestToken: %s", requestToken.OauthToken)
 	user, err := GetAccessToken(c, requestToken, oauthVerifier)
 	if err != nil {
-		c.Errorf("GetReqestTokenHandler failed to post: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("GetReqestTokenHandler failed to post: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
 	user.SessionId = GetUniqId(r.RemoteAddr, r.UserAgent())
 	if err := SaveUser(c, *user); err != nil {
-		c.Errorf("GetReqestTokenHandler failed to save: %v", err.String())
-		http.Error(w, err.String(), http.StatusInternalServerError)
+		c.Errorf("GetReqestTokenHandler failed to save: %v", err)
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return
 	}
-	oneYearLater := time.LocalTime()
-	oneYearLater.Year += 1
+	oneYearLater := time.Now().Local()
+	oneYearLater.AddDate(1, 0,0)
 	http.SetCookie(w, &http.Cookie{
 		Name: "id",
 		Value: user.SessionId,
 		Path: "/",
-		Expires: *oneYearLater})
+		Expires: oneYearLater,
+	})
 
 	oauthType := getCookie(r, "type")
 	c.Debugf("GetReqestTokenHandler oauthType: %s", oauthType)
