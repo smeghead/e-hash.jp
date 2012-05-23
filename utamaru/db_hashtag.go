@@ -174,7 +174,8 @@ func GetPublicHashtags(c appengine.Context, options map[string]interface{}) ([]H
 		order = options["order"].(string)
 		if order == "random" {
 			newInt, _ := rand.Int(rand.Reader, big.NewInt(2)) // 1 or 2 or 3
-			order = []string{"-Count", "-Date", "Crawled"}[int(newInt.Int64())]
+			order = []string{"-Count", "-Count", "Crawled"}[int(newInt.Int64())]
+			//order = []string{"-Count", "-Date", "Crawled"}[int(newInt.Int64())]
 			c.Debugf("GetPublicHashtags order random selected: %s", order)
 		}
 	}

@@ -1,410 +1,420 @@
-body {
-	text-align:center;
-	background-color: #CCCCFF;
+.sidebar {
+  min-height: 20px;
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #eee;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
-a{color:#2D76B9;text-decoration:none;}
-a:hover{text-decoration:underline;}
-a:focus{outline:1px dotted;}
-hr{border:0;border-top:1px solid rgba(0,0,0,0.1);border-bottom:1px solid rgba(255,255,255,0.3);*border-top:1px solid #000;*border-bottom:1px solid #fff;*filter:alpha(opacity = 30);clear:both;height:0;display:block;margin:15px 0 15px 0;}
-h1{font-size:25px;}
-h2{font-size:27px;}
-h3{font-size:21px;}
-h4{font-size:19px;}
-h5{font-size:17px;}
-h6{font-size:15px;}
-ol{list-style:decimal;}
-ul{list-style:disc;}
-li{margin-left:30px;}
-b,strong{font-weight:bold;}
-fieldset,img{border:0;}
+/* body { */
+/* 	text-align:center; */
+/* 	background-color: #CCCCFF; */
+/* } */
+/* a{color:#2D76B9;text-decoration:none;} */
+/* a:hover{text-decoration:underline;} */
+/* a:focus{outline:1px dotted;} */
+/* hr{border:0;border-top:1px solid rgba(0,0,0,0.1);border-bottom:1px solid rgba(255,255,255,0.3);*border-top:1px solid #000;*border-bottom:1px solid #fff;*filter:alpha(opacity = 30);clear:both;height:0;display:block;margin:15px 0 15px 0;} */
+/* h1{font-size:25px;} */
+/* h2{font-size:27px;} */
+/* h3{font-size:21px;} */
+/* h4{font-size:19px;} */
+/* h5{font-size:17px;} */
+/* h6{font-size:15px;} */
+/* ol{list-style:decimal;} */
+/* ul{list-style:disc;} */
+/* li{margin-left:30px;} */
+/* b,strong{font-weight:bold;} */
+/* fieldset,img{border:0;} */
 /* layout */
-div#main-container {
-	background-color: #9999CC; /*rgba(171, 219, 177, 0.898438);
-	_background-color: #ABDBB1;*/
-	width: 900px;
-	margin-left:auto;
-	margin-right:auto;
-	text-align: left;
-	border-radius: 8px;
-}
-div#menu {
-	width: 665px;
-	padding: 0px;
-	float: left;
-	background-color: #dddddd;
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
-}
-div#main {
-	width: 625px;
-	padding: 20px;
-	float: left;
-	background-color: white;
-	border-bottom-left-radius: 8px;
-	border-bottom-right-radius: 8px;
-}
+/* div#main-container { */
+/* 	background-color: #9999CC; */
+/* 	width: 900px; */
+/* 	margin-left:auto; */
+/* 	margin-right:auto; */
+/* 	text-align: left; */
+/* 	border-radius: 8px; */
+/* } */
+/* div#menu { */
+/* 	width: 665px; */
+/* 	padding: 0px; */
+/* 	float: left; */
+/* 	background-color: #dddddd; */
+/* 	border-top-left-radius: 8px; */
+/* 	border-top-right-radius: 8px; */
+/* } */
+/* div#main { */
+/* 	width: 625px; */
+/* 	padding: 20px; */
+/* 	float: left; */
+/* 	background-color: white; */
+/* 	border-bottom-left-radius: 8px; */
+/* 	border-bottom-right-radius: 8px; */
+/* } */
 
-div#sidebar {
-	padding: 20px 20px 20px 685px;
-}
-div#footer {
-	clear: left;
-	text-align: left;
-}
+/* div#sidebar { */
+/* 	padding: 20px 20px 20px 685px; */
+/* } */
+/* div#footer { */
+/* 	clear: left; */
+/* 	text-align: left; */
+/* } */
 
-/* style */
-h1 a,
-h1 a:hover,
-h1 a:visited {
-	font-size: 40px;
-	color: #FFFFFF !important;
-/* 	color: #FF00CC !important; */
-}
-h2 a,
-h2 a:hover,
-h2 a:visited {
-	color: #3366CC;
-}
+/* |+style+| */
+/* h1 a, */
+/* h1 a:hover, */
+/* h1 a:visited { */
+/* 	font-size: 40px; */
+/* 	color: #FFFFFF !important; */
+/* |+	color: #FF00CC !important;+| */
+/* } */
+/* h2 a, */
+/* h2 a:hover, */
+/* h2 a:visited { */
+/* 	color: #3366CC; */
+/* } */
 
-.menu{margin:0 auto; padding:0; height:20px; width:100%; display:block;}
-.menu li {
-	padding: 0px;
-	margin: 0px;
-	list-style:none;
-	display:inline;
-}
-.menu li a{
-	float:left;
-	padding: 8px 0px 8px 15px;
-	display:block;
-	color:#333; text-decoration:none;
-	font-size: 11pt;
-	font-weight: bold;
-	cursor:pointer;
-	border-top-left-radius: 8px;
-	border-top-right-radius: 8px;
-	background-color: #EEE;
-}
-.menu li a span{line-height:20px; float:left; display:block; padding-right:15px; }
-.menu li a:hover{ color:#444; background-color: #CCC;}
-.menu li a:hover span{}
-.menu li a.active, .menu li a.active:hover {
-	line-height:30px;
-	color:#444;
-	background-color: #BBB;
-	cursor: default;
-}
-.menu li a.active span, .menu li a.active:hover span{}
-h2 a {
-	padding: 3px;
-}
-div#main-container .subject_list {
-	font-size: 120%;
-	margin: 0px 0px;
-}
-div#main .subject_list {
-	line-height: 180%;
-}
-h2 a:hover,
-.subject_list a:hover,
-.more a:hover
-{
-	text-decoration:none;
-	background-color: #FFDD66;
-}
-div#sidebar #qr-code {
-	text-align: center;
-}
-div#sidebar h5 {
-	margin-bottom: 10px;
-	font-weight: normal;
-}
-div#sidebar .subject_list a {
-	color:#0D56B9;
-	font-size: 120%;
-}
-div#sidebar hr {
-	clear: none;
-	width: 100%;
-}
-div#topad {
-	margin: 10px;
-}
-div#sidead {
-	margin: 20px;
-	text-align: center;
-}
-div#tweet-box {
-	text-align: right;
-	width: 610px;
-}
-div#tweet-box textarea {
-	width: 610px;
-	padding: 5px;
-	height: 40px;
-	border: 1px solid gray;
-	border-radius: 5px;
-}
-div#tweet-box input.post {
-}
-div#tweet-box #leave-letter-count {
-	color: #999999;
-	font-size: 16px;
-}
-.subject_block {
-	width: 600px;
-	margin: 30px 0px;
-	padding: 10px;
-	background-color: #FFFF99;
-	border-style: solid;
-	border-color: #FFCC00;
-	border-width: 1px;
-	border-radius: 5px;
-}
-.subject_block .icon {
-	float: left;
-	border-radius: 5px;
-}
-.subject_block .icon_block {
-	float: left;
-	width: 48px;
-	font-size: 8pt;
-	text-align: center;
-}
-.subject_block div.feedback {
-	float: right;
-	background-color: #FF6600;
-	margin: 0px 5px;
-	background: -webkit-gradient(linear, left top, left bottom, from(#FF9966), to(#FF6600));
-	background: linear-gradient(top, #FF9966, #FF6600);
-	border-radius: 3px;
-}
-.subject_block div.feedback a.like,
-.subject_block div.feedback a.retweet,
-.subject_block div.feedback a.favorite
-{
-	padding: 4px 5px;
-	display: block;
-	cursor: pointer;
-	font-size: 10pt;
-	font-weight: bold;
-	color: white;
-}
-.subject_block .icon_block img {
-	width: 48px;
-	height: 48px;
-}
-.subject_block .subject_right {
-	float: left;
-	width: 550px;
-}
-.subject_block .twitter-buttons {
-	float: right;
-	margin-right: 18px;
-}
-div.users {
-	clear: both;
-}
-.subject_block .twitter-buttons div.button {
-	margin: 2px 5px;
-	float: right;
-	display: block;
-	background-color: #FF6600;
-	border-radius: 3px;
-/* 	width: 18px; */
-/* 	height: 18px; */
-/* 	background: url(../images/tw-sprite.png); */
-}
-/* .subject_block .twitter-buttons div.reply { */
-/* 	background-position: 0 0; */
+/* .menu{margin:0 auto; padding:0; height:20px; width:100%; display:block;} */
+/* .menu li { */
+/* 	padding: 0px; */
+/* 	margin: 0px; */
+/* 	list-style:none; */
+/* 	display:inline; */
 /* } */
-/* .subject_block .twitter-buttons div.retweet { */
-/* 	background-position: -80px 0; */
+/* .menu li a{ */
+/* 	float:left; */
+/* 	padding: 8px 0px 8px 15px; */
+/* 	display:block; */
+/* 	color:#333; text-decoration:none; */
+/* 	font-size: 11pt; */
+/* 	font-weight: bold; */
+/* 	cursor:pointer; */
+/* 	border-top-left-radius: 8px; */
+/* 	border-top-right-radius: 8px; */
+/* 	background-color: #EEE; */
 /* } */
-/* .subject_block .twitter-buttons div.favorite { */
-/* 	background-position: -32px 0; */
-/* } */
-/* .subject_block .twitter-buttons div:hover.reply { */
-/* 	background-position: -16px 0; */
-/* } */
-/* .subject_block .twitter-buttons div:hover.retweet { */
-/* 	background-position: -96px 0; */
-/* } */
-/* .subject_block .twitter-buttons div:hover.favorite { */
-/* 	background-position: -48px 0; */
-/* } */
-/* .subject_block .twitter-buttons div.retweeted { */
-/* 	background-position: -112px 0; */
-/* } */
-/* .subject_block .twitter-buttons div.favorited { */
-/* 	background-position: -64px 0; */
+/* .menu li a span{line-height:20px; float:left; display:block; padding-right:15px; } */
+/* .menu li a:hover{ color:#444; background-color: #CCC;} */
+/* .menu li a:hover span{} */
+/* .menu li a.active, .menu li a.active:hover { */
+/* 	line-height:30px; */
+/* 	color:#444; */
+/* 	background-color: #BBB; */
 /* 	cursor: default; */
 /* } */
+/* .menu li a.active span, .menu li a.active:hover span{} */
+/* h2 a { */
+/* 	padding: 3px; */
+/* } */
+/* div#main-container .subject_list { */
+/* 	font-size: 120%; */
+/* 	margin: 0px 0px; */
+/* } */
+/* div#main .subject_list { */
+/* 	line-height: 180%; */
+/* } */
+/* h2 a:hover, */
+/* .subject_list a:hover, */
+/* .more a:hover */
+/* { */
+/* 	text-decoration:none; */
+/* 	background-color: #FFDD66; */
+/* } */
+/* div#sidebar #qr-code { */
+/* 	text-align: center; */
+/* } */
+/* div#sidebar h5 { */
+/* 	margin-bottom: 10px; */
+/* 	font-weight: normal; */
+/* } */
+/* div#sidebar .subject_list a { */
+/* 	color:#0D56B9; */
+/* 	font-size: 120%; */
+/* } */
+/* div#sidebar hr { */
+/* 	clear: none; */
+/* 	width: 100%; */
+/* } */
+div#topad {
+	width: 728px;
+	margin: 5px auto;
+}
+/* div#sidead { */
+/* 	margin: 20px; */
+/* 	text-align: center; */
+/* } */
+/* div#tweet-box { */
+/* 	text-align: right; */
+/* 	width: 610px; */
+/* } */
+/* div#tweet-box textarea { */
+/* 	width: 610px; */
+/* 	padding: 5px; */
+/* 	height: 40px; */
+/* 	border: 1px solid gray; */
+/* 	border-radius: 5px; */
+/* } */
+/* div#tweet-box input.post { */
+/* } */
+/* div#tweet-box #leave-letter-count { */
+/* 	color: #999999; */
+/* 	font-size: 16px; */
+/* } */
+.subject_block {
+	margin: 20px 0px;
+	padding: 10px 0px;
+	background-color: #FFFF99;
+/* 	border-style: solid; */
+	border-color: #FFCC00;
+	border-width: 1px;
+	border-radius: 5px;
+}
+/* .subject_block .icon { */
+/* 	float: left; */
+/* 	border-radius: 5px; */
+/* } */
+/* .subject_block .icon_block { */
+/* 	float: left; */
+/* 	width: 48px; */
+/* 	font-size: 8pt; */
+/* 	text-align: center; */
+/* } */
+.subject_block div.feedback {
+	float: right;
+	margin: 0px 2px;
+}
+/* .subject_block div.feedback a.like, */
+/* .subject_block div.feedback a.retweet, */
+/* .subject_block div.feedback a.favorite */
+/* { */
+/* 	padding: 4px 5px; */
+/* 	display: block; */
+/* 	cursor: pointer; */
+/* 	font-size: 10pt; */
+/* 	font-weight: bold; */
+/* 	color: white; */
+/* } */
+/* .subject_block .icon_block img { */
+/* 	width: 48px; */
+/* 	height: 48px; */
+/* } */
+/* .subject_block .subject_right { */
+/* 	float: left; */
+/* 	width: 550px; */
+/* } */
+/* .subject_block .twitter-buttons { */
+/* 	float: right; */
+/* 	margin-right: 18px; */
+/* } */
+/* div.users { */
+/* 	clear: both; */
+/* } */
+/* .subject_block .twitter-buttons div.button { */
+/* 	margin: 2px 5px; */
+/* 	float: right; */
+/* 	display: block; */
+/* 	background-color: #FF6600; */
+/* 	border-radius: 3px; */
+/* |+	width: 18px;+| */
+/* |+	height: 18px;+| */
+/* |+	background: url(../images/tw-sprite.png);+| */
+/* } */
+/* |+.subject_block .twitter-buttons div.reply {+| */
+/* |+	background-position: 0 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div.retweet {+| */
+/* |+	background-position: -80px 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div.favorite {+| */
+/* |+	background-position: -32px 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div:hover.reply {+| */
+/* |+	background-position: -16px 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div:hover.retweet {+| */
+/* |+	background-position: -96px 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div:hover.favorite {+| */
+/* |+	background-position: -48px 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div.retweeted {+| */
+/* |+	background-position: -112px 0;+| */
+/* |+}+| */
+/* |+.subject_block .twitter-buttons div.favorited {+| */
+/* |+	background-position: -64px 0;+| */
+/* |+	cursor: default;+| */
+/* |+}+| */
 
-.subject_block .subject_record {
-	margin: 5px 10px;
-	font-size: 70%;
-}
-.subject_block .create_at {
-}
+/* .subject_block .subject_record { */
+/* 	margin: 5px 10px; */
+/* 	font-size: 70%; */
+/* } */
+/* .subject_block .create_at { */
+/* } */
 .subject_block .text {
-	margin: 10px;
-	font-size: 140%;
-	padding: 5px 15px;
+	font-size: 120%;
+	line-height: 140%;
+	margin: 5px 0px;
+	padding: 5px 5px;
 	background-color: white;
 	border-radius: 8px;
-	border-style: solid;
+/* 	border-style: solid; */
 	border-color: #FFCC00;
 	border-width: 1px;
 }
-#main .more {
+.container .more {
 	text-align: right;
 }
-#main .more-tweets {
-	padding: 5px;
-	font-size: 13pt;
-	font-weight: bold;
-	text-align: center;
-	color: #111166;
-	background-color: #99CCFF;
-	border: 1px solid #336699;
-	border-radius: 5px;
-	cursor: pointer;
-}
-#main div:hover.more-tweets {
-	color: #4444AA;
-	background-color: #88BBEE;
-}
-a.twitter-hashtag {
-	color: #FF33FF !important;
-}
-#introduction {
-/* 	border: 3px solid blue; */
-	padding: 0px;
-	font-weight: bold;
-	font-size: 120%;
-	margin-bottom: 20px;
-}
-#introduction span {
-	font-size: 120%;
-}
-#header {
-	text-align: left;
-	background-color: #222;
-	margin-bottom: 2px;
-	padding: 2px;
-}
-#footer {
-	background-color: #222;
-	color: #666;
-	margin-top: 30px;
-	padding: 10px 10px 50px 10px;
-}
-#copyright {
-	float: right;
-	vertical-align: top;
-}
-.clear {
-	clear: both;
-	height: 0px;
-}
+/* #main .more-tweets { */
+/* 	padding: 5px; */
+/* 	font-size: 13pt; */
+/* 	font-weight: bold; */
+/* 	text-align: center; */
+/* 	color: #111166; */
+/* 	background-color: #99CCFF; */
+/* 	border: 1px solid #336699; */
+/* 	border-radius: 5px; */
+/* 	cursor: pointer; */
+/* } */
+/* #main div:hover.more-tweets { */
+/* 	color: #4444AA; */
+/* 	background-color: #88BBEE; */
+/* } */
+/* a.twitter-hashtag { */
+/* 	color: #FF33FF !important; */
+/* } */
+/* #introduction { */
+/* |+	border: 3px solid blue;+| */
+/* 	padding: 0px; */
+/* 	font-weight: bold; */
+/* 	font-size: 120%; */
+/* 	margin-bottom: 20px; */
+/* } */
+/* #introduction span { */
+/* 	font-size: 120%; */
+/* } */
+/* #header { */
+/* 	text-align: left; */
+/* 	background-color: #222; */
+/* 	margin-bottom: 2px; */
+/* 	padding: 2px; */
+/* } */
+/* #footer { */
+/* 	background-color: #222; */
+/* 	color: #666; */
+/* 	margin-top: 30px; */
+/* 	padding: 10px 10px 50px 10px; */
+/* } */
+/* #copyright { */
+/* 	float: right; */
+/* 	vertical-align: top; */
+/* } */
+/* .clear { */
+/* 	clear: both; */
+/* 	height: 0px; */
+/* } */
 
-div.totop {
-	margin: 20px 0px;
-	font-size: 130%;
-}
+/* div.totop { */
+/* 	margin: 20px 0px; */
+/* 	font-size: 130%; */
+/* } */
 
-div.virtual-blank {
-	height: 1000px;
-}
-/* ticker */
-.container {  
-/*     width: 600px;   */
-    text-align: left;  
-    height: 25px;
-}  
-.container .wrap {  
-    position: relative;   
-    padding: 0px;
-    overflow: hidden;  
-    height: 25px;
-}  
-#ticker {
-    float: right;
-    width: 50%;
-    white-space: nowrap;
-    overflow: hidden;
-    display: none;
-}
-#ticker-elements-hide {
-	display: none;
-}  
-#ticker-elements {
-    position: relative;  
-    height: 25px;
-}  
-#ticker-elements span {
-    padding-right: 20px;  
-}  
-#ticker-elements span a {
-	color: #99f;
-	font-size: 15pt;
-}  
-/* error page */
-div.errorpage-message {
-	font-size: 150%;
-	font-weight: bold;
-	height: 1000px;
-}
-div#social-bookmarks {
-	clear: right;
-	float: right;
-}
-div#social-bookmarks div {
-	display: inline;
-	margin: 5px;
-}
-div.hatebu {
-	display: inline;
-}
-div.facebook-like {
-}
-div.message {
-	display: none;
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	opacity: 80%;
-	background-color: white;
-	color: gray;
-	text-align: center;
-	font-size: 20pt;
-	padding: 30px;
-}
-div#sort-box a {
-	margin: 1px;
-	padding: 5px;
-}
-div#sort-box a.current {
-	color: white;
-	background-color: #000066;
-	border-radius: 5px;
-}
-div#delete-tweets {
-	text-align: left;
-}
-div.navi {
-	padding: 0 10px 0 10px;
-}
-div.navi a {
-	text-decoration: underline;
-	font-size: 200%;
-	font-weight: bold;
-	padding: 0 10px 0 10px;
-	background-color: #33f;
-	color: white;
-}
-li.hashtag label {
-	cursor: pointer;
-}
+/* div.virtual-blank { */
+/* 	height: 1000px; */
+/* } */
+/* |+ticker+| */
+/* .container {   */
+/* |+    width: 600px;  +| */
+/*     text-align: left;   */
+/*     height: 25px; */
+/* }   */
+/* .container .wrap {   */
+/*     position: relative;    */
+/*     padding: 0px; */
+/*     overflow: hidden;   */
+/*     height: 25px; */
+/* }   */
+/* #ticker { */
+/*     float: right; */
+/*     width: 50%; */
+/*     white-space: nowrap; */
+/*     overflow: hidden; */
+/*     display: none; */
+/* } */
+/* #ticker-elements-hide { */
+/* 	display: none; */
+/* }   */
+/* #ticker-elements { */
+/*     position: relative;   */
+/*     height: 25px; */
+/* }   */
+/* #ticker-elements span { */
+/*     padding-right: 20px;   */
+/* }   */
+/* #ticker-elements span a { */
+/* 	color: #99f; */
+/* 	font-size: 15pt; */
+/* }   */
+/* |+error page+| */
+/* div.errorpage-message { */
+/* 	font-size: 150%; */
+/* 	font-weight: bold; */
+/* 	height: 1000px; */
+/* } */
+/* div#social-bookmarks { */
+/* 	clear: right; */
+/* 	float: right; */
+/* } */
+/* div#social-bookmarks div { */
+/* 	display: inline; */
+/* 	margin: 5px; */
+/* } */
+/* div.hatebu { */
+/* 	display: inline; */
+/* } */
+/* div.facebook-like { */
+/* } */
+/* div.message { */
+/* 	display: none; */
+/* 	position: fixed; */
+/* 	top: 0px; */
+/* 	left: 0px; */
+/* 	width: 100%; */
+/* 	opacity: 80%; */
+/* 	background-color: white; */
+/* 	color: gray; */
+/* 	text-align: center; */
+/* 	font-size: 20pt; */
+/* 	padding: 30px; */
+/* } */
+/* div#sort-box a { */
+/* 	margin: 1px; */
+/* 	padding: 5px; */
+/* } */
+/* div#sort-box a.current { */
+/* 	color: white; */
+/* 	background-color: #000066; */
+/* 	border-radius: 5px; */
+/* } */
+/* div#delete-tweets { */
+/* 	text-align: left; */
+/* } */
+/* div.navi { */
+/* 	padding: 0 10px 0 10px; */
+/* } */
+/* div.navi a { */
+/* 	text-decoration: underline; */
+/* 	font-size: 200%; */
+/* 	font-weight: bold; */
+/* 	padding: 0 10px 0 10px; */
+/* 	background-color: #33f; */
+/* 	color: white; */
+/* } */
+/* li.hashtag label { */
+/* 	cursor: pointer; */
+/* } */

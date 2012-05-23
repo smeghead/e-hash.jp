@@ -213,7 +213,7 @@ func CronAdminDeleteTweet(w http.ResponseWriter, r *http.Request) {
 	hashtags, err := GetHashtags(c, map[string]interface{}{
 		"page": page,
 		"length": 20,
-		"order": "View",
+		"order": "-Date",
 	})
 	if err != nil {
 		c.Errorf("FrontHashtags failed to search hashtags: %v", err)

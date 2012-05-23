@@ -14,42 +14,43 @@ $(function(){
       $('body').remove('.message');
     }, 5000);
   };
-  var existsInPage = function (element) {
-    var topLocation = 0;
-    do {
-      topLocation += element.offsetTop  || 0;
-      if (element.offsetParent == document.body)
-        if (element.position == 'absolute') break;
+//   var existsInPage = function (element) {
+//     var topLocation = 0;
+//     do {
+//       topLocation += element.offsetTop  || 0;
+//       if (element.offsetParent == document.body)
+//         if (element.position == 'absolute') break;
 
-      element = element.offsetParent;
-    } while (element);
+//       element = element.offsetParent;
+//     } while (element);
 
-    var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop || 0;
+//     var scrollPosition = document.documentElement.scrollTop || document.body.scrollTop || 0;
 
-    var browserHeight = window.innerHeight ||
-      (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientHeight) ||
-      (document.body && document.body.clientHeight) || 0;
-    return (topLocation > scrollPosition) && (topLocation < scrollPosition + browserHeight);
-  };
+//     var browserHeight = window.innerHeight ||
+//       (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientHeight) ||
+//       (document.body && document.body.clientHeight) || 0;
+//     return (topLocation > scrollPosition) && (topLocation < scrollPosition + browserHeight);
+//   };
 
   //initialize
   try {
     var initialize = function(target){
       $('.create_at', target).each(function(){
         var timestamp = $(this).text();
-        var d = new Date();
-        d.setTime(timestamp.substring(0, timestamp.length - 3));
-        var date_string = 
-          zero(d.getFullYear(), 4) + '年' +
-          zero((d.getMonth() + 1), 2) + '月' +
-          zero(d.getDate(), 2) + '日 ' +
-          zero(d.getHours(), 2) + ':' +
-          zero(d.getMinutes(), 2);
+        timestamp = timestamp.replace(/ \+.*$/, '');
+//         var d = new Date();
+//         d.setTime(timestamp.substring(0, timestamp.length - 3));
+//         var date_string = 
+//           zero(d.getFullYear(), 4) + '年' +
+//           zero((d.getMonth() + 1), 2) + '月' +
+//           zero(d.getDate(), 2) + '日 ' +
+//           zero(d.getHours(), 2) + ':' +
+//           zero(d.getMinutes(), 2);
         $(this).html(
           '<a target="_blank" href="http://twitter.com/#!/' +
           $(this).data('screenname') + '/status/' +
           $(this).data('statusid') + '">' +
-          date_string + '</a>');
+          timestamp + '</a>');
         $(this).show();
       });
       $('a.subject_link', target).each(function(){
@@ -129,25 +130,6 @@ $(function(){
         );
         return false;
       });
-      $('a.like', target).click(function(){
-        var $this = $(this);
-        $.post('/like', {key: $this.data('key'), url: document.location.pathname},
-          function(data){
-            if (data == 'needs_oauth') {
-              document.location.href = '/get_request_token';
-              return;
-            }
-            // update page.
-            if (data != '') {
-              var image = document.createElement('img');
-              image.src = 'http://img.tweetimag.es/i/' + data + '_m';
-              $('.users', $this.closest('div.subject_block')).append(image);
-              message_display('(・∀・)ｲｲ!しました');
-            }
-          }
-        );
-        return false;
-      });
       // user count.
       $('div.subject_block', target).each(function(){
         var $this = $(this);
@@ -185,18 +167,18 @@ $(function(){
       $this.text('もっと読む')
     });
   });
-  $('div.more-tweets').each(function(){
-    var $this = $(this);
-    setInterval(function(){
-      var org_text = $this.text();
-      if (existsInPage($this.get(0))) {
-        if ($this.text() == '読み込み中...')
-          return;
-        $this.text('読み込み中...');
-        $this.click();
-      }
-    }, 1000);
-  });
+//   $('div.more-tweets').each(function(){
+//     var $this = $(this);
+//     setInterval(function(){
+//       var org_text = $this.text();
+//       if (existsInPage($this.get(0))) {
+//         if ($this.text() == '読み込み中...')
+//           return;
+//         $this.text('読み込み中...');
+//         $this.click();
+//       }
+//     }, 1000);
+//   });
   $('div.hashtags-more a').click(function(){
     var $this = $(this);
     var page = $this.closest('.hashtags-more').prev('div').data('page') + 1;
@@ -207,6 +189,7 @@ $(function(){
         $this.hide();
         return;
       }
+      initialize(more);
       more.insertBefore($this.closest('.hashtags-more'));
       $('a.subject_link', more).tagcloud();
     });

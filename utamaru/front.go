@@ -45,7 +45,7 @@ func getUser(c appengine.Context, w http.ResponseWriter, r *http.Request) Twitte
 	}
 	user, err := FindUser(c, sessionId)
 	if err != nil {
-		c.Infof("OauthLikeHandler failed to find user. %v", err)
+		c.Infof("getUser failed to find user. %v", err)
 		return TwitterUser{}
 	}
 	return user
@@ -359,34 +359,6 @@ func RetweetHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, user.ScreenName)
 }
 
-func OauthLikeHandler(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	c.Debugf("OauthLikeHandler")
-
-	keyBytes, _ := base64.StdEncoding.DecodeString(getCookie(r, "key"))
-	key := string(keyBytes)
-	url := getCookie(r, "url")
-	if len(url) == 0 {
-		url = "/"
-	}
-	c.Debugf("OauthLikeHandler key: %s url: %s", key, url)
-	user := getUser(c, w, r)
-	if user.ScreenName == "" {
-		c.Infof("OauthLikeHandler failed to find user. empty user.")
-		http.Redirect(w, r, url, 302)
-		return
-	}
-	c.Debugf("OauthLikeHandler user: %v", user)
-
-	err := LikeTweet(c, key, user)
-	if err != nil {
-		c.Errorf("OauthLikeHandler failed to point up. : %v", err)
-		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
-		return
-	}
-	http.Redirect(w, r, url, 302)
-}
-
 func PostHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Debugf("PostHandler")
@@ -516,51 +488,6 @@ func SignoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, url, 302)
-}
-func LikeHandler(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	c.Debugf("LikeHandler")
-
-	if r.Method != "POST" {
-		c.Errorf("LikeHandler method not supported.")
-		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
-		return
-	}
-	// パラメータの保存 Oauthの後にリダイレクトするため。
-	http.SetCookie(w, &http.Cookie{
-		Name: "type",
-		Value: "like",
-		Path: "/",
-	})
-	key := r.FormValue("key")
-	c.Debugf("LikeHandler key: %s", key)
-	http.SetCookie(w, &http.Cookie{
-		Name: "key",
-		Value: base64.StdEncoding.EncodeToString([]byte(key)),
-		Path: "/",
-	})
-	url := r.FormValue("url")
-	c.Debugf("LikeHandler url: %s", url)
-	http.SetCookie(w, &http.Cookie{
-		Name: "url",
-		Value: url,
-		Path: "/",
-	})
-	user := getUser(c, w, r)
-	if user.ScreenName == "" {
-		c.Infof("LikeHandler failed to find user. empty user.")
-		fmt.Fprint(w, "needs_oauth")
-		return
-	}
-	c.Debugf("LikeHandler user: %v", user)
-
-	err := LikeTweet(c, key, user)
-	if err != nil {
-		c.Errorf("LikeHandler failed to point up. : %v", err)
-		ErrorPage(w, "Likeに失敗しました。", http.StatusInternalServerError)
-		return
-	}
-	fmt.Fprint(w, user.ScreenName)
 }
 
 func FrontSubjectMore(w http.ResponseWriter, r *http.Request) {

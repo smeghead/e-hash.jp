@@ -25,8 +25,6 @@ func init() {
 	http.HandleFunc("/retweet", RetweetHandler)
 	http.HandleFunc("/favorite", FavoriteHandler)
 	http.HandleFunc("/point_up", PointUpHandler)
-	http.HandleFunc("/like", LikeHandler)
-	http.HandleFunc("/oauthlike", OauthLikeHandler)
 	http.HandleFunc("/post", PostHandler)
 	http.HandleFunc("/oauthpost", OauthPostHandler)
 	http.HandleFunc("/signout", SignoutHandler)

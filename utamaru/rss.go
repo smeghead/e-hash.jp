@@ -9,15 +9,15 @@ import (
 )
 
 type Item struct {
-	Title string
+	Title string `xml:"title"`
 }
 
 type Channel struct {
-	Item []Item
+	Item []Item `xml:"item"`
 }
 
 type Rss struct {
-	Channel Channel
+	Channel Channel `xml:"channel"`
 }
 
 func GetHashtagsFromRss(c appengine.Context) ([]Hashtag, error) {
@@ -35,10 +35,17 @@ func GetHashtagsFromRss(c appengine.Context) ([]Hashtag, error) {
 		c.Errorf("GetHashtagsFromRss failed to get body : %v", err)
 		return nil, err
 	}
+	c.Debugf("GetHashtagsFromRss body: %v", string(body))
 	var rss Rss
-	xml.Unmarshal(body, &rss)
+	err = xml.Unmarshal(body, &rss)
+	if err != nil {
+		c.Errorf("GetHashtagsFromRss failed to Unmarshal body : %v", err)
+		return nil, err
+	}
 	hashtags := make([]Hashtag, 0, 10)
+	c.Debugf("GetHashtagsFromRss rss: %v", rss)
 	for _, item := range rss.Channel.Item {
+		c.Debugf("GetHashtagsFromRss title: %v", item.Title)
 		if item.Title[0:1] == "#" {
 			c.Debugf("GetHashtagsFromRss hit hashtag. %s", item.Title)
 			var h Hashtag

@@ -4,6 +4,9 @@ runtime: go
 api_version: go1
 
 handlers:
+- url: /bootstrap
+  static_dir: bootstrap
+
 - url: /css
   static_dir: css
 

@@ -78,7 +78,8 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) error {
 			continue
 		}
 		c.Debugf("SaveTweets tweet : %s", tweet.Text)
-		if len(tweet.To_User_Id_Str) > 0 || tweet.Text[0:4] == "RT @" {
+		//if len(tweet.To_User_Id_Str) > 0 || tweet.Text[0:4] == "RT @" {
+		if tweet.Text[0:4] == "RT @" {
 			// RTは、無視する
 			c.Infof("SaveTweets tweet is RT: %s", tweet.Text)
 			continue
@@ -96,6 +97,18 @@ func SaveTweets(c appengine.Context, tweets []TweetTw, hashtag string) error {
 			c.Errorf("SaveTweets failed to put: %v", err)
 			return err
 		}
+	}
+
+	// まったくtweetが無いならhashtagを削除する
+	count, err := datastore.NewQuery("Tweet").Filter("Hashtag =", hashtag).Count(c)
+	if err != nil {
+		c.Errorf("SaveTweets failed to count: %v", err)
+		return err
+	}
+
+	if count == 0 {
+		c.Infof("SaveTweets delete hashtag cas no tweets.")
+		DeleteHashtag(c, hashtag);
 	}
 
 	if len(tweets) == 0 {

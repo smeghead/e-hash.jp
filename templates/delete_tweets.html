@@ -17,6 +17,11 @@
           var li = $(this);
           li.append(button.clone());
         });
+        $('li.hashtag').each(function(){
+          var hashtag = $('label', this);
+          var text = hashtag.text().trim().substring(1);
+          hashtag.html('<a href="/s/' + encodeURIComponent(text) + '" target="_blank">' + text + '</a>');
+        });
       })
     </script>
   </head>
