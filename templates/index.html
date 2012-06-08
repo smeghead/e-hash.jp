@@ -17,6 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="shortcut icon" href="/favicon.ico" />
 
     <!-- Le styles -->
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -34,7 +35,6 @@
     <![endif]-->
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
 <!--     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png"> -->
 <!--     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png"> -->
 <!--     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png"> -->
@@ -51,6 +51,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
+          
           <a class="brand" href="/">{{.siteTitle|html}}</a>
           <div class="nav-collapse">
             <ul class="nav">
@@ -76,12 +77,12 @@
 <!--             <div> -->
 <!--               <iframe src="http://www.facebook.com/plugins/like.php?app_id=168512816559710&amp;href=http%3A%2F%2Fwww.e-hash.jp%2F&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe> -->
 <!--             </div> -->
-<!--             <div id="user-info"> -->
-<!--               {{if .user.ScreenName}} -->
-<!--               <img src="http://img.tweetimag.es/i/{{.user.ScreenName|html}}_m" /> -->
-<!--               <a href="/signout">サインアウト</a> -->
-<!--               {{end}} -->
-<!--             </div> -->
+            <div id="user-info">
+              {{if .user.ScreenName}}
+              <img src="http://img.tweetimag.es/i/{{.user.ScreenName|html}}_m" />
+              <a href="/signout">サインアウト</a>
+              {{end}}
+            </div>
 <!--           </div> -->
         </div>
       </div>
@@ -125,20 +126,26 @@
                       <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
                     </div>
                     <div class="twitter-buttons span3">
-                      <div class="feedback btn">
-                        <a class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り</span></a>
-                      </div>
-                      <div class="feedback btn">
-                        <a class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式RT</span></a>
+                      <div class="feedback">
+                        <div class="btn-group">
+                          <a class="favorite btn btn-warning" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="favorite" title="Twitterでお気に入りに登録">お気に入り</span></a>
+                          <a class="retweet btn btn-info" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式RT</span></a>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="text"> {{.Text|html}}</div>
-                </div>
-                <div class="users row">
-                    {{range .Users}}
-                      <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
-                    {{end}}
+                  <div class="row">
+                    <div class="span6">
+                      <div class="text"> {{.Text|html}}</div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="users span6">
+                      {{range .Users}}
+                        <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
+                      {{end}}
+                    </div>
+                  </div>
                 </div>
               </div>
             {{end}}
@@ -160,7 +167,7 @@
               <h5>人気</h5>
               <ul>
               {{range .Common_HashtagsHot}}
-                <li><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
+                <li class="unstyled"><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
               {{end}}
             </ul>
             </div>
@@ -183,7 +190,7 @@
               <h5>最新</h5>
               <ul>
               {{range .Common_HashtagsNew}}
-                <li><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
+                <li class="unstyled"><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
               {{end}}
               </ul>
             </div>

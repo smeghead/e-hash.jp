@@ -1,27 +1,35 @@
         {{range .Tweets}}
-        <div class="subject_block">
-          <div class="icon_block">
+        <div class="subject_block row">
+          <div class="icon_block span1">
             <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name}}" data-key="{{.Hashtag|html}}:{{.Id_Str}}"><img class="icon" src="{{.Profile_Image_Url}}" /></a>
           </div>
-          <div class="subject_right">
-            <div class="twitter-buttons">
-              <div class="feedback">
-                <a class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+          <div class="subject_right span6">
+            <div class="row">
+              <div class="subject_record span3">
+                <a data-key="{{.Hashtag|html}}:{{.Id_Str}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name}}">{{.Screen_name|html}}</a>
+                <span data-screenname="{{.Screen_name}}" data-statusid="{{.Id_Str}}/" class="create_at">{{.Created_At}}</span>
               </div>
-              <div class="feedback">
-                <a class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
+              <div class="twitter-buttons span3">
+                <div class="feedback">
+                  <div class="btn-group">
+                    <a class="favorite btn btn-warning" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="favorite" title="Twitterでお気に入りに登録">お気に入り</span></a>
+                    <a class="retweet btn btn-info" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式RT</span></a>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="subject_record">
-              <a data-key="{{.Hashtag|html}}:{{.Id_Str}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name}}">{{.Screen_name|html}}</a>
-              <span data-screenname="{{.Screen_name}}" data-statusid="{{.Id_Str}}/" class="create_at">{{.Created_At}}</span>
-            </div>
-            <div class="text"> {{.Text|html}}</div>
           </div>
-          <div class="users">
+          <div class="row">
+            <div class="span6">
+              <div class="text"> {{.Text|html}}</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="users span6">
               {{range .Users}}
-                <img src="http://img.tweetimag.es/i/{{.ScreenName}}_m" />
+                <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
               {{end}}
+            </div>
           </div>
         </div>
         {{end}}

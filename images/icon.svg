@@ -9,12 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="162"
+   height="162"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
-   sodipodi:docname="icon.svg">
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/home/smeghead/work/go/e-hash.jp/images/icon.png"
+   inkscape:export-xdpi="21.09"
+   inkscape:export-ydpi="21.09">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -24,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="158.30801"
-     inkscape:cy="433.77049"
+     inkscape:zoom="3.9399576"
+     inkscape:cx="82.383438"
+     inkscape:cy="94.68194"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -34,7 +37,11 @@
      inkscape:window-height="789"
      inkscape:window-x="1"
      inkscape:window-y="53"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -50,58 +57,31 @@
   <g
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
-     id="layer1">
-    <g
-       id="g5368"
-       transform="matrix(0.9525,0,0,0.96,-21.308141,445.31771)">
-      <g
-         transform="translate(0,-0.50001335)"
-         id="g5350">
-        <rect
-           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-           id="rect2993"
-           width="149.79829"
-           height="17.618176"
-           x="90.963371"
-           y="178.91817" />
-        <rect
-           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-           id="rect2993-9"
-           width="149.79829"
-           height="17.618176"
-           x="90.963371"
-           y="243.18803" />
-      </g>
-      <g
-         transform="translate(0.8625164,0)"
-         id="g5354">
-        <rect
-           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-           id="rect2993-0"
-           width="149.79829"
-           height="17.618176"
-           x="144.46303"
-           y="-205.94402"
-           transform="matrix(0,1,-1,0,0,0)" />
-        <rect
-           style="fill:#2d3ea6;fill-opacity:1;stroke:#2d3ea6;stroke-width:23.02841187;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-           id="rect2993-9-3"
-           width="149.79829"
-           height="17.618176"
-           x="144.46303"
-           y="-141.67416"
-           transform="matrix(0,1,-1,0,0,0)" />
-      </g>
-    </g>
+     id="layer1"
+     transform="translate(-10.546111,1.6197701)">
     <rect
-       style="fill:none;stroke:none"
-       id="rect5378"
-       width="179.10112"
-       height="179.10112"
-       x="47.125351"
-       y="566.35486"
-       inkscape:export-filename="/home/smeghead/work/go/utamaru/images/icon.png"
-       inkscape:export-xdpi="64"
-       inkscape:export-ydpi="64" />
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       id="rect2992"
+       width="162"
+       height="162"
+       x="10.546111"
+       y="-1.6197701"
+       ry="14.626917"
+       inkscape:export-xdpi="35.560001"
+       inkscape:export-ydpi="35.560001"
+       inkscape:export-filename="/home/smeghead/work/go/e-hash.jp/images/icon.png" />
+    <text
+       xml:space="preserve"
+       style="font-size:162.73814392px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:justify;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:'Takaoゴシック';-inkscape-font-specification:'Takaoゴシック'"
+       x="6.9189186"
+       y="144.26952"
+       id="text3100"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0406498,0.96093806)"><tspan
+         sodipodi:role="line"
+         id="tspan3102"
+         x="6.9189186"
+         y="144.26952"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:#0000ff;font-family:'たぬき油性マジック';-inkscape-font-specification:'たぬき油性マジック Bold'">井</tspan></text>
   </g>
 </svg>

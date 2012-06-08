@@ -17,6 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="shortcut icon" href="/favicon.ico" />
 
     <!-- Le styles -->
     <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -34,7 +35,6 @@
     <![endif]-->
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
 <!--     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png"> -->
 <!--     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png"> -->
 <!--     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png"> -->
@@ -76,12 +76,12 @@
 <!--             <div> -->
 <!--               <iframe src="http://www.facebook.com/plugins/like.php?app_id=168512816559710&amp;href=http%3A%2F%2Fwww.e-hash.jp%2F&amp;send=false&amp;layout=button_count&amp;width=100&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;font&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100px; height:21px;" allowTransparency="true"></iframe> -->
 <!--             </div> -->
-<!--             <div id="user-info"> -->
-<!--               {{if .user.ScreenName}} -->
-<!--               <img src="http://img.tweetimag.es/i/{{.user.ScreenName|html}}_m" /> -->
-<!--               <a href="/signout">サインアウト</a> -->
-<!--               {{end}} -->
-<!--             </div> -->
+            <div id="user-info">
+              {{if .user.ScreenName}}
+              <img src="http://img.tweetimag.es/i/{{.user.ScreenName|html}}_m" />
+              <a href="/signout">サインアウト</a>
+              {{end}}
+            </div>
 <!--           </div> -->
         </div>
       </div>
@@ -121,47 +121,57 @@
                 <a href="http://b.hatena.ne.jp/entry/http://www.e-hash.jp/s/{{.encodedhashtag}}" class="hatena-bookmark-button" data-hatena-bookmark-title="#イーハッシュJP" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
               </div>
             </h2>
-            <div id="tweet-box">
-              <form>
-                <textarea id="status" cols="100" rows="3"></textarea>
-                <span id="leave-letter-count">&nbsp;</span>
-                <input type="submit" class="post" value="Twitterにつぶやく" disabled="disabled" />
-              </form>
+            <div class="row">
+              <div id="tweet-box" class="span7">
+                <form>
+                  <textarea id="status" cols="100" rows="3"></textarea>
+                  <span id="leave-letter-count">&nbsp;</span>
+                  <input type="submit" class="post" value="Twitterにつぶやく" disabled="disabled" />
+                </form>
+              </div>
             </div>
-            <div id="sort-box">
-              <a href="/s/{{.encodedhashtag}}"{{if .sort}}{{else}} class="current"{{end}}>人気順</a>
-              <a href="/s/{{.encodedhashtag}}?sort=new"{{if .sort}} class="current"{{end}}>新しい順</a>
+            <div id="sort-box" class="btn-group">
+              <a href="/s/{{.encodedhashtag}}" class="btn {{if .sort}}{{else}} btn-inverse{{end}}">人気順</a>
+              <a href="/s/{{.encodedhashtag}}?sort=new" class="btn {{if .sort}} btn-inverse{{end}}">新しい順</a>
             </div>
             <div id="subject_blocks">
               {{range .elements.Tweets}}
-                <div class="subject_block">
-                  <div class="icon_block">
+                <div class="subject_block row">
+                  <div class="icon_block span1">
                     <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str}}"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
                   </div>
-                  <div class="subject_right">
-                    <div class="twitter-buttons">
-                      <div class="feedback">
-                        <a class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button favorite" title="Twitterでお気に入りに登録">お気に入り！</span></a>
+                  <div class="subject_right span6">
+                    <div class="row">
+                      <div class="subject_record span3">
+                        <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}">{{.Screen_name|html}}</a>
+                        <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
                       </div>
-                      <div class="feedback">
-                        <a class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="button retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式リツイート</span></a>
+                      <div class="twitter-buttons span3">
+                        <div class="feedback">
+                          <div class="btn-group">
+                            <a class="favorite btn btn-warning" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="favorite" title="Twitterでお気に入りに登録">お気に入り</span></a>
+                            <a class="retweet btn btn-info" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}"><span class="retweet" title="Twitterで公式リツイートして、フォロワーに知らせる">公式RT</span></a>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="subject_record">
-                      <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}">{{.Screen_name|html}}</a>
-                      <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
+                    <div class="row">
+                      <div class="span6">
+                        <div class="text"> {{.Text|html}}</div>
+                      </div>
                     </div>
-                    <div class="text"> {{.Text|html}}</div>
-                  </div>
-                  <div class="users">
-                      {{range .Users}}
-                        <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
-                      {{end}}
+                    <div class="row">
+                      <div class="users span6">
+                        {{range .Users}}
+                          <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
+                        {{end}}
+                      </div>
+                    </div>
                   </div>
                 </div>
               {{end}}
             </div>
-            <div class="more-tweets" data-hashtag="{{.elements.Hashtag.Name}}" data-page="0">
+            <div class="more-tweets btn" data-hashtag="{{.elements.Hashtag.Name}}" data-page="0">
               もっと読む
             </div>
             <div class="totop">
@@ -171,7 +181,7 @@
           <br clear="all"/>
 
         </div>
-        <div class="span4">
+        <div class="sidebar span3">
           <div id="sidebar">
             <div id="qr-code">
               <img src="/images/ehashjp.gif" alt="e-hash.jp link" />
@@ -180,7 +190,7 @@
               <h5>人気</h5>
               <ul>
               {{range .Common_HashtagsHot}}
-                <li><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
+                <li class="unstyled"><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
               {{end}}
             </ul>
             </div>
@@ -203,7 +213,7 @@
               <h5>最新</h5>
               <ul>
               {{range .Common_HashtagsNew}}
-                <li><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
+                <li class="unstyled"><a class="subject_link" href="#" data-hashtag="{{.Name|html}}">{{.Name|html}}</a></li>&nbsp;
               {{end}}
               </ul>
             </div>

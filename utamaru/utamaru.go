@@ -116,6 +116,7 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 	oauthToken := r.FormValue("oauth_token")
 	oauthVerifier := r.FormValue("oauth_verifier")
 	c.Debugf("%s, %s", oauthToken, oauthVerifier)
+	c.Debugf("passsssss")
 	requestToken, err := FindRequestToken(c, oauthToken)
 	if err != nil {
 		c.Errorf("GetAccessTokenHandler failed to find requestToken: %v", err)
@@ -136,7 +137,7 @@ func GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	oneYearLater := time.Now().Local()
-	oneYearLater.AddDate(1, 0,0)
+	oneYearLater = oneYearLater.AddDate(1, 0,0)
 	http.SetCookie(w, &http.Cookie{
 		Name: "id",
 		Value: user.SessionId,
