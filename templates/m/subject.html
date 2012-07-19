@@ -98,7 +98,9 @@
               </div>
               <div class="users ui-li-desc">
                   {{range .Users}}
-                    <img src="http://img.tweetimag.es/i/{{.ScreenName|html}}_m" />
+                    <a href="https://twitter.com/intent/user?screen_name={{.ScreenName|html}}" target="_blank">
+                      <img src="https://api.twitter.com/1/users/profile_image?screen_name={{.ScreenName|html}}&size=mini" />
+                    </a>
                   {{end}}
               </div>
             </div>

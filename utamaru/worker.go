@@ -24,6 +24,11 @@ func WorkerCrawleHashtagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(tweets) < 50 {
+		c.Infof("WorkerCrawleHashtagHandler tweets least: %v", len(tweets))
+		return
+	}
+
 	if err := SaveTweets(c, tweets, hashtag); err != nil {
 		c.Errorf("WorkerCrawleHashtagHandler failed to SaveTweets: %v", err)
 		//http.Error(w, err.String(), http.StatusInternalServerError)
