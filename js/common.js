@@ -99,7 +99,7 @@ $(function(){
             // update page.
             if (data != '') {
               var image = document.createElement('img');
-              image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+              image.src = 'https://api.twitter.com/1/users/profile_image?screen_name=' + data + '&size=mini';
               $('.users', $this.closest('div.subject_block')).append(image);
               message_display('Retweetしました');
             }
@@ -122,7 +122,7 @@ $(function(){
             // update page.
             if (data != '') {
               var image = document.createElement('img');
-              image.src = 'http://img.tweetimag.es/i/' + data + '_m';
+              image.src = 'https://api.twitter.com/1/users/profile_image?screen_name=' + data + '&size=mini';
               $('.users', $this.closest('div.subject_block')).append(image);
               message_display('Favoriteしました');
             }

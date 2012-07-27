@@ -10,7 +10,8 @@ p {
 #ad-space {
 }
 .text {
-	font-size: 130%;
+	font-size: 120%;
+	margin: 5px;
 }
 img.icon {
 	width: 48px;
@@ -19,9 +20,12 @@ img.icon {
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	float: left;
+	margin-right: 3px;
+	margin-bottom: 3px;
 }
 .screen-name,
 .create_at {
+	margin: 3px;
 	display: block;
 }
 .create_at {
