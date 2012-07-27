@@ -191,7 +191,7 @@ $(function(){
       }
       initialize(more);
       more.insertBefore($this.closest('.hashtags-more'));
-      $('a.subject_link', more).tagcloud();
+//       $('a.subject_link', more).tagcloud();
     });
     return false;
   });
@@ -240,15 +240,15 @@ $(function(){
   });
 
   // hashtags tagcloud
-  if ($.fn.tagcloud) {
-    (function(){
-      $.fn.tagcloud.defaults = {
-          size: {start: 14, end: 23, unit: 'pt'}
-          //color: {start: '#cde', end: '#f52'}
-      };
-      $('a.subject_link').tagcloud();
-    })();
-  }
+//   if ($.fn.tagcloud) {
+//     (function(){
+//       $.fn.tagcloud.defaults = {
+//           size: {start: 14, end: 23, unit: 'pt'}
+//           //color: {start: '#cde', end: '#f52'}
+//       };
+//       $('a.subject_link').tagcloud();
+//     })();
+//   }
   $('a#contact-to').attr('href', 'mailto:smeghead7+e-hash.jp@gmail.com?subject=' + document.location.hostname + 'についての問合せ');
 
   //ticker

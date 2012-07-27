@@ -420,3 +420,8 @@ div.hatebu {
 /* li.hashtag label { */
 /* 	cursor: pointer; */
 /* } */
+
+.span8 .subject_list {
+	font-size: 16pt;
+	line-height: 150%;
+}

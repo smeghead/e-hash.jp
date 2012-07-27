@@ -13,12 +13,9 @@ img.icon {
 	width: 48px;
 	height: 48px;
 }
-#adsense {
-	text-align: center;
-}
 #copyright {
-	float: right;
 	vertical-align: top;
+	text-align: right;
 }
 div.message {
 	display: none;
@@ -32,4 +29,11 @@ div.message {
 	text-align: center;
 	font-size: 120%;
 	padding: 30px;
+}
+
+.ui-icon-retweet {
+	background: url(../images/retweet.png);
+}
+.ui-icon-favorite {
+	background: url(../images/favorite.png);
 }

@@ -1,4 +1,4 @@
-      <ul data-role="listview" data-theme="e">
+      <ul data-role="listview" data-theme="c">
         {{range .Tweets}}
           <li class="ui-li ui-btn-down-a ui-btn-up-a">
           <div class="subject_block ui-button-text">
@@ -10,9 +10,9 @@
               </div>
               <span class="text"> {{.Text|html}}</span>
               <div class="twitter-buttons ui-li-desc">
-                  <div data-type="horizontal" data-role="controlgroup" class="ui-corner-all ui-controlgroup ui-controlgroup-horizontal">
-                    <a data-theme="e" data-ajax="false" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-statusid=":{{.Id_Str|html}}" class="favorite ui-btn ui-btn-up-e ui-corner-left" data-role="button"><span aria-hidden="true" class="ui-btn-inner ui-corner-left"><span class="ui-btn-text"><span title="Twitterでお気に入りに登録" class="button favorite">お気に入り</span></span></span></a>
-                    <a data-theme="e" data-ajax="false" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-statusid=":{{.Id_Str|html}}" class="retweet ui-btn ui-btn-up-e" data-role="button"><span aria-hidden="true" class="ui-btn-inner"><span class="ui-btn-text"><span title="Twitterで公式リツイートして、フォロワーに知らせる" class="button retweet">公式RT</span></span></span></a>
+                  <div data-role="controlgroup" data-type="horizontal">
+                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="favorite" data-iconpos="notext" data-theme="e" data-inline="true">Twitterでお気に入りに登録</a>
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="retweet" data-iconpos="notext" data-theme="e" data-inline="true">Twitterで公式リツイートして、フォロワーに知らせる</a>
                   </div>
               </div>
             </div>
