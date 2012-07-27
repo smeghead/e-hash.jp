@@ -1,3 +1,6 @@
+.clear {
+	clear: both;
+}
 h2 {
 	margin-top: 5px;
 }
@@ -12,6 +15,20 @@ p {
 img.icon {
 	width: 48px;
 	height: 48px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	float: left;
+}
+.screen-name,
+.create_at {
+	display: block;
+}
+.create_at {
+	font-weight: normal;
+}
+.twitter-buttons {
+	float: right;
 }
 #copyright {
 	vertical-align: top;

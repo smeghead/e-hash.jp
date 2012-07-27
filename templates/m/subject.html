@@ -80,30 +80,27 @@
         <div id="subject_blocks">
           <ul data-role="listview" data-theme="c">
           {{range .elements.Tweets}}
-            <li class="ui-li ui-btn-down-c ui-btn-up-c">
-            <div class="subject_block ui-button-text">
-              <div class="subject_right">
-                <div class="subject_record ui-li-heading">
-                  <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
-                  <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-ajax="false">{{.Screen_name|html}}</a>
-                  <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
-                </div>
-                <span class="text"> {{.Text|html}}</span>
-                <div class="twitter-buttons ui-li-desc">
+            <li class="ui-li">
+              <div class="subject_block">
+                <div class="twitter-buttons">
                   <div data-role="controlgroup" data-type="horizontal">
-                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="favorite" data-iconpos="notext" data-theme="e" data-inline="true">Twitterでお気に入りに登録</a>
-                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="retweet" data-iconpos="notext" data-theme="e" data-inline="true">Twitterで公式リツイートして、フォロワーに知らせる</a>
+                    <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="favorite" data-iconpos="notext" data-theme="c" data-inline="true">Twitterでお気に入りに登録</a>
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="retweet" data-iconpos="notext" data-theme="c" data-inline="true" title="Twitterで公式リツイートして、フォロワーに知らせる">&nbsp;</a>
                   </div>
                 </div>
+                <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>
+                <a data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" class="profile screen-name" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-ajax="false">{{.Screen_name|html}}</a>
+                <span data-screenname="{{.Screen_name|html}}" data-statusid="{{.Id_Str|html}}/" class="create_at">{{.Created_At|html}}</span>
+
+                <div class="text clear"> {{.Text|html}}</div>
+                <div class="users ui-li-desc">
+                    {{range .Users}}
+                      <a href="https://twitter.com/intent/user?screen_name={{.ScreenName|html}}" target="_blank">
+                        <img src="https://api.twitter.com/1/users/profile_image?screen_name={{.ScreenName|html}}&size=mini" />
+                      </a>
+                    {{end}}
+                </div>
               </div>
-              <div class="users ui-li-desc">
-                  {{range .Users}}
-                    <a href="https://twitter.com/intent/user?screen_name={{.ScreenName|html}}" target="_blank">
-                      <img src="https://api.twitter.com/1/users/profile_image?screen_name={{.ScreenName|html}}&size=mini" />
-                    </a>
-                  {{end}}
-              </div>
-            </div>
             </li>
           {{end}}
           </ul>
