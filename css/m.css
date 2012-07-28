@@ -10,8 +10,9 @@ p {
 #ad-space {
 }
 .text {
-	font-size: 120%;
-	margin: 5px;
+	font-size: 11pt;
+	margin: 15px 0px;
+	line-height: 130%;
 }
 img.icon {
 	width: 48px;

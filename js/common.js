@@ -1,4 +1,8 @@
-$(function(){
+$(function(event){
+  if (_from) {
+    console.log('hide h1.');
+    $('h1').css('display', 'none');
+  }
   var zero = function(s, n){
     s = '0000' + s;
     return s.substring(s.length - n);
@@ -158,6 +162,10 @@ $(function(){
       }
       var data_element = $(data);
       initialize(data_element);
+      if (typeof($.fn.jqmData) != 'undefined') {
+        data_element.appendTo( ".ui-page" ).trigger( "create" );
+      }
+
       var blocks = $('div#subject_blocks');
       blocks.append(data_element);
       if ($('ul', blocks).length > 0) {

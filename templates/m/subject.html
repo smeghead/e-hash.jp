@@ -32,6 +32,7 @@
           adtag1 : 1,
         },
       };
+      var _from = '{{._from}}';
     </script>
     <script type="text/javascript" src="http://js.ad-stir.com/js/adstir.js?2012010601"></script>
   </head>
@@ -85,7 +86,7 @@
                 <div class="twitter-buttons">
                   <div data-role="controlgroup" data-type="horizontal">
                     <a data-role="button" class="favorite" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="favorite" data-iconpos="notext" data-theme="c" data-inline="true">Twitterでお気に入りに登録</a>
-                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="retweet" data-iconpos="notext" data-theme="c" data-inline="true" title="Twitterで公式リツイートして、フォロワーに知らせる">&nbsp;</a>
+                    <a data-role="button" class="retweet" data-statusid=":{{.Id_Str|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false" data-icon="retweet" data-iconpos="notext" data-theme="c" data-inline="true">Twitterで公式リツイートして、フォロワーに知らせる</a>
                   </div>
                 </div>
                 <a class="profile" href="https://twitter.com/intent/user?screen_name={{.Screen_name|html}}" data-key="{{.Hashtag|html}}:{{.Id_Str|html}}" data-ajax="false"><img class="icon" src="{{.Profile_Image_Url|html}}" /></a>

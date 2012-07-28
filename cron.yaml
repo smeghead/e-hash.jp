@@ -10,4 +10,4 @@ cron:
   schedule: every 2 hours
 - description: record hashtags from rss.
   url: /cron/record_rss_hashtags
-  schedule: every 4 hours
+  schedule: every 24 hours
