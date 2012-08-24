@@ -5,9 +5,9 @@ cron:
 #- description: record trends hashtag.
 #  url: /cron/record_trends_hashtags
 #  schedule: every 2 hours
-- description: crawle hashtags tweets.
-  url: /cron/crawle_hashtags
-  schedule: every 2 hours
-- description: record hashtags from rss.
-  url: /cron/record_rss_hashtags
-  schedule: every 24 hours
+#- description: crawle hashtags tweets.
+#  url: /cron/crawle_hashtags
+#  schedule: every 2 hours
+#- description: record hashtags from rss.
+#  url: /cron/record_rss_hashtags
+#  schedule: every 24 hours

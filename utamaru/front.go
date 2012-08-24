@@ -63,16 +63,17 @@ func getSessionId(c appengine.Context, r *http.Request) string {
 	return getCookie(r, "id")
 }
 
-func getCommonMap(c appengine.Context, r *http.Request, user TwitterUser) (map[string]interface{}, error) {
+func getCommonMap(c appengine.Context, w http.ResponseWriter, r *http.Request, user TwitterUser) (map[string]interface{}, error) {
 	commonMap := make(map[string]interface{})
 
 	commonMap["user"] = user
 	commonMap["siteTitle"] = SiteTitle
 
 	from, err := r.Cookie("_from")
+	c.Debugf("cookie from: %v", from)
 	c.Debugf("cookie error: %v", err)
-	if err != nil && from != nil {
-		c.Debugf("_from: %v", from)
+	if err == nil && from != nil {
+		c.Debugf("cookie _from: %v", from)
 		commonMap["_from"] = from.Value
 	}
 
@@ -108,7 +109,7 @@ func FrontTop(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	user := getUser(c, w, r)
-	resultMap, err := getCommonMap(c, r, user)
+	resultMap, err := getCommonMap(c, w, r, user)
 	if err != nil {
 		c.Errorf("FrontTop failed to retrieve resultMap: %v", err)
 		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
@@ -167,7 +168,7 @@ func FrontSubject(w http.ResponseWriter, r *http.Request) {
 	hashtag := "#" + path[3:]
 
 	user := getUser(c, w, r)
-	resultMap, err := getCommonMap(c, r, user)
+	resultMap, err := getCommonMap(c, w, r, user)
 	if err != nil {
 		c.Errorf("FrontSubject failed to retrieve resultMap: %v", err)
 		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
@@ -211,7 +212,7 @@ func FrontHashtags(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	user := getUser(c, w, r)
-	resultMap, err := getCommonMap(c, r, user)
+	resultMap, err := getCommonMap(c, w, r, user)
 	if err != nil {
 		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err)
 		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
@@ -268,7 +269,7 @@ func FrontAbout(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	user := getUser(c, w, r)
-	resultMap, err := getCommonMap(c, r, user)
+	resultMap, err := getCommonMap(c, w, r, user)
 	if err != nil {
 		c.Errorf("FrontHashtags failed to retrieve resultMap: %v", err)
 		ErrorPage(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)

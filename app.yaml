@@ -4,38 +4,7 @@ runtime: go
 api_version: go1
 
 handlers:
-- url: /bootstrap
-  static_dir: bootstrap
-
-- url: /css
-  static_dir: css
-
-- url: /js
-  static_dir: js
-
-- url: /images
-  static_dir: images
-
-- url: /favicon.ico
-  static_files: favicon.ico
-  upload: favicon.ico
-
-- url: /robots.txt
-  static_files: robots.txt
-  upload: robots.txt
-
-- url: /cron/.*
-  script: _go_app
-  login: admin
-
-- url: /worker/.*
-  script: _go_app
-  login: admin
-
-- url: /admin/.*
-  script: _go_app
-  login: admin
-
 - url: /.*
-  script: _go_app
+  static_files: index.html
+  upload: index.html
 

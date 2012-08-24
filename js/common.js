@@ -1,5 +1,5 @@
 $(function(event){
-  if (_from) {
+  if (typeof(_from) != 'undefined' && _from) {
     console.log('hide h1.');
     $('h1').css('display', 'none');
   }
